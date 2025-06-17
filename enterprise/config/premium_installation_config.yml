@@ -1,0 +1,22 @@
+# ------- Branding Related Config ------- #
+- name: INSTALLATION_NAME
+  value: 'Leadster Chat'
+- name: LOGO_THUMBNAIL
+  value: 'https://leadster.com.br/blog/wp-content/uploads/2021/05/cropped-leadster_icon-270x270.png'
+- name: LOGO
+  value: 'https://leadster.com.br/img/leadster/leadster.svg'
+- name: LOGO_DARK
+  value: 'https://storage.googleapis.com/neuro-cdn/leadster/logos/leadsterwhite500.png'
+- name: BRAND_URL
+  value: 'https://leadster.com.br/'
+- name: WIDGET_BRAND_URL
+  value: 'https://leadster.com.br/'
+- name: BRAND_NAME
+  value: 'Leadster Chat'
+- name: TERMS_URL
+  value: 'https://leadster.com.br/termos_de_uso'
+- name: PRIVACY_URL
+  value: 'https://leadster.com.br/privacidade'
+- name: DISPLAY_MANIFEST
+  value: true
+# ------- End of Branding Related Config ------- #
