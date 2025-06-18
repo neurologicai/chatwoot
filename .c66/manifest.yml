@@ -1,2 +1,9 @@
 postgresql:
   server: external
+
+# Desabilitar compilação automática de assets para usar deploy hooks
+asset_pipeline_precompile: false
+
+# Configurações do Node.js
+node:
+  version: 23
