@@ -7,26 +7,22 @@ hooks:
       fail_on_error: true
 
   after_deploy:
-    - name: "Instalar pnpm"
-      command: "curl -fsSL https://get.pnpm.io/install.sh | sh -"
+    - name: "Instalar Node.js e pnpm"
+      command: |
+        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+        curl -fsSL https://get.pnpm.io/install.sh | sh -
+        echo 'export PATH="$HOME/.local/share/pnpm:$PATH"' >> ~/.bashrc
+        source ~/.bashrc
       user: "deploy"
       run_on: "all_servers"
       fail_on_error: true
 
-    - name: "Configurar PATH do pnpm"
-      command: "export PATH=\"$HOME/.local/share/pnpm:$PATH\""
-      user: "deploy"
-      run_on: "all_servers"
-      fail_on_error: true
-
-    - name: "Instalar dependências do Node"
-      command: "pnpm install"
-      user: "deploy"
-      run_on: "all_servers"
-      fail_on_error: true
-
-    - name: "Compilar assets com Vite"
-      command: "bundle exec vite build"
+    - name: "Instalar dependências e compilar assets"
+      command: |
+        export PATH="$HOME/.local/share/pnpm:$PATH"
+        pnpm install
+        bundle exec vite build
       user: "deploy"
       run_on: "all_servers"
       fail_on_error: true
