@@ -1,9 +1,2 @@
 postgresql:
   server: external
-
-rails:
-  asset_pipeline_precompile: false
-  
-production:
-  rails:
-    asset_pipeline_precompile: false
