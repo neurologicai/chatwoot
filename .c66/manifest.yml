@@ -1,11 +1,10 @@
 postgresql:
   server: external
 
-# Configurações do Rails para desabilitar compilação automática
-rails:
+# Usar Docker ao invés de Rails tradicional
+docker:
   configuration:
-    asset_pipeline_enabled: false
-    asset_pipeline_precompile: false
+    dockerfile_path: ./Dockerfile
 
 # Configurações do Node.js
 node:
