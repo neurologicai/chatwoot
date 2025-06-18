@@ -1,0 +1,56 @@
+hooks:
+  before_deploy:
+    - name: "Verificar configuração do banco"
+      command: "ruby -e \"require 'erb'; require 'yaml'; YAML.load(ERB.new(File.read('config/database.yml')).result)\""
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+  after_deploy:
+    - name: "Instalar pnpm"
+      command: "curl -fsSL https://get.pnpm.io/install.sh | sh -"
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+    - name: "Configurar PATH do pnpm"
+      command: "export PATH=\"$HOME/.local/share/pnpm:$PATH\""
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+    - name: "Instalar dependências do Node"
+      command: "pnpm install"
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+    - name: "Compilar assets com Vite"
+      command: "bundle exec vite build"
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+    - name: "Rodar migrações"
+      command: "bundle exec rails db:migrate"
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+    - name: "Verificar conexão com o banco"
+      command: "bundle exec rails runner \"ActiveRecord::Base.connection.execute('SELECT 1')\""
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+    - name: "Limpar cache"
+      command: "bundle exec rails tmp:cache:clear"
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: false
+
+    - name: "Reiniciar Sidekiq"
+      command: "bundle exec sidekiqctl quiet && bundle exec sidekiqctl stop"
+      user: "deploy"
+      run_on: "sidekiq_servers"
+      fail_on_error: false 
