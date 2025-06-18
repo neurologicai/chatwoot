@@ -1,11 +1,12 @@
 hooks:
   before_rails:
-    - name: "Instalar Node.js"
+    - name: "Instalar Node.js 20"
       command: |
-        if ! command -v node > /dev/null; then
-          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-        fi
+        # Remover versão antiga se existir
+        sudo apt-get remove -y nodejs npm
+        # Instalar Node.js 20.x
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+        sudo apt-get install -y nodejs
         echo "Node.js $(node --version) instalado"
         echo "npm $(npm --version) disponível"
       user: "deploy"
@@ -14,7 +15,11 @@ hooks:
 
     - name: "Instalar dependências JavaScript"
       command: |
-        npm install
+        # Gerar package-lock.json se não existir
+        if [ ! -f package-lock.json ]; then
+          npm install --package-lock-only
+        fi
+        npm ci
         echo "Dependências JavaScript instaladas com sucesso"
       user: "deploy"
       run_on: "all_servers"
