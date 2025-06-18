@@ -1,5 +1,5 @@
 hooks:
-  before_deploy:
+  before_rails:
     - name: "Instalar Node.js 23 e pnpm 10"
       command: |
         # Remover versão antiga se existir
