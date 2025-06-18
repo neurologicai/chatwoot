@@ -7,6 +7,25 @@ hooks:
       fail_on_error: true
 
   after_deploy:
+    - name: "Instalar Node.js e pnpm"
+      command: |
+        if ! command -v node > /dev/null; then
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+        fi
+        curl -fsSL https://get.pnpm.io/install.sh | sh -
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+    - name: "Instalar dependências e compilar assets"
+      command: |
+        ~/.local/share/pnpm/pnpm install
+        bundle exec vite build
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
     - name: "Rodar migrações"
       command: "bundle exec rails db:migrate"
       user: "deploy"
