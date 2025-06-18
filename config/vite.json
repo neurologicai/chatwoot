@@ -2,7 +2,7 @@
   "all": {
     "sourceCodeDir": "app/javascript",
     "watchAdditionalPaths": [],
-    "packageManager": "npm"
+    "packageManager": "pnpm"
   },
   "development": {
     "autoBuild": true,
@@ -15,6 +15,6 @@
     "port": 3037
   },
   "production": {
-    "packageManager": "npm"
+    "packageManager": "pnpm"
   }
 }

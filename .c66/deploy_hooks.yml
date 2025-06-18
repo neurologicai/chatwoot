@@ -1,26 +1,26 @@
 hooks:
   before_rails:
-    - name: "Instalar Node.js 20"
+    - name: "Instalar Node.js 23 e pnpm 10"
       command: |
         # Remover versão antiga se existir
         sudo apt-get remove -y nodejs npm
-        # Instalar Node.js 20.x
-        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+        # Instalar Node.js 23.x
+        curl -fsSL https://deb.nodesource.com/setup_23.x | sudo -E bash -
         sudo apt-get install -y nodejs
         echo "Node.js $(node --version) instalado"
-        echo "npm $(npm --version) disponível"
+        
+        # Instalar pnpm 10.x
+        sudo npm install -g pnpm@10.2.0
+        echo "pnpm $(pnpm --version) instalado"
       user: "deploy"
       run_on: "all_servers"
       fail_on_error: true
 
-    - name: "Instalar dependências JavaScript"
+    - name: "Instalar dependências JavaScript com pnpm"
       command: |
-        # Gerar package-lock.json se não existir
-        if [ ! -f package-lock.json ]; then
-          npm install --package-lock-only
-        fi
-        npm ci
-        echo "Dependências JavaScript instaladas com sucesso"
+        # Usar pnpm install para instalar dependências
+        pnpm install --frozen-lockfile
+        echo "Dependências JavaScript instaladas com pnpm"
       user: "deploy"
       run_on: "all_servers"
       fail_on_error: true
