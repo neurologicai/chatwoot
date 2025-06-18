@@ -6,7 +6,6 @@ hooks:
       run_on: "all_servers"
       fail_on_error: true
 
-  after_deploy:
     - name: "Instalar Node.js e pnpm"
       command: |
         if ! command -v node > /dev/null; then
@@ -38,6 +37,7 @@ hooks:
       run_on: "all_servers"
       fail_on_error: true
 
+  after_deploy:
     - name: "Limpar cache"
       command: "bundle exec rails tmp:cache:clear"
       user: "deploy"
