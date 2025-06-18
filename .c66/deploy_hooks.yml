@@ -1,5 +1,5 @@
 hooks:
-  before_rails:
+  before_deploy:
     - name: "Instalar Node.js 23 e pnpm 10"
       command: |
         # Remover versão antiga se existir
@@ -25,7 +25,16 @@ hooks:
       run_on: "all_servers"
       fail_on_error: true
 
-  before_deploy:
+    - name: "Compilar assets com Vite"
+      command: |
+        export RAILS_ENV=production
+        export RAILS_GROUPS=assets
+        bundle exec rake assets:precompile
+        echo "Assets compilados com sucesso"
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
     - name: "Verificar configuração do banco"
       command: "ruby -e \"require 'erb'; require 'yaml'; YAML.load(ERB.new(File.read('config/database.yml')).result)\""
       user: "deploy"
