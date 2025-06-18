@@ -1,17 +1,42 @@
-.bundle
-.env
-.env.*
-docker-compose.*
-docker/Dockerfile
-docker/dockerfiles
-log
-storage
-public/system
-tmp
-.codeclimate.yml
-public/packs
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Node modules (serão instalados no container)
 node_modules
-vendor/bundle
+
+# Assets compilados (serão gerados no container)
+public/assets
+public/vite
+public/packs
+
+# Logs
+log/*.log
+tmp/
+
+# Desenvolvimento
 .DS_Store
 *.swp
-*~
+*.swo
+
+# Testes
+spec/
+test/
+coverage/
+
+# Documentação
+README.md
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+
+# CI/CD
+.github/
+.circleci/
+
+# IDEs
+.vscode/
+.idea/
