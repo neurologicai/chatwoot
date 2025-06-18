@@ -1,8 +1,11 @@
 postgresql:
   server: external
 
-# Desabilitar compilação automática de assets para usar deploy hooks
-asset_pipeline_precompile: false
+# Configurações do Rails para desabilitar compilação automática
+rails:
+  configuration:
+    asset_pipeline_enabled: false
+    asset_pipeline_precompile: false
 
 # Configurações do Node.js
 node:
