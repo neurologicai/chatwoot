@@ -1,7 +1,8 @@
 {
   "all": {
     "sourceCodeDir": "app/javascript",
-    "watchAdditionalPaths": []
+    "watchAdditionalPaths": [],
+    "packageManager": "npm"
   },
   "development": {
     "autoBuild": true,
@@ -12,5 +13,8 @@
     "autoBuild": true,
     "publicOutputDir": "vite-test",
     "port": 3037
+  },
+  "production": {
+    "packageManager": "npm"
   }
 }
