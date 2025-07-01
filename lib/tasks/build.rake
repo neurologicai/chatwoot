@@ -127,17 +127,41 @@ task before_assets_precompile: :environment do
   if final_node_version.start_with?('v23.') && !final_pnpm_version.empty?
     puts "✅ Versões corretas detectadas, executando comandos..."
     
+    # Configurar ambiente para ViteRuby usar as versões corretas
+    puts "=== Configurando ambiente para ViteRuby ==="
+    
+    # Criar um wrapper para o pnpm que garante uso do Node.js correto
+    wrapper_content = <<~SCRIPT
+      #!/bin/bash
+      export PATH="/usr/bin:/usr/local/bin:$PATH"
+      exec /usr/bin/pnpm "$@"
+    SCRIPT
+    
+    # Escrever wrapper temporário
+    File.write('/tmp/pnpm-wrapper', wrapper_content)
+    system('sudo chmod +x /tmp/pnpm-wrapper')
+    system('sudo cp /tmp/pnpm-wrapper /usr/local/bin/pnpm-wrapper')
+    
+    # Definir variáveis de ambiente para o sistema
+    ENV['NODE_PATH'] = '/usr/bin/node'
+    ENV['PNPM_PATH'] = '/usr/bin/pnpm'
+    
     # Executar comandos pnpm
     system('pnpm install') || abort("❌ Falha ao executar pnpm install")
     system('echo "-------------- Bulding SDK for Production --------------"')
     system('pnpm run build:sdk') || abort("❌ Falha ao executar pnpm run build:sdk")
     system('echo "-------------- Bulding App for Production --------------"')
+    
+    # **NÃO** restaurar PATH original para manter Node.js 23.x disponível para ViteRuby
+    puts "=== Mantendo Node.js 23.x e pnpm 10.x disponíveis para ViteRuby ==="
+    puts "PATH final: #{ENV['PATH']}"
+    puts "Node.js final: #{`node --version 2>/dev/null`.strip}"
+    puts "pnpm final: #{`pnpm --version 2>/dev/null`.strip}"
+    puts "NODE_PATH: #{ENV['NODE_PATH']}"
+    puts "PNPM_PATH: #{ENV['PNPM_PATH']}"
   else
     abort("❌ Versões ainda incorretas após instalação. Node.js: #{final_node_version}, pnpm: #{final_pnpm_version}")
   end
-  
-  # Restaurar PATH original
-  ENV['PATH'] = original_path
 end
 
 # every time you execute 'rake assets:precompile'
