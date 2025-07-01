@@ -64,14 +64,14 @@ task before_assets_precompile: :environment do
     puts "⚠️  pnpm não encontrado ou versão incorreta (#{pnpm_version}, requer 10.x)"
     puts "Instalando pnpm 10.x para Node.js #{node_major}..."
     
-    # Usar o Node.js correto para instalar pnpm
+    # Usar o Node.js correto para instalar pnpm com sudo
     node_path = `which node`.strip
     npm_path = `which npm`.strip
     
     puts "Usando Node.js: #{node_path}"
     puts "Usando npm: #{npm_path}"
     
-    if system("#{npm_path} install -g pnpm@10.2.0")
+    if system("sudo #{npm_path} install -g pnpm@10.2.0")
       puts "✅ pnpm 10.x instalado, criando symlinks..."
       
       # Tentar diferentes localizações para o pnpm
@@ -91,6 +91,14 @@ task before_assets_precompile: :environment do
       else
         puts "Procurando pnpm automaticamente..."
         system("find /usr -name 'pnpm*' -type f 2>/dev/null | head -5")
+        
+        # Tentar criar symlink para o pnpm usando npm root
+        npm_global_dir = `#{npm_path} root -g 2>/dev/null`.strip
+        potential_pnpm = "#{npm_global_dir}/pnpm/bin/pnpm.cjs"
+        if File.exist?(potential_pnpm)
+          puts "Encontrado pnpm em npm global: #{potential_pnpm}"
+          system("sudo ln -sf #{potential_pnpm} /usr/bin/pnpm")
+        end
       end
       
       # Atualizar PATH e verificar
