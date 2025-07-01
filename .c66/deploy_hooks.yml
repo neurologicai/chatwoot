@@ -1,4 +1,44 @@
 hooks:
+  before_deploy:
+    - name: "Verificar configuração do banco"
+      command: "ruby -e \"require 'erb'; require 'yaml'; YAML.load(ERB.new(File.read('config/database.yml')).result)\""
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+    - name: "Instalar Node.js e pnpm"
+      command: |
+        if ! command -v node > /dev/null; then
+          curl -fsSL https://deb.nodesource.com/setup_23.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+        fi
+        if ! command -v pnpm > /dev/null; then
+          sudo npm install -g pnpm@10.2.0
+        fi
+        node --version
+        npm --version
+        pnpm --version
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+    - name: "Instalar dependências JavaScript"
+      command: |
+        pnpm install --frozen-lockfile
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
+    - name: "Verificar instalação do pnpm"
+      command: |
+        echo "Verificando se pnpm está disponível..."
+        which pnpm
+        pnpm --version
+        echo "Node.js e pnpm instalados com sucesso!"
+      user: "deploy"
+      run_on: "all_servers"
+      fail_on_error: true
+
   after_deploy:
     - name: "Rodar migrações"
       command: "bundle exec rails db:migrate"
