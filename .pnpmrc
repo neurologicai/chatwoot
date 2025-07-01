@@ -3,4 +3,8 @@ auto-install-peers=true
 strict-peer-dependencies=false
 shamefully-hoist=true
 # Garantir que instale no diretório correto
-prefer-symlinked-executables=false 
+prefer-symlinked-executables=false
+# Evitar verificações rígidas de engine no CI/deploy
+engine-strict=false
+# Configuração para produção
+resolution-mode=highest 
