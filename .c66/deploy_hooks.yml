@@ -6,37 +6,62 @@ hooks:
       run_on: "all_servers"
       fail_on_error: true
 
-    - name: "Instalar Node.js e pnpm"
+    - name: "Instalar Node.js 23 e pnpm"
       command: |
-        if ! command -v node > /dev/null; then
-          curl -fsSL https://deb.nodesource.com/setup_23.x | sudo -E bash -
-          sudo apt-get install -y nodejs
+        echo "=== Status atual do Node.js ==="
+        node --version || echo "Node.js não encontrado"
+        which node || echo "Node.js não no PATH"
+        echo "==============================="
+        
+        # Forçar instalação do Node.js 23.x
+        echo "Instalando Node.js 23.x..."
+        curl -fsSL https://deb.nodesource.com/setup_23.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+        
+        # Verificar se a instalação foi bem-sucedida
+        echo "Verificando instalação do Node.js..."
+        node --version
+        npm --version
+        
+        # Instalar pnpm baseado na versão do Node.js
+        node_version=$(node --version | sed 's/v//' | cut -d. -f1)
+        if [ "$node_version" -ge 18 ]; then
+          pnpm_version="10.2.0"
+        else
+          pnpm_version="8.15.1"
         fi
-        if ! command -v pnpm > /dev/null; then
-          sudo npm install -g pnpm@10.2.0
-          # Criar symlink adicional para garantir que esteja sempre disponível
-          sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpm.cjs /usr/local/bin/pnpm
-          sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpx.cjs /usr/local/bin/pnpx
-        fi
+        
+        echo "Instalando pnpm $pnpm_version para Node.js $node_version..."
+        sudo npm install -g pnpm@$pnpm_version
+        
+        # Criar symlinks para garantir disponibilidade
+        sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpm.cjs /usr/local/bin/pnpm 2>/dev/null || sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpm.js /usr/local/bin/pnpm
+        sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpx.cjs /usr/local/bin/pnpx 2>/dev/null || sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpx.js /usr/local/bin/pnpx
+        
         # Configurar PATH globalmente para o sistema
         echo 'export PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:$PATH"' | sudo tee -a /etc/environment
         echo 'export PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:$PATH"' | sudo tee -a /etc/profile
+        
+        echo "=== Verificação final ==="
         node --version
         npm --version
-        pnpm --version
         which pnpm
+        pnpm --version
+        echo "========================="
       user: "deploy"
       run_on: "all_servers"
       fail_on_error: true
 
-    - name: "Verificar instalação do pnpm"
+    - name: "Verificar instalação final"
       command: |
-        echo "Verificando se pnpm está disponível..."
+        echo "Verificando se tudo está funcionando..."
         export PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:$PATH"
-        which pnpm
-        pnpm --version
+        echo "Node.js: $(node --version)"
+        echo "npm: $(npm --version)" 
+        echo "pnpm location: $(which pnpm)"
+        echo "pnpm version: $(pnpm --version)"
         echo "PATH atual: $PATH"
-        echo "Node.js e pnpm instalados com sucesso!"
+        echo "Instalação concluída com sucesso!"
       user: "deploy"
       run_on: "all_servers"
       fail_on_error: true
