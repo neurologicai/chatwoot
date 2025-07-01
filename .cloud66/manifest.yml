@@ -1,2 +1,22 @@
 postgresql:
   server: external
+
+# Usar Docker ao invés de Rails tradicional
+docker:
+  configuration:
+    dockerfile_path: ./Dockerfile
+
+# Configurações do Node.js
+node:
+  version: 23
+
+# Variáveis de ambiente para garantir que pnpm esteja disponível
+environment:
+  PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/lib/node_modules/.bin:$PATH"
+  NODE_ENV: "production"
+
+# Habilitar compilação de assets (agora com pnpm funcionando)
+rails:
+  configuration:
+    asset_pipeline_enabled: true
+    asset_pipeline_precompile: true

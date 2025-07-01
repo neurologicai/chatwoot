@@ -1,0 +1,6 @@
+# Configurações do pnpm para deploy em produção
+auto-install-peers=true
+strict-peer-dependencies=false
+shamefully-hoist=true
+# Garantir que instale no diretório correto
+prefer-symlinked-executables=false 

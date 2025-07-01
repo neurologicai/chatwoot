@@ -18,6 +18,9 @@ hooks:
           sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpm.cjs /usr/local/bin/pnpm
           sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpx.cjs /usr/local/bin/pnpx
         fi
+        # Configurar PATH globalmente para o sistema
+        echo 'export PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:$PATH"' | sudo tee -a /etc/environment
+        echo 'export PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:$PATH"' | sudo tee -a /etc/profile
         node --version
         npm --version
         pnpm --version
@@ -26,28 +29,10 @@ hooks:
       run_on: "all_servers"
       fail_on_error: true
 
-    - name: "Instalar dependências JavaScript"
-      command: |
-        pnpm install --frozen-lockfile
-      user: "deploy"
-      run_on: "all_servers"
-      fail_on_error: true
-
-    - name: "Compilar assets manualmente"
-      command: |
-        echo "Compilando assets com pnpm disponível..."
-        export PATH="/usr/local/bin:$PATH"
-        which pnpm
-        pnpm --version
-        RAILS_ENV=production RAILS_GROUPS=assets bundle exec rake assets:precompile
-        echo "Assets compilados com sucesso!"
-      user: "deploy"
-      run_on: "all_servers"
-      fail_on_error: true
-
     - name: "Verificar instalação do pnpm"
       command: |
         echo "Verificando se pnpm está disponível..."
+        export PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:$PATH"
         which pnpm
         pnpm --version
         echo "PATH atual: $PATH"

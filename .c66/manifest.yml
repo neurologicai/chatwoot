@@ -15,8 +15,8 @@ environment:
   PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/lib/node_modules/.bin:$PATH"
   NODE_ENV: "production"
 
-# Desabilitar compilação automática de assets
+# Habilitar compilação de assets (agora com pnpm funcionando)
 rails:
   configuration:
-    asset_pipeline_enabled: false
-    asset_pipeline_precompile: false
+    asset_pipeline_enabled: true
+    asset_pipeline_precompile: true
