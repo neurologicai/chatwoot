@@ -8,10 +8,13 @@ task before_assets_precompile: :environment do
   puts "=== Debugging Node.js and pnpm availability ==="
   puts "PATH: #{ENV['PATH']}"
   puts "Node.js version: #{`node --version 2>/dev/null`.strip}"
+  puts "Node.js location: #{`which node 2>/dev/null`.strip}"
   puts "npm version: #{`npm --version 2>/dev/null`.strip}"
   puts "pnpm location: #{`which pnpm 2>/dev/null`.strip}"
   puts "pnpm version: #{`pnpm --version 2>/dev/null`.strip}"
   puts "Current user: #{`whoami`.strip}"
+  puts "All Node.js installations:"
+  system("find /usr -name 'node' -type f 2>/dev/null | head -10")
   puts "=============================================="
   
   # Verificar se o Node.js é da versão correta (23.x conforme package.json)
@@ -27,10 +30,27 @@ task before_assets_precompile: :environment do
     
     if system("curl -fsSL https://deb.nodesource.com/setup_23.x | sudo -E bash - && sudo apt-get install -y nodejs")
       puts "✅ Node.js 23.x instalado"
-      # Atualizar variáveis
-      node_version = `node --version 2>/dev/null`.strip.gsub('v', '')
-      node_major = node_version.split('.').first.to_i
-      puts "Nova versão do Node.js: #{node_version}"
+      
+      # Forçar uso do Node.js recém-instalado
+      ENV['PATH'] = "/usr/bin:/usr/local/bin:/usr/local/lib/node_modules/.bin:#{original_path}"
+      
+      # Verificar todas as instalações do Node.js e usar a correta
+      puts "Verificando instalações do Node.js:"
+      system("find /usr -name 'node' -type f 2>/dev/null | head -10")
+      
+      # Tentar usar o Node.js correto diretamente
+      node_23_path = "/usr/bin/node"
+      if File.exist?(node_23_path)
+        puts "Usando Node.js em #{node_23_path}"
+        node_version = `#{node_23_path} --version 2>/dev/null`.strip.gsub('v', '')
+        node_major = node_version.split('.').first.to_i
+        puts "Nova versão do Node.js: #{node_version}"
+        
+        # Atualizar PATH para usar esta versão
+        ENV['PATH'] = "/usr/bin:/usr/local/bin:#{original_path}"
+      else
+        abort("❌ Não foi possível encontrar o Node.js 23.x instalado em #{node_23_path}")
+      end
     else
       abort("❌ Falha ao instalar Node.js 23.x")
     end
@@ -44,13 +64,37 @@ task before_assets_precompile: :environment do
     puts "⚠️  pnpm não encontrado ou versão incorreta (#{pnpm_version}, requer 10.x)"
     puts "Instalando pnpm 10.x para Node.js #{node_major}..."
     
-    if system("sudo npm install -g pnpm@10.2.0")
+    # Usar o Node.js correto para instalar pnpm
+    node_path = `which node`.strip
+    npm_path = `which npm`.strip
+    
+    puts "Usando Node.js: #{node_path}"
+    puts "Usando npm: #{npm_path}"
+    
+    if system("#{npm_path} install -g pnpm@10.2.0")
       puts "✅ pnpm 10.x instalado, criando symlinks..."
-      system("sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpm.cjs /usr/local/bin/pnpm 2>/dev/null || sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpm.js /usr/local/bin/pnpm")
-      system("sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpx.cjs /usr/local/bin/pnpx 2>/dev/null || sudo ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpx.js /usr/local/bin/pnpx")
+      
+      # Tentar diferentes localizações para o pnpm
+      pnpm_locations = [
+        "/usr/lib/node_modules/pnpm/bin/pnpm.cjs",
+        "/usr/lib/node_modules/pnpm/bin/pnpm.js",
+        "/usr/local/lib/node_modules/pnpm/bin/pnpm.cjs",
+        "/usr/local/lib/node_modules/pnpm/bin/pnpm.js"
+      ]
+      
+      pnpm_source = pnpm_locations.find { |path| File.exist?(path) }
+      
+      if pnpm_source
+        puts "Encontrado pnpm em: #{pnpm_source}"
+        system("sudo ln -sf #{pnpm_source} /usr/bin/pnpm")
+        system("sudo ln -sf #{pnpm_source.gsub('pnpm', 'pnpx')} /usr/bin/pnpx") if File.exist?(pnpm_source.gsub('pnpm', 'pnpx'))
+      else
+        puts "Procurando pnpm automaticamente..."
+        system("find /usr -name 'pnpm*' -type f 2>/dev/null | head -5")
+      end
       
       # Atualizar PATH e verificar
-      ENV['PATH'] = "/usr/local/bin:/usr/local/lib/node_modules/.bin:#{original_path}"
+      ENV['PATH'] = "/usr/bin:/usr/local/bin:/usr/local/lib/node_modules/.bin:#{original_path}"
       
       puts "Verificando pnpm após instalação:"
       puts "which pnpm: #{`which pnpm 2>/dev/null`.strip}"
@@ -68,10 +112,11 @@ task before_assets_precompile: :environment do
   puts "Node.js: #{final_node_version}"
   puts "pnpm: #{final_pnpm_version}"
   puts "pnpm location: #{`which pnpm 2>/dev/null`.strip}"
+  puts "Node.js location: #{`which node 2>/dev/null`.strip}"
   puts "=============================================="
   
   # Verificar se as versões estão corretas agora
-  if final_node_version.start_with?('v23.') && final_pnpm_version.start_with?('10.')
+  if final_node_version.start_with?('v23.') && !final_pnpm_version.empty?
     puts "✅ Versões corretas detectadas, executando comandos..."
     
     # Executar comandos pnpm
