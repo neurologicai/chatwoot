@@ -24,18 +24,17 @@ defineProps({
 </script>
 
 <template>
-  <button
-    class="flex flex-col gap-4 w-full h-fit p-4 rounded-md border border-n-weak dark:border-n-weak"
+  <div
+    class="flex flex-col gap-4 w-full h-fit sm:max-h-[220px] p-4 sm:max-w-[350px] rounded-md border border-solid border-ash-200"
     :class="{
       'border-primary-300 ': active,
     }"
+    @click="$emit('click')"
   >
     <div class="flex flex-col gap-2 items-center w-full rounded-t-[5px]">
-      <div class="grid grid-cols-[1fr_auto] items-center w-full gap-1">
-        <div
-          class="overflow-hidden text-base font-medium text-ash-900 text-left"
-        >
-          <span class="block truncate">{{ title }}</span>
+      <div class="flex items-center justify-between w-full gap-1">
+        <div class="flex items-center text-base font-medium text-ash-900">
+          {{ title }}
         </div>
         <input
           :checked="active"
@@ -61,5 +60,5 @@ defineProps({
         class="hidden object-cover w-full dark:block"
       />
     </div>
-  </button>
+  </div>
 </template>

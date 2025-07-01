@@ -15,7 +15,7 @@ class Conversations::UpdateMessageStatusJob < ApplicationJob
     conversation.messages.where(status: %w[sent delivered])
                 .where.not(message_type: 'incoming')
                 .where('messages.created_at <= ?', timestamp).find_each do |message|
-      Messages::StatusUpdateService.new(message, status).perform
+      message.update!(status: status)
     end
   end
 end

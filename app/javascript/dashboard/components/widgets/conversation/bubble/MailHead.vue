@@ -45,7 +45,6 @@ export default {
 };
 </script>
 
-<!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
   <div
     v-if="showHead"

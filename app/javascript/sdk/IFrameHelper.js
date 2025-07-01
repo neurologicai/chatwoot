@@ -22,11 +22,7 @@ import {
 } from './bubbleHelpers';
 import { isWidgetColorLighter } from 'shared/helpers/colorHelper';
 import { dispatchWindowEvent } from 'shared/helpers/CustomEventHelper';
-import {
-  CHATWOOT_ERROR,
-  CHATWOOT_POSTBACK,
-  CHATWOOT_READY,
-} from '../widget/constants/sdkEvents';
+import { CHATWOOT_ERROR, CHATWOOT_READY } from '../widget/constants/sdkEvents';
 import { SET_USER_ERROR } from '../widget/constants/errorTypes';
 import { getUserCookieName, setCookieWithDomain } from './cookieHelpers';
 import {
@@ -82,7 +78,6 @@ export const IFrameHelper = {
 
     addClasses(widgetHolder, holderClassName);
     widgetHolder.id = 'cw-widget-holder';
-    widgetHolder.dataset.turboPermanent = true;
     widgetHolder.appendChild(iframe);
     body.appendChild(widgetHolder);
     IFrameHelper.initPostMessageCommunication();
@@ -206,13 +201,6 @@ export const IFrameHelper = {
 
     setCampaignReadOn() {
       updateCampaignReadStatus(window.$chatwoot.baseDomain);
-    },
-
-    postback(data) {
-      dispatchWindowEvent({
-        eventName: CHATWOOT_POSTBACK,
-        data,
-      });
     },
 
     toggleBubble: state => {

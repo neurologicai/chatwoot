@@ -1,17 +1,16 @@
 <script>
-import { Chrome } from '@lk77/vue3-color';
+import { Chrome } from 'vue-color';
 
 export default {
   components: {
     Chrome,
   },
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: '',
     },
   },
-  emits: ['update:modelValue'],
   data() {
     return {
       isPickerOpen: false,
@@ -27,7 +26,7 @@ export default {
       this.isPickerOpen = !this.isPickerOpen;
     },
     updateColor(e) {
-      this.$emit('update:modelValue', e.hex);
+      this.$emit('input', e.hex);
     },
   },
 };
@@ -37,23 +36,23 @@ export default {
   <div class="colorpicker">
     <div
       class="colorpicker--selected"
-      :style="`background-color: ${modelValue}`"
+      :style="`background-color: ${value}`"
       @click.prevent="toggleColorPicker"
     />
     <Chrome
       v-if="isPickerOpen"
       v-on-clickaway="closeTogglePicker"
       disable-alpha
-      :model-value="modelValue"
+      :value="value"
       class="colorpicker--chrome"
-      @update:model-value="updateColor"
+      @input="updateColor"
     />
   </div>
 </template>
 
 <style scoped lang="scss">
-@import 'dashboard/assets/scss/variables';
-@import 'dashboard/assets/scss/mixins';
+@import '~dashboard/assets/scss/variables';
+@import '~dashboard/assets/scss/mixins';
 
 .colorpicker {
   position: relative;

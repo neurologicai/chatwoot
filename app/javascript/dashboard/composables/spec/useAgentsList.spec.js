@@ -5,25 +5,8 @@ import { useMapGetter } from 'dashboard/composables/store';
 import { allAgentsData, formattedAgentsData } from './fixtures/agentFixtures';
 import * as agentHelper from 'dashboard/helper/agentHelper';
 
-// Mock vue-i18n
-vi.mock('vue-i18n', () => ({
-  useI18n: () => ({
-    t: key => (key === 'AGENT_MGMT.MULTI_SELECTOR.LIST.NONE' ? 'None' : key),
-  }),
-}));
-
 vi.mock('dashboard/composables/store');
 vi.mock('dashboard/helper/agentHelper');
-
-// Create a mock None agent
-const mockNoneAgent = {
-  confirmed: true,
-  name: 'None',
-  id: 0,
-  role: 'agent',
-  account_id: 0,
-  email: 'None',
-};
 
 const mockUseMapGetter = (overrides = {}) => {
   const defaultGetters = {
@@ -45,6 +28,14 @@ describe('useAgentsList', () => {
     agentHelper.getSortedAgentsByAvailability.mockReturnValue(
       formattedAgentsData.slice(1)
     );
+    agentHelper.getCombinedAgents.mockImplementation(
+      (agents, includeNone, isAgentSelected) => {
+        if (includeNone && isAgentSelected) {
+          return [agentHelper.createNoneAgent, ...agents];
+        }
+        return agents;
+      }
+    );
 
     mockUseMapGetter();
   });
@@ -53,26 +44,24 @@ describe('useAgentsList', () => {
     const { agentsList, assignableAgents } = useAgentsList();
 
     expect(assignableAgents.value).toEqual(allAgentsData);
-    expect(agentsList.value[0]).toEqual(mockNoneAgent);
-    expect(agentsList.value.length).toBe(
-      formattedAgentsData.slice(1).length + 1
-    );
+    expect(agentsList.value).toEqual([
+      agentHelper.createNoneAgent,
+      ...formattedAgentsData.slice(1),
+    ]);
   });
 
   it('includes None agent when includeNoneAgent is true', () => {
     const { agentsList } = useAgentsList(true);
 
-    expect(agentsList.value[0]).toEqual(mockNoneAgent);
-    expect(agentsList.value.length).toBe(
-      formattedAgentsData.slice(1).length + 1
-    );
+    expect(agentsList.value[0]).toEqual(agentHelper.createNoneAgent);
+    expect(agentsList.value.length).toBe(formattedAgentsData.length);
   });
 
   it('excludes None agent when includeNoneAgent is false', () => {
     const { agentsList } = useAgentsList(false);
 
-    expect(agentsList.value[0].id).not.toBe(0);
-    expect(agentsList.value.length).toBe(formattedAgentsData.slice(1).length);
+    expect(agentsList.value[0]).not.toEqual(agentHelper.createNoneAgent);
+    expect(agentsList.value.length).toBe(formattedAgentsData.length - 1);
   });
 
   it('handles empty assignable agents', () => {
@@ -84,7 +73,7 @@ describe('useAgentsList', () => {
     const { agentsList, assignableAgents } = useAgentsList();
 
     expect(assignableAgents.value).toEqual([]);
-    expect(agentsList.value).toEqual([mockNoneAgent]);
+    expect(agentsList.value).toEqual([agentHelper.createNoneAgent]);
   });
 
   it('handles missing inbox_id', () => {
@@ -97,6 +86,6 @@ describe('useAgentsList', () => {
     const { agentsList, assignableAgents } = useAgentsList();
 
     expect(assignableAgents.value).toEqual([]);
-    expect(agentsList.value).toEqual([mockNoneAgent]);
+    expect(agentsList.value).toEqual([agentHelper.createNoneAgent]);
   });
 });

@@ -1,6 +1,5 @@
 class Whatsapp::Providers::Whatsapp360DialogService < Whatsapp::Providers::BaseService
   def send_message(phone_number, message)
-    @message = message
     if message.attachments.present?
       send_attachment_message(phone_number, message)
     elsif message.content_type == 'input_select'
@@ -10,7 +9,7 @@ class Whatsapp::Providers::Whatsapp360DialogService < Whatsapp::Providers::BaseS
     end
   end
 
-  def send_template(phone_number, template_info)
+  def send_template(message, phone_number, template_info)
     response = HTTParty.post(
       "#{api_base_path}/messages",
       headers: api_headers,
@@ -21,7 +20,7 @@ class Whatsapp::Providers::Whatsapp360DialogService < Whatsapp::Providers::BaseS
       }.to_json
     )
 
-    process_response(response)
+    process_response(message, response)
   end
 
   def sync_templates
@@ -50,6 +49,14 @@ class Whatsapp::Providers::Whatsapp360DialogService < Whatsapp::Providers::BaseS
     "#{api_base_path}/media/#{media_id}"
   end
 
+  def message_update_payload(message)
+    { status: message[:status] }
+  end
+
+  def message_path(message)
+    "#{api_base_path}/messages/#{message[:source_id]}"
+  end
+
   private
 
   def api_base_path
@@ -68,7 +75,7 @@ class Whatsapp::Providers::Whatsapp360DialogService < Whatsapp::Providers::BaseS
       }.to_json
     )
 
-    process_response(response)
+    process_response(message, response)
   end
 
   def send_attachment_message(phone_number, message)
@@ -79,7 +86,6 @@ class Whatsapp::Providers::Whatsapp360DialogService < Whatsapp::Providers::BaseS
     }
     type_content['caption'] = message.content unless %w[audio sticker].include?(type)
     type_content['filename'] = attachment.file.filename if type == 'document'
-
     response = HTTParty.post(
       "#{api_base_path}/messages",
       headers: api_headers,
@@ -90,12 +96,17 @@ class Whatsapp::Providers::Whatsapp360DialogService < Whatsapp::Providers::BaseS
       }.to_json
     )
 
-    process_response(response)
+    process_response(message, response)
   end
 
-  def error_message(response)
-    # {"meta": {"success": false, "http_code": 400, "developer_message": "errro-message", "360dialog_trace_id": "someid"}}
-    response.parsed_response.dig('meta', 'developer_message')
+  def process_response(message, response)
+    if response.success?
+      response['messages'].first['id']
+    else
+      Rails.logger.error response.body
+      message.update!(status: :failed, external_error: response.body)
+      nil
+    end
   end
 
   def template_body_parameters(template_info)
@@ -126,6 +137,6 @@ class Whatsapp::Providers::Whatsapp360DialogService < Whatsapp::Providers::BaseS
       }.to_json
     )
 
-    process_response(response)
+    process_response(message, response)
   end
 end

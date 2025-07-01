@@ -1,29 +1,38 @@
-<script setup>
-import { useMapGetter } from 'dashboard/composables/store.js';
+<script>
+import { mapGetters } from 'vuex';
 
 import SearchResultSection from './SearchResultSection.vue';
 import SearchResultContactItem from './SearchResultContactItem.vue';
 
-defineProps({
-  contacts: {
-    type: Array,
-    default: () => [],
+export default {
+  components: {
+    SearchResultSection,
+    SearchResultContactItem,
   },
-  query: {
-    type: String,
-    default: '',
+  props: {
+    contacts: {
+      type: Array,
+      default: () => [],
+    },
+    query: {
+      type: String,
+      default: '',
+    },
+    isFetching: {
+      type: Boolean,
+      default: false,
+    },
+    showTitle: {
+      type: Boolean,
+      default: true,
+    },
   },
-  isFetching: {
-    type: Boolean,
-    default: false,
+  computed: {
+    ...mapGetters({
+      accountId: 'getCurrentAccountId',
+    }),
   },
-  showTitle: {
-    type: Boolean,
-    default: true,
-  },
-});
-
-const accountId = useMapGetter('getCurrentAccountId');
+};
 </script>
 
 <template>
@@ -34,7 +43,7 @@ const accountId = useMapGetter('getCurrentAccountId');
     :show-title="showTitle"
     :is-fetching="isFetching"
   >
-    <ul v-if="contacts.length" class="space-y-1.5 list-none">
+    <ul v-if="contacts.length" class="search-list">
       <li v-for="contact in contacts" :key="contact.id">
         <SearchResultContactItem
           :id="contact.id"

@@ -3,26 +3,25 @@
     "HEADER": "Agentes",
     "HEADER_BTN_TXT": "Adicionar Agente",
     "LOADING": "Buscando lista de agente",
-    "DESCRIPTION": "Um agente é um membro de seu time de atendimento ao cliente que pode visualizar e responder às mensagens de usuários. A lista abaixo mostra todos os agentes de sua conta.",
-    "LEARN_MORE": "Saiba mais sobre as funções do usuário",
+    "DESCRIPTION": "Um Agente é um membro da equipe de Suporte ao Cliente que pode visualizar e responder às mensagens dos usuários. A lista mostra todos os agentes em sua conta. Para adicionar um novo agente, clique em Adicionar Agente; o novo agente receberá um e-mail com um link para ativar sua conta. As permissões no 🅷🆄🅱 são baseadas em funções: Agentes podem acessar caixas de entrada, relatórios e conversas, atribuir e resolver conversas; Administradores têm acesso total a todos os recursos e configurações, além dos privilégios dos Agentes.",
+    "SIDEBAR_TXT": "<p><b>Agentes</b></p> <p> Um <b>Agente</b> é um membro da sua equipe de Suporte ao Cliente. </p><p> Os agentes serão capazes de ver e responder as mensagens dos seus usuários. A lista mostra todos os agentes atualmente em sua conta. </p><p> Clique em <b>Adicionar Agente</b> para adicionar um novo agente. O agente que você adicionar receberá um e-mail com um link de confirmação para ativar sua conta, para acessar o 🅷🆄🅱 e responder às mensagens. </p><p> O acesso aos recursos do 🅷🆄🅱 são baseados nas seguintes funções. </p><p> <b>Agentes</b> - Agentes com essa função só podem acessar caixas de entrada, relatórios e conversas. Eles podem atribuir conversas a outros agentes ou a eles próprios e resolver conversas.</p><p> <b>Administrador</b> - Administrador terá acesso a todos os recursos do 🅷🆄🅱 ativados para sua conta, incluindo configurações e todos os privilégios de agentes normais.</p>",
     "AGENT_TYPES": {
       "ADMINISTRATOR": "Administrador",
       "AGENT": "Agente"
     },
     "LIST": {
       "404": "Não existem agentes associados a esta conta",
-      "TITLE": "Gerenciar agentes de seu time",
+      "TITLE": "Gerenciar agentes da sua equipe",
       "DESC": "Você pode adicionar e/ou remover agentes de um time.",
       "NAME": "Nome",
       "EMAIL": "E-mail",
-      "STATUS": "Status",
+      "STATUS": "SItuação",
       "ACTIONS": "Ações",
       "VERIFIED": "Verificado",
-      "VERIFICATION_PENDING": "Verificação Pendente",
-      "AVAILABLE_CUSTOM_ROLE": "Permissões de função personalizada disponíveis"
+      "VERIFICATION_PENDING": "Verificação Pendente"
     },
     "ADD": {
-      "TITLE": "Adicionar agente a seu time",
+      "TITLE": "Adicionar agente ao seu time",
       "DESC": "Você pode adicionar pessoas que poderão acompanhar o suporte de suas caixas de entrada.",
       "CANCEL_BUTTON_TEXT": "Cancelar",
       "FORM": {
@@ -31,10 +30,11 @@
           "PLACEHOLDER": "Por favor, insira o nome do agente"
         },
         "AGENT_TYPE": {
-          "LABEL": "Função",
-          "PLACEHOLDER": "Selecione uma função",
-          "ERROR": "É necessária uma função"
+          "LABEL": "Tipo de Agente",
+          "PLACEHOLDER": "Selecione um tipo",
+          "ERROR": "É necessário o tipo de agente"
         },
+
         "EMAIL": {
           "LABEL": "Endereço de e-mail",
           "PLACEHOLDER": "Por favor, insira um endereço de e-mail do agente"
@@ -68,9 +68,9 @@
           "PLACEHOLDER": "Por favor, insira um nome do agente"
         },
         "AGENT_TYPE": {
-          "LABEL": "Função",
-          "PLACEHOLDER": "Selecione uma função",
-          "ERROR": "É necessária uma função"
+          "LABEL": "Tipo de Agente",
+          "PLACEHOLDER": "Selecione um tipo",
+          "ERROR": "É necessário o tipo de agente"
         },
         "EMAIL": {
           "LABEL": "Endereço de email",
@@ -100,13 +100,10 @@
       "NO_RESULTS": "Nenhum resultado encontrado."
     },
     "MULTI_SELECTOR": {
-      "PLACEHOLDER": "Nenhum",
+      "PLACEHOLDER": "Nenhuma",
       "TITLE": {
         "AGENT": "Selecionar agente",
         "TEAM": "Selecionar time"
-      },
-      "LIST": {
-        "NONE": "Nenhum"
       },
       "SEARCH": {
         "NO_RESULTS": {

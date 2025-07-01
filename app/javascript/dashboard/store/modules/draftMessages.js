@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import types from '../mutation-types';
 
 import { REPLY_EDITOR_MODES } from 'dashboard/components/widgets/WootWriter/constants';
@@ -30,19 +31,16 @@ export const actions = {
 
 export const mutations = {
   [types.SET_DRAFT_MESSAGES]($state, { key, message }) {
-    $state.records = {
-      ...$state.records,
-      [key]: message,
-    };
+    Vue.set($state.records, key, message);
     LocalStorage.set(LOCAL_STORAGE_KEYS.DRAFT_MESSAGES, $state.records);
   },
   [types.REMOVE_DRAFT_MESSAGES]($state, { key }) {
     const { [key]: draftToBeRemoved, ...updatedRecords } = $state.records;
-    $state.records = updatedRecords;
+    Vue.set($state, 'records', updatedRecords);
     LocalStorage.set(LOCAL_STORAGE_KEYS.DRAFT_MESSAGES, $state.records);
   },
   [types.SET_REPLY_EDITOR_MODE]($state, { mode }) {
-    $state.replyEditorMode = mode;
+    Vue.set($state, 'replyEditorMode', mode);
   },
 };
 

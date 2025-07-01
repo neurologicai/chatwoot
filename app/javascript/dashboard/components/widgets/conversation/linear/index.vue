@@ -1,15 +1,12 @@
 <script setup>
-import { computed, ref, onMounted, watch, defineOptions, provide } from 'vue';
+import { computed, ref, onMounted, watch, defineComponent, provide } from 'vue';
 import { useAlert } from 'dashboard/composables';
 import { useStoreGetters } from 'dashboard/composables/store';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'dashboard/composables/useI18n';
 import LinearAPI from 'dashboard/api/integrations/linear';
 import CreateOrLinkIssue from './CreateOrLinkIssue.vue';
 import Issue from './Issue.vue';
-import { useTrack } from 'dashboard/composables';
-import { LINEAR_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import { parseLinearAPIErrorResponse } from 'dashboard/store/utils/api';
-import Button from 'dashboard/components-next/button/Button.vue';
 
 const props = defineProps({
   conversationId: {
@@ -18,7 +15,7 @@ const props = defineProps({
   },
 });
 
-defineOptions({
+defineComponent({
   name: 'Linear',
 });
 
@@ -59,7 +56,6 @@ const unlinkIssue = async linkId => {
   try {
     isUnlinking.value = true;
     await LinearAPI.unlinkIssue(linkId);
-    useTrack(LINEAR_EVENTS.UNLINK_ISSUE);
     linkedIssue.value = null;
     useAlert(t('INTEGRATION_SETTINGS.LINEAR.UNLINK.SUCCESS'));
   } catch (error) {
@@ -100,38 +96,33 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    class="relative after:content-[''] after:h-5 after:bg-transparent after:top-5 after:w-full after:block after:absolute after:z-0"
-    :class="{ group: linkedIssue }"
-  >
-    <Button
+  <div class="relative" :class="{ group: linkedIssue }">
+    <woot-button
       v-on-clickaway="closeIssue"
       v-tooltip="tooltipText"
-      sm
-      ghost
-      slate
-      class="!gap-1 group-hover:bg-n-alpha-2"
+      variant="clear"
+      color-scheme="secondary"
       @click="openIssue"
     >
       <fluent-icon
         icon="linear"
         size="19"
-        class="text-[#5E6AD2] flex-shrink-0"
+        class="text-[#5E6AD2]"
         view-box="0 0 19 19"
       />
-      <span v-if="linkedIssue" class="text-xs font-medium text-n-slate-11">
+      <span v-if="linkedIssue" class="text-xs font-medium text-ash-800">
         {{ linkedIssue.issue.identifier }}
       </span>
-    </Button>
+    </woot-button>
     <Issue
       v-if="linkedIssue"
       :issue="linkedIssue.issue"
       :link-id="linkedIssue.id"
-      class="absolute right-0 top-[36px] invisible group-hover:visible"
-      @unlink-issue="unlinkIssue"
+      class="absolute right-0 top-[40px] invisible group-hover:visible"
+      @unlinkIssue="unlinkIssue"
     />
     <woot-modal
-      v-model:show="shouldShowPopup"
+      :show.sync="shouldShowPopup"
       :on-close="closePopup"
       :close-on-backdrop-click="false"
       class="!items-start [&>div]:!top-12 [&>div]:sticky"

@@ -48,8 +48,4 @@ module AssignmentHandler
       create_assignee_change_activity(user_name)
     end
   end
-
-  def self_assign?(assignee_id)
-    assignee_id.present? && Current.user&.id == assignee_id
-  end
 end

@@ -3,14 +3,19 @@ import ChannelItem from 'dashboard/components/widgets/ChannelItem.vue';
 import router from '../../../index';
 import PageHeader from '../SettingsSubPageHeader.vue';
 import { mapGetters } from 'vuex';
-import globalConfigMixin from 'shared/mixins/globalConfigMixin';
+import { useGlobalConfig } from 'shared/composables/useGlobalConfig';
 
 export default {
   components: {
     ChannelItem,
     PageHeader,
   },
-  mixins: [globalConfigMixin],
+  setup() {
+    const { useInstallationName } = useGlobalConfig();
+    return {
+      useInstallationName,
+    };
+  },
   data() {
     return {
       enabledFeatures: {},
@@ -35,7 +40,7 @@ export default {
         },
         { key: 'telegram', name: 'Telegram' },
         { key: 'line', name: 'Line' },
-        { key: 'instagram', name: 'Instagram' },
+        { key: 'internal', name: 'Internal' },
       ];
     },
     ...mapGetters({
@@ -52,8 +57,8 @@ export default {
     },
     initChannelAuth(channel) {
       const params = {
+        page: 'new',
         sub_page: channel,
-        accountId: this.accountId,
       };
       router.push({ name: 'settings_inboxes_page_channel', params });
     },
@@ -63,7 +68,7 @@ export default {
 
 <template>
   <div
-    class="w-full h-full col-span-6 p-6 overflow-auto border border-b-0 rounded-t-lg border-n-weak bg-n-solid-1"
+    class="border border-slate-25 dark:border-slate-800/60 bg-white dark:bg-slate-900 h-full p-6 w-full max-w-full md:w-3/4 md:max-w-[75%] flex-shrink-0 flex-grow-0"
   >
     <PageHeader
       class="max-w-4xl"
@@ -83,7 +88,7 @@ export default {
         :key="channel.key"
         :channel="channel"
         :enabled-features="enabledFeatures"
-        @channel-item-click="initChannelAuth"
+        @channelItemClick="initChannelAuth"
       />
     </div>
   </div>

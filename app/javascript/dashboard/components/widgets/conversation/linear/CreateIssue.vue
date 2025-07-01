@@ -1,15 +1,12 @@
 <script setup>
 import { reactive, computed, onMounted, ref } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { useI18n } from 'vue-i18n';
-import { useTrack } from 'dashboard/composables';
+import { useI18n } from 'dashboard/composables/useI18n';
 import { useAlert } from 'dashboard/composables';
 import LinearAPI from 'dashboard/api/integrations/linear';
 import validations from './validations';
 import { parseLinearAPIErrorResponse } from 'dashboard/store/utils/api';
 import SearchableDropdown from './SearchableDropdown.vue';
-import { LINEAR_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
-import Button from 'dashboard/components-next/button/Button.vue';
 
 const props = defineProps({
   conversationId: {
@@ -48,7 +45,7 @@ const statusDesiredOrder = [
 ];
 
 const isCreating = ref(false);
-const inputStyles = { borderRadius: '0.75rem', fontSize: '0.875rem' };
+const inputStyles = { borderRadius: '12px', fontSize: '14px' };
 
 const formState = reactive({
   title: '',
@@ -191,7 +188,6 @@ const createIssue = async () => {
     const { id: issueId } = response.data;
     await LinearAPI.link_issue(props.conversationId, issueId, props.title);
     useAlert(t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.CREATE_SUCCESS'));
-    useTrack(LINEAR_EVENTS.CREATE_ISSUE);
     onClose();
   } catch (error) {
     const errorMessage = parseLinearAPIErrorResponse(
@@ -213,7 +209,7 @@ onMounted(getTeams);
       v-model="formState.title"
       :class="{ error: v$.title.$error }"
       class="w-full"
-      :styles="{ ...inputStyles, padding: '0.375rem 0.75rem' }"
+      :styles="{ ...inputStyles, padding: '6px 12px' }"
       :label="$t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.TITLE.LABEL')"
       :placeholder="
         $t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.TITLE.PLACEHOLDER')
@@ -225,7 +221,7 @@ onMounted(getTeams);
       {{ $t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.FORM.DESCRIPTION.LABEL') }}
       <textarea
         v-model="formState.description"
-        :style="{ ...inputStyles, padding: '0.5rem 0.75rem' }"
+        :style="{ ...inputStyles, padding: '8px 12px' }"
         rows="3"
         class="text-sm"
         :placeholder="
@@ -249,20 +245,20 @@ onMounted(getTeams);
       />
     </div>
     <div class="flex items-center justify-end w-full gap-2 mt-8">
-      <Button
-        faded
-        slate
-        type="reset"
-        :label="$t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.CANCEL')"
+      <woot-button
+        class="px-4 rounded-xl button clear outline-woot-200/50 outline"
         @click.prevent="onClose"
-      />
-      <Button
-        type="submit"
-        :label="$t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.CREATE')"
-        :disabled="isSubmitDisabled"
+      >
+        {{ $t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.CANCEL') }}
+      </woot-button>
+      <woot-button
+        :is-disabled="isSubmitDisabled"
+        class="px-4 rounded-xl"
         :is-loading="isCreating"
         @click.prevent="createIssue"
-      />
+      >
+        {{ $t('INTEGRATION_SETTINGS.LINEAR.ADD_OR_LINK.CREATE') }}
+      </woot-button>
     </div>
   </div>
 </template>

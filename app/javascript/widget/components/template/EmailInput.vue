@@ -6,12 +6,14 @@ import { getContrastingTextColor } from '@chatwoot/utils';
 
 import FluentIcon from 'shared/components/FluentIcon/Index.vue';
 import Spinner from 'shared/components/Spinner.vue';
+import darkModeMixin from 'widget/mixins/darkModeMixin.js';
 
 export default {
   components: {
     FluentIcon,
     Spinner,
   },
+  mixins: [darkModeMixin],
   props: {
     messageId: {
       type: Number,
@@ -43,6 +45,16 @@ export default {
         this.messageContentAttributes &&
         this.messageContentAttributes.submitted_email
       );
+    },
+    inputColor() {
+      return `${this.$dm('bg-white', 'dark:bg-slate-600')}
+        ${this.$dm('text-black-900', 'dark:text-slate-50')}
+        ${this.$dm('border-black-200', 'dark:border-black-500')}`;
+    },
+    inputHasError() {
+      return this.v$.email.$error
+        ? `${this.inputColor} error`
+        : `${this.inputColor}`;
     },
   },
   validations: {
@@ -76,14 +88,14 @@ export default {
   <div>
     <form
       v-if="!hasSubmitted"
-      class="email-input-group h-10 flex my-2 mx-0 min-w-[200px]"
+      class="email-input-group"
       @submit.prevent="onSubmit"
     >
       <input
-        v-model="email"
-        type="email"
+        v-model.trim="email"
+        class="form-input"
         :placeholder="$t('EMAIL_PLACEHOLDER')"
-        :class="{ error: v$.email.$error }"
+        :class="inputHasError"
         @input="v$.email.$touch"
         @keydown.enter="onSubmit"
       />
@@ -104,21 +116,34 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+@import '~widget/assets/scss/variables.scss';
+
 .email-input-group {
+  display: flex;
+  margin: $space-small 0;
+  min-width: 200px;
+
   input {
-    @apply dark:bg-n-alpha-black1 rtl:rounded-tl-[0] ltr:rounded-tr-[0] rtl:rounded-bl-[0] ltr:rounded-br-[0] p-2.5 w-full focus:ring-0 focus:outline-n-brand;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    padding: $space-one;
+    width: 100%;
 
     &::placeholder {
-      @apply text-n-slate-10;
+      color: $color-light-gray;
     }
 
     &.error {
-      @apply outline-n-ruby-8 dark:outline-n-ruby-8 hover:outline-n-ruby-9 dark:hover:outline-n-ruby-9;
+      border-color: $color-error;
     }
   }
 
   .button {
-    @apply rtl:rounded-tr-[0] ltr:rounded-tl-[0] rtl:rounded-br-[0] ltr:rounded-bl-[0] rounded-lg h-auto ltr:-ml-px rtl:-mr-px text-xl;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    font-size: $font-size-large;
+    height: auto;
+    margin-left: -1px;
 
     .spinner {
       display: block;

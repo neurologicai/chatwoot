@@ -17,7 +17,6 @@ export default {
       default: () => ({}),
     },
   },
-  emits: ['submit'],
   setup() {
     const v$ = useVuelidate();
     provide('v$', v$);
@@ -108,20 +107,20 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-col w-full h-auto md:flex-row md:h-full">
+  <div class="flex flex-col md:flex-row h-auto md:h-full w-full">
     <div
-      class="flex-1 w-full h-full max-h-full px-12 py-4 overflow-y-auto md:w-auto macro-gradient-radial dark:macro-dark-gradient-radial macro-gradient-radial-size"
+      class="flex-1 w-full md:w-auto macro-gradient-radial dark:macro-dark-gradient-radial macro-gradient-radial-size h-full max-h-full py-4 px-12 overflow-y-auto"
     >
       <MacroNodes
         v-model="macro.actions"
         :files="files"
         :errors="errors"
-        @add-new-node="appendNode"
-        @delete-node="deleteNode"
-        @reset-action="resetNode"
+        @addNewNode="appendNode"
+        @deleteNode="deleteNode"
+        @resetAction="resetNode"
       />
     </div>
-    <div class="w-full md:w-1/3 pb-4">
+    <div class="w-full md:w-1/3">
       <MacroProperties
         :macro-name="macro.name"
         :macro-visibility="macro.visibility"
@@ -135,16 +134,13 @@ export default {
 
 <style scoped>
 @tailwind components;
-
 @layer components {
   .macro-gradient-radial {
     background-image: radial-gradient(#ebf0f5 1.2px, transparent 0);
   }
-
   .macro-dark-gradient-radial {
     background-image: radial-gradient(#293f51 1.2px, transparent 0);
   }
-
   .macro-gradient-radial-size {
     background-size: 1rem 1rem;
   }

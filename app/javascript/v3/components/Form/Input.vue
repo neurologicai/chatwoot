@@ -1,44 +1,66 @@
-<script setup>
-import { defineProps, defineModel } from 'vue';
+<script>
 import WithLabel from './WithLabel.vue';
-
-defineProps({
-  label: {
-    type: String,
-    required: true,
+export default {
+  components: {
+    WithLabel,
   },
-  type: {
-    type: String,
-    default: 'text',
+  props: {
+    label: {
+      type: String,
+      default: '',
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    type: {
+      type: String,
+      default: 'text',
+    },
+    tabindex: {
+      type: Number,
+      default: undefined,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    placeholder: {
+      type: String,
+      default: '',
+    },
+    value: {
+      type: [String, Number],
+      default: '',
+    },
+    icon: {
+      type: String,
+      default: '',
+    },
+    hasError: {
+      type: Boolean,
+      default: false,
+    },
+    errorMessage: {
+      type: String,
+      default: '',
+    },
+    dataTestid: {
+      type: String,
+      default: '',
+    },
+    spacing: {
+      type: String,
+      default: 'base',
+      validator: value => ['base', 'compact'].includes(value),
+    },
   },
-  icon: {
-    type: String,
-    default: '',
+  methods: {
+    onInput(e) {
+      this.$emit('input', e.target.value);
+    },
   },
-  name: {
-    type: String,
-    required: true,
-  },
-  hasError: Boolean,
-  errorMessage: {
-    type: String,
-    default: '',
-  },
-  spacing: {
-    type: String,
-    default: 'base',
-    validator: value => ['base', 'compact'].includes(value),
-  },
-});
-
-defineOptions({
-  inheritAttrs: false,
-});
-
-const model = defineModel({
-  type: [String, Number],
-  required: true,
-});
+};
 </script>
 
 <template>
@@ -53,19 +75,27 @@ const model = defineModel({
       <slot />
     </template>
     <input
-      v-bind="$attrs"
-      v-model="model"
+      :id="name"
+      :name="name"
       :type="type"
-      class="block w-full border-none rounded-md shadow-sm bg-n-alpha-black2 appearance-none outline outline-1 focus:outline focus:outline-1 text-n-slate-12 placeholder:text-n-slate-10 sm:text-sm sm:leading-6 px-3 py-3"
+      autocomplete="off"
+      :tabindex="tabindex"
+      :required="required"
+      :placeholder="placeholder"
+      :data-testid="dataTestid"
+      :value="value"
       :class="{
-        'error outline-n-ruby-8 dark:outline-n-ruby-8 hover:outline-n-ruby-9 dark:hover:outline-n-ruby-9 disabled:outline-n-ruby-8 dark:disabled:outline-n-ruby-8':
+        'focus:outline-red-600 outline-red-600 dark:focus:outline-red-600 dark:outline-red-600':
           hasError,
-        'outline-n-weak dark:outline-n-weak hover:outline-n-slate-6 dark:hover:outline-n-slate-6 focus:outline-n-brand dark:focus:outline-n-brand':
+        'outline-slate-200 dark:outline-slate-600 dark:focus:outline-woot-500 focus:outline-woot-500':
           !hasError,
         'px-3 py-3': spacing === 'base',
         'px-3 py-2 mb-0': spacing === 'compact',
         'pl-9': icon,
       }"
+      class="block w-full border-none rounded-md shadow-sm appearance-none outline outline-1 focus:outline-2 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 sm:text-sm sm:leading-6 dark:bg-slate-800"
+      @input="onInput"
+      @blur="$emit('blur')"
     />
   </WithLabel>
 </template>

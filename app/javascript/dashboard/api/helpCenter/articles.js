@@ -52,13 +52,12 @@ class ArticlesAPI extends PortalsAPI {
   }
 
   createArticle({ portalSlug, articleObj }) {
-    const { content, title, authorId, categoryId, locale } = articleObj;
+    const { content, title, author_id, category_id } = articleObj;
     return axios.post(`${this.url}/${portalSlug}/articles`, {
       content,
       title,
-      author_id: authorId,
-      category_id: categoryId,
-      locale,
+      author_id,
+      category_id,
     });
   }
 

@@ -4,20 +4,14 @@ import {
   useStoreGetters,
   useMapGetter,
 } from 'dashboard/composables/store';
-import { useI18n } from 'vue-i18n';
+import { useAlert, useTrack } from 'dashboard/composables';
+import { useI18n } from '../useI18n';
 import OpenAPI from 'dashboard/api/integrations/openapi';
-import analyticsHelper from 'dashboard/helper/AnalyticsHelper/index';
 
 vi.mock('dashboard/composables/store');
-vi.mock('vue-i18n');
+vi.mock('dashboard/composables');
+vi.mock('../useI18n');
 vi.mock('dashboard/api/integrations/openapi');
-vi.mock('dashboard/helper/AnalyticsHelper/index', async importOriginal => {
-  const actual = await importOriginal();
-  actual.default = {
-    track: vi.fn(),
-  };
-  return actual;
-});
 vi.mock('dashboard/helper/AnalyticsHelper/events', () => ({
   OPEN_AI_EVENTS: {
     TEST_EVENT: 'open_ai_test_event',
@@ -46,7 +40,9 @@ describe('useAI', () => {
       };
       return { value: mockValues[getter] };
     });
+    useTrack.mockReturnValue(vi.fn());
     useI18n.mockReturnValue({ t: vi.fn() });
+    useAlert.mockReturnValue(vi.fn());
   });
 
   it('initializes computed properties correctly', async () => {
@@ -82,12 +78,13 @@ describe('useAI', () => {
   });
 
   it('records analytics correctly', async () => {
-    // const mockTrack = analyticsHelper.track;
+    const mockTrack = vi.fn();
+    useTrack.mockReturnValue(mockTrack);
     const { recordAnalytics } = useAI();
 
     await recordAnalytics('TEST_EVENT', { data: 'test' });
 
-    expect(analyticsHelper.track).toHaveBeenCalledWith('open_ai_test_event', {
+    expect(mockTrack).toHaveBeenCalledWith('open_ai_test_event', {
       type: 'TEST_EVENT',
       data: 'test',
     });

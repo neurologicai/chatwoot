@@ -1,8 +1,11 @@
-import { shallowMount } from '@vue/test-utils';
-import { createStore } from 'vuex';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+import Vuex from 'vuex';
 import ReportsFiltersAgents from '../../Filters/Agents.vue';
 
-const mockStore = createStore({
+const localVue = createLocalVue();
+localVue.use(Vuex);
+
+const mockStore = new Vuex.Store({
   modules: {
     agents: {
       namespaced: true,
@@ -20,26 +23,25 @@ const mockStore = createStore({
 });
 
 const mountParams = {
-  global: {
-    plugins: [mockStore],
-    mocks: {
-      $t: msg => msg,
-    },
-    stubs: ['multiselect'],
+  localVue,
+  store: mockStore,
+  mocks: {
+    $t: msg => msg,
   },
+  stubs: ['multiselect'],
 };
 
 describe('ReportsFiltersAgents.vue', () => {
-  it('emits "agents-filter-selection" event when handleInput is called', async () => {
+  it('emits "agents-filter-selection" event when handleInput is called', () => {
     const wrapper = shallowMount(ReportsFiltersAgents, mountParams);
 
     const selectedAgents = [
       { id: 1, name: 'Agent 1' },
       { id: 2, name: 'Agent 2' },
     ];
-    await wrapper.setData({ selectedOptions: selectedAgents });
+    wrapper.setData({ selectedOptions: selectedAgents });
 
-    await wrapper.vm.handleInput();
+    wrapper.vm.handleInput();
 
     expect(wrapper.emitted('agentsFilterSelection')).toBeTruthy();
     expect(wrapper.emitted('agentsFilterSelection')[0]).toEqual([

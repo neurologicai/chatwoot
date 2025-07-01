@@ -5,11 +5,9 @@ import EditAutomationRule from './EditAutomationRule.vue';
 import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
 import SettingsLayout from '../SettingsLayout.vue';
 import { computed, onMounted, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'dashboard/composables/useI18n';
 import { useStoreGetters, useStore } from 'dashboard/composables/store';
 import AutomationRuleRow from './AutomationRuleRow.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
-
 const getters = useStoreGetters();
 const store = useStore();
 const { t } = useI18n();
@@ -161,15 +159,6 @@ const toggleAutomation = async ({ id, name, status }) => {
     useAlert(t('AUTOMATION.EDIT.API.ERROR_MESSAGE'));
   }
 };
-
-const tableHeaders = computed(() => {
-  return [
-    t('AUTOMATION.LIST.TABLE_HEADER.NAME'),
-    t('AUTOMATION.LIST.TABLE_HEADER.DESCRIPTION'),
-    t('AUTOMATION.LIST.TABLE_HEADER.ACTIVE'),
-    t('AUTOMATION.LIST.TABLE_HEADER.CREATED_ON'),
-  ];
-});
 </script>
 
 <template>
@@ -187,11 +176,13 @@ const tableHeaders = computed(() => {
         feature-name="automation"
       >
         <template #actions>
-          <Button
-            icon="i-lucide-circle-plus"
-            :label="$t('AUTOMATION.HEADER_BTN_TXT')"
+          <woot-button
+            class="button nice rounded-md"
+            icon="add-circle"
             @click="openAddPopup"
-          />
+          >
+            {{ $t('AUTOMATION.HEADER_BTN_TXT') }}
+          </woot-button>
         </template>
       </BaseSettingsHeader>
     </template>
@@ -199,14 +190,16 @@ const tableHeaders = computed(() => {
       <table class="min-w-full divide-y divide-slate-75 dark:divide-slate-700">
         <thead>
           <th
-            v-for="thHeader in tableHeaders"
+            v-for="thHeader in $t('AUTOMATION.LIST.TABLE_HEADER')"
             :key="thHeader"
-            class="py-4 ltr:pr-4 rtl:pl-4 rtl:text-right ltr:text-left font-semibold text-n-slate-11"
+            class="py-4 pr-4 text-left font-semibold text-slate-700 dark:text-slate-300"
           >
             {{ thHeader }}
           </th>
         </thead>
-        <tbody class="divide-y divide-n-weak text-n-slate-11">
+        <tbody
+          class="divide-y divide-slate-50 dark:divide-slate-800 text-slate-700 dark:text-slate-300"
+        >
           <AutomationRuleRow
             v-for="automation in records"
             :key="automation.id"
@@ -222,19 +215,19 @@ const tableHeaders = computed(() => {
     </template>
 
     <woot-modal
-      v-model:show="showAddPopup"
+      :show.sync="showAddPopup"
       size="medium"
       :on-close="hideAddPopup"
     >
       <AddAutomationRule
         v-if="showAddPopup"
         :on-close="hideAddPopup"
-        @save-automation="submitAutomation"
+        @saveAutomation="submitAutomation"
       />
     </woot-modal>
 
     <woot-delete-modal
-      v-model:show="showDeleteConfirmationPopup"
+      :show.sync="showDeleteConfirmationPopup"
       :on-close="closeDeletePopup"
       :on-confirm="confirmDeletion"
       :title="$t('LABEL_MGMT.DELETE.CONFIRM.TITLE')"
@@ -245,7 +238,7 @@ const tableHeaders = computed(() => {
     />
 
     <woot-modal
-      v-model:show="showEditPopup"
+      :show.sync="showEditPopup"
       size="medium"
       :on-close="hideEditPopup"
     >
@@ -253,7 +246,7 @@ const tableHeaders = computed(() => {
         v-if="showEditPopup"
         :on-close="hideEditPopup"
         :selected-response="selectedAutomation"
-        @save-automation="submitAutomation"
+        @saveAutomation="submitAutomation"
       />
     </woot-modal>
     <woot-confirm-modal

@@ -28,7 +28,7 @@ export default {
     },
   },
 
-  unmounted() {
+  beforeDestroy() {
     clearTimeout(this.timeOutID);
   },
   methods: {

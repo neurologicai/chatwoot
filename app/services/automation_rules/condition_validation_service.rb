@@ -15,22 +15,13 @@ class AutomationRules::ConditionValidationService
 
   def perform
     @rule.conditions.each do |condition|
-      return false unless valid_condition?(condition) && valid_query_operator?(condition)
+      return false unless valid_condition?(condition)
     end
 
     true
   end
 
   private
-
-  def valid_query_operator?(condition)
-    query_operator = condition['query_operator']
-
-    return true if query_operator.nil?
-    return true if query_operator.empty?
-
-    %w[AND OR].include?(query_operator.upcase)
-  end
 
   def valid_condition?(condition)
     key = condition['attribute_key']

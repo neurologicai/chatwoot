@@ -2,25 +2,23 @@
 import { useAlert } from 'dashboard/composables';
 import { mapGetters } from 'vuex';
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
-import ContextMenu from 'dashboard/components/ui/ContextMenu.vue';
 import AddCannedModal from 'dashboard/routes/dashboard/settings/canned/AddCanned.vue';
-import { useSnakeCase } from 'dashboard/composables/useTransformKeys';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
 import { conversationUrl, frontendURL } from '../../../helper/URLHelper';
 import {
   ACCOUNT_EVENTS,
   CONVERSATION_EVENTS,
 } from '../../../helper/AnalyticsHelper/events';
+import TranslateModal from 'dashboard/components/widgets/conversation/bubble/TranslateModal.vue';
 import MenuItem from '../../../components/widgets/conversation/contextMenu/menuItem.vue';
-import { useTrack } from 'dashboard/composables';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import ForwardModal from 'dashboard/components/widgets/conversation/bubble/ForwardModal.vue';
 
 export default {
   components: {
     AddCannedModal,
+    TranslateModal,
     MenuItem,
-    ContextMenu,
-    NextButton,
+    ForwardModal,
   },
   props: {
     message: {
@@ -39,15 +37,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    hideButton: {
-      type: Boolean,
-      default: false,
-    },
   },
-  emits: ['open', 'close', 'replyTo'],
   setup() {
     const { getPlainText } = useMessageFormatter();
-
     return {
       getPlainText,
     };
@@ -55,19 +47,22 @@ export default {
   data() {
     return {
       isCannedResponseModalOpen: false,
+      showTranslateModal: false,
       showDeleteModal: false,
+      showForwardModal: false,
     };
   },
   computed: {
     ...mapGetters({
       getAccount: 'accounts/getAccount',
       currentAccountId: 'getCurrentAccountId',
+      currentChat: 'getSelectedChat',
     }),
     plainTextContent() {
       return this.getPlainText(this.messageContent);
     },
     conversationId() {
-      return this.message.conversation_id ?? this.message.conversationId;
+      return this.message.conversation_id;
     },
     messageId() {
       return this.message.id;
@@ -76,9 +71,13 @@ export default {
       return this.message.content;
     },
     contentAttributes() {
-      return useSnakeCase(
-        this.message.content_attributes ?? this.message.contentAttributes
-      );
+      return this.message.content_attributes;
+    },
+    inboxId() {
+      return this.currentChat.inbox_id;
+    },
+    inbox() {
+      return this.$store.getters['inboxes/getInbox'](this.inboxId);
     },
   },
   methods: {
@@ -103,7 +102,7 @@ export default {
       this.handleClose();
     },
     showCannedResponseModal() {
-      useTrack(ACCOUNT_EVENTS.ADDED_TO_CANNED_RESPONSE);
+      this.$track(ACCOUNT_EVENTS.ADDED_TO_CANNED_RESPONSE);
       this.isCannedResponseModalOpen = true;
     },
     hideCannedResponseModal() {
@@ -123,12 +122,16 @@ export default {
         messageId: this.messageId,
         targetLanguage: locale || 'en',
       });
-      useTrack(CONVERSATION_EVENTS.TRANSLATE_A_MESSAGE);
+      this.$track(CONVERSATION_EVENTS.TRANSLATE_A_MESSAGE);
       this.handleClose();
+      this.showTranslateModal = true;
     },
     handleReplyTo() {
       this.$emit('replyTo', this.message);
       this.handleClose();
+    },
+    onCloseTranslateModal() {
+      this.showTranslateModal = false;
     },
     openDeleteModal() {
       this.handleClose();
@@ -149,6 +152,22 @@ export default {
     closeDeleteModal() {
       this.showDeleteModal = false;
     },
+    canDeleteMessage() {
+      if (this.isAdmin) {
+        return this.enabledOptions.delete;
+      }
+      return (
+        this.enabledOptions.delete && this.inbox.allow_agent_to_delete_message
+      );
+    },
+
+    handleForward() {
+      this.handleClose();
+      this.showForwardModal = true;
+    },
+    onCloseForwardModal() {
+      this.showForwardModal = false;
+    },
   },
 };
 </script>
@@ -158,7 +177,7 @@ export default {
     <!-- Add To Canned Responses -->
     <woot-modal
       v-if="isCannedResponseModalOpen && enabledOptions['cannedResponse']"
-      v-model:show="isCannedResponseModalOpen"
+      :show.sync="isCannedResponseModalOpen"
       :on-close="hideCannedResponseModal"
     >
       <AddCannedModal
@@ -166,11 +185,25 @@ export default {
         :on-close="hideCannedResponseModal"
       />
     </woot-modal>
+    <!-- Translate Content -->
+    <TranslateModal
+      v-if="showTranslateModal"
+      :content="messageContent"
+      :content-attributes="contentAttributes"
+      @close="onCloseTranslateModal"
+    />
+    <!-- Confirm Deletion -->
+    <!-- Forward Content -->
+    <forward-modal
+      v-if="showForwardModal"
+      :message="message"
+      @close="onCloseForwardModal"
+    />
     <!-- Confirm Deletion -->
     <woot-delete-modal
-      v-if="showDeleteModal && enabledOptions['delete']"
-      v-model:show="showDeleteModal"
+      v-if="showDeleteModal"
       class="context-menu--delete-modal"
+      :show.sync="showDeleteModal"
       :on-close="closeDeleteModal"
       :on-confirm="confirmDeletion"
       :title="$t('CONVERSATION.CONTEXT_MENU.DELETE_CONFIRMATION.TITLE')"
@@ -178,16 +211,14 @@ export default {
       :confirm-text="$t('CONVERSATION.CONTEXT_MENU.DELETE_CONFIRMATION.DELETE')"
       :reject-text="$t('CONVERSATION.CONTEXT_MENU.DELETE_CONFIRMATION.CANCEL')"
     />
-    <NextButton
-      v-if="!hideButton"
-      ghost
-      slate
-      sm
-      icon="i-lucide-ellipsis-vertical"
-      class="invisible group-hover/context-menu:visible"
+    <woot-button
+      icon="more-vertical"
+      color-scheme="secondary"
+      variant="clear"
+      size="small"
       @click="handleOpen"
     />
-    <ContextMenu
+    <woot-context-menu
       v-if="isOpen && !isCannedResponseModalOpen"
       :x="contextMenuPosition.x"
       :y="contextMenuPosition.y"
@@ -201,7 +232,7 @@ export default {
             label: $t('CONVERSATION.CONTEXT_MENU.REPLY_TO'),
           }"
           variant="icon"
-          @click.stop="handleReplyTo"
+          @click="handleReplyTo"
         />
         <MenuItem
           v-if="enabledOptions['copy']"
@@ -210,26 +241,33 @@ export default {
             label: $t('CONVERSATION.CONTEXT_MENU.COPY'),
           }"
           variant="icon"
-          @click.stop="handleCopy"
+          @click="handleCopy"
         />
         <MenuItem
-          v-if="enabledOptions['translate']"
+          v-if="enabledOptions['copy']"
           :option="{
             icon: 'translate',
             label: $t('CONVERSATION.CONTEXT_MENU.TRANSLATE'),
           }"
           variant="icon"
-          @click.stop="handleTranslate"
+          @click="handleTranslate"
+        />
+        <menu-item
+          :option="{
+            icon: 'share',
+            label: 'Encaminhar',
+          }"
+          variant="icon"
+          @click="handleForward"
         />
         <hr />
         <MenuItem
-          v-if="enabledOptions['copyLink']"
           :option="{
             icon: 'link',
             label: $t('CONVERSATION.CONTEXT_MENU.COPY_PERMALINK'),
           }"
           variant="icon"
-          @click.stop="copyLinkToMessage"
+          @click="copyLinkToMessage"
         />
         <MenuItem
           v-if="enabledOptions['cannedResponse']"
@@ -238,20 +276,21 @@ export default {
             label: $t('CONVERSATION.CONTEXT_MENU.CREATE_A_CANNED_RESPONSE'),
           }"
           variant="icon"
-          @click.stop="showCannedResponseModal"
+          @click="showCannedResponseModal"
         />
-        <hr v-if="enabledOptions['delete']" />
-        <MenuItem
-          v-if="enabledOptions['delete']"
-          :option="{
-            icon: 'delete',
-            label: $t('CONVERSATION.CONTEXT_MENU.DELETE'),
-          }"
-          variant="icon"
-          @click.stop="openDeleteModal"
-        />
+        <template v-if="canDeleteMessage()">
+          <hr />
+          <menu-item
+            :option="{
+              icon: 'delete',
+              label: this.$t('CONVERSATION.CONTEXT_MENU.DELETE'),
+            }"
+            variant="icon"
+            @click="openDeleteModal"
+          />
+        </template>
       </div>
-    </ContextMenu>
+    </woot-context-menu>
   </div>
 </template>
 
@@ -264,7 +303,7 @@ export default {
   }
 
   hr {
-    @apply m-1 border-b border-solid border-n-strong;
+    @apply m-1 border-b border-solid border-slate-50 dark:border-slate-800/50;
   }
 }
 

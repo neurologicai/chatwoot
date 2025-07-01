@@ -20,9 +20,8 @@ By default, it renders:
     <meta name="viewport" content="initial-scale=1">
     <meta name= "turbolinks-cache-control" content= "no-cache">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <%= vite_client_tag %>
-    <%= vite_javascript_tag 'portal' %>
+    <%= javascript_pack_tag 'portal' %>
+    <%= stylesheet_pack_tag 'portal' %>
     <style>
       #appearance-dropdown[data-current-theme="system"] .check-mark-icon.light-theme,
       #appearance-dropdown[data-current-theme="system"] .check-mark-icon.dark-theme,
@@ -38,10 +37,6 @@ By default, it renders:
       <%= yield(:head) %>
     <% else %>
       <title><%= @portal.page_title%></title>
-    <% end %>
-    
-    <% if @portal.logo.present? %>
-      <link rel="icon" href="<%= url_for(@portal.logo) %>">
     <% end %>
 
     <% unless @theme_from_params.blank? %>
@@ -68,7 +63,7 @@ By default, it renders:
           <%= render "public/api/v1/portals/header", portal: @portal %>
         <% end %>
         <%= yield %>
-        <% if !(@is_plain_layout_enabled || @portal.account.feature_enabled?('disable_branding')) %>
+        <% if !@is_plain_layout_enabled %>
           <%= render "public/api/v1/portals/footer" %>
         <% end %>
       </main>

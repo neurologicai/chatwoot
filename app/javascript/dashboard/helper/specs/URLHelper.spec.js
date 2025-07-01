@@ -6,7 +6,6 @@ import {
   getArticleSearchURL,
   hasValidAvatarUrl,
   timeStampAppendedURL,
-  getHostNameFromURL,
 } from '../URLHelper';
 
 describe('#URL Helpers', () => {
@@ -237,30 +236,6 @@ describe('#URL Helpers', () => {
     it('should throw an error for invalid URLs', () => {
       const input = 'not a valid url';
       expect(() => timeStampAppendedURL(input)).toThrow();
-    });
-  });
-
-  describe('getHostNameFromURL', () => {
-    it('should return the hostname from a valid URL', () => {
-      expect(getHostNameFromURL('https://example.com/path')).toBe(
-        'example.com'
-      );
-    });
-
-    it('should return null for an invalid URL', () => {
-      expect(getHostNameFromURL('not a valid url')).toBe(null);
-    });
-
-    it('should return null for an empty string', () => {
-      expect(getHostNameFromURL('')).toBe(null);
-    });
-
-    it('should return null for undefined input', () => {
-      expect(getHostNameFromURL(undefined)).toBe(null);
-    });
-
-    it('should correctly handle URLs with non-standard TLDs', () => {
-      expect(getHostNameFromURL('https://chatwoot.help')).toBe('chatwoot.help');
     });
   });
 });

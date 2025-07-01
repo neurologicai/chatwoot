@@ -1,7 +1,6 @@
 <script>
 import { getUnixTime } from 'date-fns';
 import { findSnoozeTime } from 'dashboard/helper/snoozeHelpers';
-import { emitter } from 'shared/helpers/mitt';
 import wootConstants from 'dashboard/constants/globals';
 import {
   CMD_BULK_ACTION_SNOOZE_CONVERSATION,
@@ -9,7 +8,6 @@ import {
   CMD_BULK_ACTION_RESOLVE_CONVERSATION,
 } from 'dashboard/helper/commandbar/events';
 
-import NextButton from 'dashboard/components-next/button/Button.vue';
 import AgentSelector from './AgentSelector.vue';
 import UpdateActions from './UpdateActions.vue';
 import LabelActions from './LabelActions.vue';
@@ -22,7 +20,6 @@ export default {
     LabelActions,
     TeamActions,
     CustomSnoozeModal,
-    NextButton,
   },
   props: {
     conversations: {
@@ -50,14 +47,6 @@ export default {
       default: false,
     },
   },
-  emits: [
-    'selectAllConversations',
-    'assignAgent',
-    'updateConversations',
-    'assignLabels',
-    'assignTeam',
-    'resolveConversations',
-  ],
   data() {
     return {
       showAgentsList: false,
@@ -69,29 +58,29 @@ export default {
     };
   },
   mounted() {
-    emitter.on(
+    this.$emitter.on(
       CMD_BULK_ACTION_SNOOZE_CONVERSATION,
       this.onCmdSnoozeConversation
     );
-    emitter.on(
+    this.$emitter.on(
       CMD_BULK_ACTION_REOPEN_CONVERSATION,
       this.onCmdReopenConversation
     );
-    emitter.on(
+    this.$emitter.on(
       CMD_BULK_ACTION_RESOLVE_CONVERSATION,
       this.onCmdResolveConversation
     );
   },
-  unmounted() {
-    emitter.off(
+  destroyed() {
+    this.$emitter.off(
       CMD_BULK_ACTION_SNOOZE_CONVERSATION,
       this.onCmdSnoozeConversation
     );
-    emitter.off(
+    this.$emitter.off(
       CMD_BULK_ACTION_REOPEN_CONVERSATION,
       this.onCmdReopenConversation
     );
-    emitter.off(
+    this.$emitter.off(
       CMD_BULK_ACTION_RESOLVE_CONVERSATION,
       this.onCmdResolveConversation
     );
@@ -173,36 +162,36 @@ export default {
         </span>
       </label>
       <div class="flex items-center gap-1 bulk-action__actions">
-        <NextButton
+        <woot-button
           v-tooltip="$t('BULK_ACTION.LABELS.ASSIGN_LABELS')"
-          icon="i-lucide-tags"
-          slate
-          xs
-          faded
+          size="tiny"
+          variant="smooth"
+          color-scheme="secondary"
+          icon="tag"
           @click="toggleLabelActions"
         />
-        <NextButton
+        <woot-button
           v-tooltip="$t('BULK_ACTION.UPDATE.CHANGE_STATUS')"
-          icon="i-lucide-repeat"
-          slate
-          xs
-          faded
+          size="tiny"
+          variant="smooth"
+          color-scheme="secondary"
+          icon="repeat"
           @click="toggleUpdateActions"
         />
-        <NextButton
+        <woot-button
           v-tooltip="$t('BULK_ACTION.ASSIGN_AGENT_TOOLTIP')"
-          icon="i-lucide-user-round-plus"
-          slate
-          xs
-          faded
+          size="tiny"
+          variant="smooth"
+          color-scheme="secondary"
+          icon="person-assign"
           @click="toggleAgentList"
         />
-        <NextButton
+        <woot-button
           v-tooltip="$t('BULK_ACTION.ASSIGN_TEAM_TOOLTIP')"
-          icon="i-lucide-users-round"
-          slate
-          xs
-          faded
+          size="tiny"
+          variant="smooth"
+          color-scheme="secondary"
+          icon="people-team-add"
           @click="toggleTeamsList"
         />
       </div>
@@ -241,7 +230,7 @@ export default {
         <TeamActions
           v-if="showTeamsList"
           class="team-actions-box"
-          @assign-team="assignTeam"
+          @assignTeam="assignTeam"
           @close="showTeamsList = false"
         />
       </transition>
@@ -250,12 +239,12 @@ export default {
       {{ $t('BULK_ACTION.ALL_CONVERSATIONS_SELECTED_ALERT') }}
     </div>
     <woot-modal
-      v-model:show="showCustomTimeSnoozeModal"
+      :show.sync="showCustomTimeSnoozeModal"
       :on-close="hideCustomSnoozeModal"
     >
       <CustomSnoozeModal
         @close="hideCustomSnoozeModal"
-        @choose-time="customSnoozeTime"
+        @chooseTime="customSnoozeTime"
       />
     </woot-modal>
   </div>
@@ -272,7 +261,7 @@ export default {
 }
 
 .bulk-action__container {
-  @apply p-4 relative border-b border-solid border-n-strong dark:border-n-weak;
+  @apply p-4 relative border-b border-solid border-slate-100 dark:border-slate-600/70;
 }
 
 .bulk-action__panel {

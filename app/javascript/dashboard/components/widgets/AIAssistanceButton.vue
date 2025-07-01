@@ -9,17 +9,13 @@ import AICTAModal from './AICTAModal.vue';
 import AIAssistanceModal from './AIAssistanceModal.vue';
 import { CMD_AI_ASSIST } from 'dashboard/helper/commandbar/events';
 import AIAssistanceCTAButton from './AIAssistanceCTAButton.vue';
-import { emitter } from 'shared/helpers/mitt';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
-    NextButton,
     AIAssistanceModal,
     AICTAModal,
     AIAssistanceCTAButton,
   },
-  emits: ['replaceText'],
   setup(props, { emit }) {
     const { uiSettings, updateUISettings } = useUISettings();
 
@@ -84,7 +80,7 @@ export default {
   },
 
   mounted() {
-    emitter.on(CMD_AI_ASSIST, this.onAIAssist);
+    this.$emitter.on(CMD_AI_ASSIST, this.onAIAssist);
     this.initializeMessage(this.draftMessage);
   },
 
@@ -128,31 +124,31 @@ export default {
     <div v-if="isAIIntegrationEnabled" class="relative">
       <AIAssistanceCTAButton
         v-if="shouldShowAIAssistCTAButton"
-        @open="openAIAssist"
+        @click="openAIAssist"
       />
-      <NextButton
+      <woot-button
         v-else
         v-tooltip.top-end="$t('INTEGRATION_SETTINGS.OPEN_AI.AI_ASSIST')"
-        icon="i-ph-magic-wand"
-        slate
-        faded
-        sm
+        icon="wand"
+        color-scheme="secondary"
+        variant="smooth"
+        size="small"
         @click="openAIAssist"
       />
       <woot-modal
-        v-model:show="showAIAssistanceModal"
+        :show.sync="showAIAssistanceModal"
         :on-close="hideAIAssistanceModal"
       >
         <AIAssistanceModal
           :ai-option="aiOption"
-          @apply-text="insertText"
+          @applyText="insertText"
           @close="hideAIAssistanceModal"
         />
       </woot-modal>
     </div>
     <div v-else-if="shouldShowAIAssistCTAButtonForAdmin" class="relative">
       <AIAssistanceCTAButton @click="openAICta" />
-      <woot-modal v-model:show="showAICtaModal" :on-close="hideAICtaModal">
+      <woot-modal :show.sync="showAICtaModal" :on-close="hideAICtaModal">
         <AICTAModal @close="hideAICtaModal" />
       </woot-modal>
     </div>

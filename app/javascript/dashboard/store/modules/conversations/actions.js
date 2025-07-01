@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import types from '../../mutation-types';
 import ConversationApi from '../../../api/inbox/conversation';
 import MessageApi from '../../../api/inbox/message';
@@ -11,7 +12,8 @@ import {
 } from './helpers/actionHelpers';
 import messageReadActions from './actions/messageReadActions';
 import messageTranslateActions from './actions/messageTranslateActions';
-import * as Sentry from '@sentry/vue';
+import messageForwardActions from './actions/messageForwardActions';
+import * as Sentry from '@sentry/browser';
 
 export const hasMessageFailedWithExternalError = pendingMessage => {
   // This helper is used to check if the message has failed with an external error.
@@ -100,7 +102,7 @@ const actions = {
   },
 
   fetchAllAttachments: async ({ commit }, conversationId) => {
-    let attachments = [];
+    let attachments = null;
 
     try {
       const { data } = await ConversationApi.getAllAttachments(conversationId);
@@ -195,7 +197,7 @@ const actions = {
           before: data.messages[0].id,
           conversationId: data.id,
         });
-        data.dataFetched = true;
+        Vue.set(data, 'dataFetched', true);
       } catch (error) {
         // Ignore error
       }
@@ -489,17 +491,9 @@ const actions = {
     commit(types.SET_CONTEXT_MENU_CHAT_ID, chatId);
   },
 
-  getInboxCaptainAssistantById: async ({ commit }, conversationId) => {
-    try {
-      const response = await ConversationApi.getInboxAssistant(conversationId);
-      commit(types.SET_INBOX_CAPTAIN_ASSISTANT, response.data);
-    } catch (error) {
-      // Handle error
-    }
-  },
-
   ...messageReadActions,
   ...messageTranslateActions,
+  ...messageForwardActions,
 };
 
 export default actions;

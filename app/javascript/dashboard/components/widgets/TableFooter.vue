@@ -16,8 +16,6 @@ const props = defineProps({
     default: 0,
   },
 });
-
-const emit = defineEmits(['pageChange']);
 const totalPages = computed(() => Math.ceil(props.totalCount / props.pageSize));
 const firstIndex = computed(() => props.pageSize * (props.currentPage - 1) + 1);
 const lastIndex = computed(() =>
@@ -28,7 +26,6 @@ const isFooterVisible = computed(
 );
 </script>
 
-<!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
   <footer
     v-if="isFooterVisible"
@@ -45,7 +42,7 @@ const isFooterVisible = computed(
       :total-pages="totalPages"
       :total-count="totalCount"
       :page-size="pageSize"
-      @page-change="emit('pageChange', $event)"
+      @pageChange="$emit('pageChange', $event)"
     />
   </footer>
 </template>

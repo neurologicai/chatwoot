@@ -1,14 +1,20 @@
-import { shallowMount } from '@vue/test-utils';
 import TemplateParser from '../../../../dashboard/components/widgets/conversation/WhatsappTemplates/TemplateParser.vue';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import { templates } from './fixtures';
+const localVue = createLocalVue();
+import VueI18n from 'vue-i18n';
+import i18n from 'dashboard/i18n';
 import { nextTick } from 'vue';
 
+localVue.use(VueI18n);
+
+const i18nConfig = new VueI18n({ locale: 'en', messages: i18n });
 const config = {
-  global: {
-    stubs: {
-      NextButton: { template: '<button />' },
-      WootInput: { template: '<input />' },
-    },
+  localVue,
+  i18n: i18nConfig,
+  stubs: {
+    WootButton: { template: '<button />' },
+    WootInput: { template: '<input />' },
   },
 };
 
@@ -16,7 +22,7 @@ describe('#WhatsAppTemplates', () => {
   it('returns all variables from a template string', async () => {
     const wrapper = shallowMount(TemplateParser, {
       ...config,
-      props: { template: templates[0] },
+      propsData: { template: templates[0] },
     });
     await nextTick();
     expect(wrapper.vm.variables).toEqual(['{{1}}', '{{2}}', '{{3}}']);
@@ -25,7 +31,7 @@ describe('#WhatsAppTemplates', () => {
   it('returns no variables from a template string if it does not contain variables', async () => {
     const wrapper = shallowMount(TemplateParser, {
       ...config,
-      props: { template: templates[12] },
+      propsData: { template: templates[12] },
     });
     await nextTick();
     expect(wrapper.vm.variables).toBeNull();
@@ -34,7 +40,7 @@ describe('#WhatsAppTemplates', () => {
   it('returns the body of a template', async () => {
     const wrapper = shallowMount(TemplateParser, {
       ...config,
-      props: { template: templates[1] },
+      propsData: { template: templates[1] },
     });
     await nextTick();
     const expectedOutput =
@@ -45,15 +51,13 @@ describe('#WhatsAppTemplates', () => {
   it('generates the templates from variable input', async () => {
     const wrapper = shallowMount(TemplateParser, {
       ...config,
-      props: { template: templates[0] },
+      propsData: { template: templates[0] },
     });
     await nextTick();
-
-    // Instead of using `setData`, directly modify the `processedParams` using the component's logic
-    await wrapper.vm.$nextTick();
-    wrapper.vm.processedParams = { 1: 'abc', 2: 'xyz', 3: 'qwerty' };
-    await wrapper.vm.$nextTick();
-
+    await wrapper.setData({
+      processedParams: { 1: 'abc', 2: 'xyz', 3: 'qwerty' },
+    });
+    await nextTick();
     const expectedOutput =
       'Esta é a sua confirmação de voo para abc-xyz em qwerty.';
     expect(wrapper.vm.processedString).toEqual(expectedOutput);

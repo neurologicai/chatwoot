@@ -83,29 +83,7 @@ class WebhookListener < BaseListener
     deliver_account_webhooks(payload, account)
   end
 
-  def conversation_typing_on(event)
-    handle_typing_status(__method__.to_s, event)
-  end
-
-  def conversation_typing_off(event)
-    handle_typing_status(__method__.to_s, event)
-  end
-
   private
-
-  def handle_typing_status(event_name, event)
-    conversation = event.data[:conversation]
-    user = event.data[:user]
-    inbox = conversation.inbox
-
-    payload = {
-      event: event_name,
-      user: user.webhook_data,
-      conversation: conversation.webhook_data,
-      is_private: event.data[:is_private] || false
-    }
-    deliver_webhook_payloads(payload, inbox)
-  end
 
   def deliver_account_webhooks(payload, account)
     account.webhooks.account_type.each do |webhook|
@@ -122,8 +100,23 @@ class WebhookListener < BaseListener
     WebhookJob.perform_later(inbox.channel.webhook_url, payload, :api_inbox_webhook)
   end
 
+  def deliver_whatsapp_inbox_webhooks(payload, inbox)
+    payload = payload.deep_symbolize_keys
+
+    return unless inbox.channel_type == 'Channel::Whatsapp' && payload[:event] == 'message_updated' && payload[:message_type] == 'incoming'
+
+    WebhookJob.perform_later(
+      inbox.channel.message_path(payload),
+      inbox.channel.message_update_payload(payload),
+      :account_webhook,
+      inbox.channel.message_update_http_method,
+      inbox.channel.api_headers
+    )
+  end
+
   def deliver_webhook_payloads(payload, inbox)
     deliver_account_webhooks(payload, inbox.account)
     deliver_api_inbox_webhooks(payload, inbox)
+    deliver_whatsapp_inbox_webhooks(payload, inbox)
   end
 end

@@ -19,10 +19,4 @@ describe('#getters', () => {
       expect(getters.getShowUnreadMessagesDialog(state)).toEqual(true);
     });
   });
-  describe('#getIsUpdatingRoute', () => {
-    it('returns correct value', () => {
-      const state = { isUpdatingRoute: true };
-      expect(getters.getIsUpdatingRoute(state)).toEqual(true);
-    });
-  });
 });

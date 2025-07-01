@@ -4,7 +4,6 @@ import { mapGetters } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 
 import InboxMembersAPI from '../../../../api/inboxMembers';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 import router from '../../../index';
 import PageHeader from '../SettingsSubPageHeader.vue';
 import { useVuelidate } from '@vuelidate/core';
@@ -12,7 +11,6 @@ import { useVuelidate } from '@vuelidate/core';
 export default {
   components: {
     PageHeader,
-    NextButton,
   },
   validations: {
     selectedAgents: {
@@ -64,16 +62,16 @@ export default {
 
 <template>
   <div
-    class="border border-n-weak bg-n-solid-1 rounded-t-lg border-b-0 h-full w-full p-6 col-span-6 overflow-auto"
+    class="border border-slate-25 dark:border-slate-800/60 bg-white dark:bg-slate-900 h-full p-6 w-full max-w-full md:w-3/4 md:max-w-[75%] flex-shrink-0 flex-grow-0"
   >
-    <form class="flex flex-wrap flex-col mx-0" @submit.prevent="addAgents()">
+    <form class="flex flex-wrap mx-0" @submit.prevent="addAgents()">
       <div class="w-full">
         <PageHeader
           :header-title="$t('INBOX_MGMT.ADD.AGENTS.TITLE')"
           :header-content="$t('INBOX_MGMT.ADD.AGENTS.DESC')"
         />
       </div>
-      <div>
+      <div class="w-3/5">
         <div class="w-full">
           <label :class="{ error: v$.selectedAgents.$error }">
             {{ $t('INBOX_MGMT.ADD.AGENTS.TITLE') }}
@@ -98,12 +96,9 @@ export default {
           </label>
         </div>
         <div class="w-full">
-          <NextButton
-            type="submit"
-            :is-loading="isCreating"
-            solid
-            blue
-            :label="$t('INBOX_MGMT.AGENTS.BUTTON_TEXT')"
+          <woot-submit-button
+            :button-text="$t('INBOX_MGMT.AGENTS.BUTTON_TEXT')"
+            :loading="isCreating"
           />
         </div>
       </div>

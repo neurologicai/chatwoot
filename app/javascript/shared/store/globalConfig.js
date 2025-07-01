@@ -5,6 +5,7 @@ const {
   AZURE_APP_ID: azureAppId,
   BRAND_NAME: brandName,
   CHATWOOT_INBOX_TOKEN: chatwootInboxToken,
+  CSML_EDITOR_HOST: csmlEditorHost,
   CREATE_NEW_ACCOUNT_FROM_DASHBOARD: createNewAccountFromDashboard,
   DIRECT_UPLOADS_ENABLED: directUploadsEnabled,
   DISPLAY_MANIFEST: displayManifest,
@@ -19,6 +20,7 @@ const {
   WIDGET_BRAND_URL: widgetBrandURL,
   DISABLE_USER_PROFILE_UPDATE: disableUserProfileUpdate,
   DEPLOYMENT_ENV: deploymentEnv,
+  CONVERSATION_STYLE_CSS: conversationStyleCss,
 } = window.globalConfig || {};
 
 const state = {
@@ -28,6 +30,7 @@ const state = {
   azureAppId,
   brandName,
   chatwootInboxToken,
+  csmlEditorHost,
   deploymentEnv,
   createNewAccountFromDashboard,
   directUploadsEnabled: directUploadsEnabled === 'true',
@@ -42,6 +45,7 @@ const state = {
   privacyURL,
   termsURL,
   widgetBrandURL,
+  conversationStyleCss: conversationStyleCss || '',
 };
 
 export const getters = {

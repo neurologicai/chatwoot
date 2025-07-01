@@ -94,8 +94,7 @@ module Api::V2::Accounts::HeatmapHelper
   end
 
   def since_timestamp(date)
-    number_of_days = params[:days_before].present? ? params[:days_before].to_i.days : 6.days
-    (date - number_of_days).to_i.to_s
+    (date - 6.days).to_i.to_s
   end
 
   def until_timestamp(date)

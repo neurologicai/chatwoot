@@ -20,10 +20,10 @@ export default {
       isPasswordChanging: false,
       errorMessage: '',
       inputStyles: {
-        borderRadius: '0.75rem',
-        padding: '0.375rem 0.75rem',
-        fontSize: '0.875rem',
-        marginBottom: '0.125rem',
+        borderRadius: '12px',
+        padding: '6px 12px',
+        fontSize: '14px',
+        marginBottom: '2px',
       },
     };
   },
@@ -95,7 +95,6 @@ export default {
             : ''
         }`"
         @input="v$.currentPassword.$touch"
-        @blur="v$.currentPassword.$touch"
       />
 
       <woot-input
@@ -109,7 +108,6 @@ export default {
           v$.password.$error ? $t('PROFILE_SETTINGS.FORM.PASSWORD.ERROR') : ''
         }`"
         @input="v$.password.$touch"
-        @blur="v$.password.$touch"
       />
 
       <woot-input
@@ -127,7 +125,6 @@ export default {
             : ''
         }`"
         @input="v$.passwordConfirmation.$touch"
-        @blur="v$.passwordConfirmation.$touch"
       />
 
       <FormButton

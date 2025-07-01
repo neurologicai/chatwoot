@@ -33,29 +33,10 @@ RSpec.describe Article do
       end
 
       it 'invalid when crossed the limit' do
-        article.content = 'a' * 25_001
+        article.content = 'a' * 40_001
         article.valid?
-        expect(article.errors[:content]).to include('is too long (maximum is 20000 characters)')
+        expect(article.errors[:content]).to include('is too long (maximum is 40000 characters)')
       end
-    end
-  end
-
-  describe 'add_locale_to_article' do
-    let(:portal) { create(:portal, config: { allowed_locales: %w[en es pt], default_locale: 'es' }) }
-    let(:category) { create(:category, slug: 'category_1', locale: 'pt', portal_id: portal.id) }
-
-    it 'adds locale to article from category' do
-      article = create(:article, category_id: category.id, content: 'This is the content', description: 'this is the description',
-                                 slug: 'this-is-title', title: 'this is title',
-                                 portal_id: portal.id, author_id: user.id)
-      expect(article.locale).to eq(category.locale)
-    end
-
-    it 'adds locale to article from portal' do
-      article = create(:article, content: 'This is the content', description: 'this is the description',
-                                 slug: 'this-is-title', title: 'this is title',
-                                 portal_id: portal.id, author_id: user.id, locale: '')
-      expect(article.locale).to eq(portal.default_locale)
     end
   end
 
@@ -165,28 +146,6 @@ RSpec.describe Article do
                                    author_id: user.id)
         expect(article.slug).to include('the-awesome-article-1')
       end
-    end
-  end
-
-  describe '#to_llm_text' do
-    it 'returns formatted article text' do
-      category = create(:category, name: 'Test Category', slug: 'test_category', portal_id: portal_1.id)
-      article = create(:article, title: 'Test Article', category_id: category.id, content: 'This is the content', portal_id: portal_1.id,
-                                 author_id: user.id)
-      expected_output = <<~TEXT
-        Title: #{article.title}
-        ID: #{article.id}
-        Status: #{article.status}
-        Category: #{category.name}
-        Author: #{user.name}
-        Views: #{article.views}
-        Created At: #{article.created_at}
-        Updated At: #{article.updated_at}
-        Content:
-        #{article.content}
-      TEXT
-
-      expect(article.to_llm_text).to eq(expected_output)
     end
   end
 end

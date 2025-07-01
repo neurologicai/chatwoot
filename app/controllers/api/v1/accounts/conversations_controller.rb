@@ -6,8 +6,6 @@ class Api::V1::Accounts::ConversationsController < Api::V1::Accounts::BaseContro
   before_action :conversation, except: [:index, :meta, :search, :create, :filter]
   before_action :inbox, :contact, :contact_inbox, only: [:create]
 
-  ATTACHMENT_RESULTS_PER_PAGE = 100
-
   def index
     result = conversation_finder.perform
     @conversations = result[:conversations]
@@ -26,12 +24,7 @@ class Api::V1::Accounts::ConversationsController < Api::V1::Accounts::BaseContro
   end
 
   def attachments
-    @attachments_count = @conversation.attachments.count
     @attachments = @conversation.attachments
-                                .includes(:message)
-                                .order(created_at: :desc)
-                                .page(attachment_params[:page])
-                                .per(ATTACHMENT_RESULTS_PER_PAGE)
   end
 
   def show; end
@@ -48,12 +41,11 @@ class Api::V1::Accounts::ConversationsController < Api::V1::Accounts::BaseContro
   end
 
   def filter
-    result = ::Conversations::FilterService.new(params.permit!, current_user, current_account).perform
+    result = ::Conversations::FilterService.new(params.permit!, current_user).perform
     @conversations = result[:conversations]
     @conversations_count = result[:count]
   rescue CustomExceptions::CustomFilter::InvalidAttribute,
          CustomExceptions::CustomFilter::InvalidOperator,
-         CustomExceptions::CustomFilter::InvalidQueryOperator,
          CustomExceptions::CustomFilter::InvalidValue => e
     render_could_not_create_error(e.message)
   end
@@ -131,13 +123,10 @@ class Api::V1::Accounts::ConversationsController < Api::V1::Accounts::BaseContro
     params.permit(:priority)
   end
 
-  def attachment_params
-    params.permit(:page)
-  end
-
   def update_last_seen_on_conversation(last_seen_at, update_assignee)
     # rubocop:disable Rails/SkipsModelValidations
-    @conversation.update_column(:agent_last_seen_at, last_seen_at)
+    # @conversation.update_column(:agent_last_seen_at, last_seen_at) # Não Marca o visto do Usuário
+    @conversation.update_column(:agent_last_seen_at, last_seen_at) && UpdateLastSeenJob.perform_later(@conversation.id, current_user, last_seen_at)
     @conversation.update_column(:assignee_last_seen_at, last_seen_at) if update_assignee.present?
     # rubocop:enable Rails/SkipsModelValidations
   end

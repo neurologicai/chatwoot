@@ -2,7 +2,6 @@
 import { mapGetters } from 'vuex';
 import { IFrameHelper } from 'widget/helpers/utils';
 import UnreadMessageList from '../components/UnreadMessageList.vue';
-import { emitter } from 'shared/helpers/mitt';
 
 export default {
   name: 'Campaigns',
@@ -29,7 +28,7 @@ export default {
           event: 'setCampaignReadOn',
         });
         IFrameHelper.sendMessage({ event: 'toggleBubble' });
-        emitter.emit('snooze-campaigns');
+        this.$emitter.emit('snooze-campaigns');
       }
     },
   },

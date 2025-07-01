@@ -27,6 +27,8 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['click']);
+
 const attrs = useAttrs();
 
 const baseClasses = {
@@ -71,6 +73,13 @@ const sizeClass = computed(() => {
 });
 
 const buttonClasses = computed(() => [colorClass.value, sizeClass.value]);
+
+const onClick = () => {
+  if (props.disabled) {
+    return;
+  }
+  emit('click');
+};
 </script>
 
 <template>
@@ -78,6 +87,7 @@ const buttonClasses = computed(() => [colorClass.value, sizeClass.value]);
     class="inline-flex items-center gap-1 text-sm font-medium reset-base rounded-xl w-fit"
     :class="buttonClasses"
     v-bind="$attrs"
+    @click="onClick"
   >
     <fluent-icon
       v-if="icon && !trailingIcon"

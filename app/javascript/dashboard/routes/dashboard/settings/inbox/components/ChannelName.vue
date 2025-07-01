@@ -1,5 +1,5 @@
 <script setup>
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'dashboard/composables/useI18n';
 import { useStoreGetters } from 'dashboard/composables/store';
 import { computed } from 'vue';
 
@@ -28,7 +28,7 @@ const i18nMap = {
   'Channel::Telegram': 'TELEGRAM',
   'Channel::Line': 'LINE',
   'Channel::Api': 'API',
-  'Channel::Instagram': 'INSTAGRAM',
+  'Channel::Internal': 'INTERNAL_CHANNEL',
 };
 
 const twilioChannelName = () => {
@@ -45,6 +45,9 @@ const readableChannelName = computed(() => {
   if (props.channelType === 'Channel::TwilioSms') {
     return twilioChannelName();
   }
+  if (props.channelType === 'Channel::Internal') {
+    return t(`INBOX_MGMT.ADD.${i18nMap[props.channelType]}.TITLE`);
+  }  
   return t(`INBOX_MGMT.CHANNELS.${i18nMap[props.channelType]}`);
 });
 </script>

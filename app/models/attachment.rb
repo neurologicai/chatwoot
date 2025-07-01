@@ -9,7 +9,6 @@
 #  external_url     :string
 #  fallback_title   :string
 #  file_type        :integer          default("image")
-#  meta             :jsonb
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  account_id       :integer          not null
@@ -70,10 +69,6 @@ class Attachment < ApplicationRecord
     end
   end
 
-  def with_attached_file?
-    [:image, :audio, :video, :file].include?(file_type.to_sym)
-  end
-
   private
 
   def file_metadata
@@ -117,8 +112,7 @@ class Attachment < ApplicationRecord
 
   def contact_metadata
     {
-      fallback_title: fallback_title,
-      meta: meta || {}
+      fallback_title: fallback_title
     }
   end
 

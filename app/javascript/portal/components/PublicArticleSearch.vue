@@ -9,7 +9,6 @@ export default {
     PublicSearchInput,
     SearchSuggestions,
   },
-  emits: ['input', 'blur'],
   data() {
     return {
       searchTerm: '',
@@ -36,18 +35,7 @@ export default {
   },
 
   watch: {
-    currentPage() {
-      this.clearSearchTerm();
-    },
-  },
-
-  unmounted() {
-    clearTimeout(this.typingTimer);
-  },
-
-  methods: {
-    onUpdateSearchTerm(value) {
-      this.searchTerm = value;
+    searchTerm() {
       if (this.typingTimer) {
         clearTimeout(this.typingTimer);
       }
@@ -58,6 +46,16 @@ export default {
         this.fetchArticlesByQuery();
       }, 1000);
     },
+    currentPage() {
+      this.clearSearchTerm();
+    },
+  },
+
+  beforeDestroy() {
+    clearTimeout(this.typingTimer);
+  },
+
+  methods: {
     onChange(e) {
       this.$emit('input', e.target.value);
     },
@@ -97,9 +95,8 @@ export default {
 <template>
   <div v-on-clickaway="closeSearch" class="relative w-full max-w-5xl my-4">
     <PublicSearchInput
-      :search-term="searchTerm"
+      v-model="searchTerm"
       :search-placeholder="searchTranslations.searchPlaceholder"
-      @update:search-term="onUpdateSearchTerm"
       @focus="openSearch"
     />
     <div

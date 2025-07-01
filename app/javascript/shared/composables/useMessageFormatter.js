@@ -14,13 +14,11 @@ export const useMessageFormatter = () => {
    * @param {boolean} isAPrivateNote - Whether the message is a private note.
    * @returns {string} - The formatted message.
    */
-  // TODO: ref:https://github.com/chatwoot/chatwoot/pull/10725#discussion_r1925300874
-  const formatMessage = (message, isATweet, isAPrivateNote, linkify) => {
+  const formatMessage = (message, isATweet, isAPrivateNote) => {
     const messageFormatter = new MessageFormatter(
       message,
       isATweet,
-      isAPrivateNote,
-      linkify
+      isAPrivateNote
     );
     return messageFormatter.formattedMessage;
   };

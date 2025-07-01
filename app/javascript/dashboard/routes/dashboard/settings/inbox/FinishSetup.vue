@@ -1,13 +1,9 @@
 <script>
 import EmptyState from '../../../../components/widgets/EmptyState.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
-import DuplicateInboxBanner from './channels/instagram/DuplicateInboxBanner.vue';
-import { INBOX_TYPES } from 'dashboard/helper/inbox';
+
 export default {
   components: {
     EmptyState,
-    NextButton,
-    DuplicateInboxBanner,
   },
   computed: {
     currentInbox() {
@@ -18,20 +14,6 @@ export default {
     isATwilioInbox() {
       return this.currentInbox.channel_type === 'Channel::TwilioSms';
     },
-    // Check if a facebook inbox exists with the same instagram_id
-    hasDuplicateInstagramInbox() {
-      const instagramId = this.currentInbox.instagram_id;
-      const facebookInbox =
-        this.$store.getters['inboxes/getFacebookInboxByInstagramId'](
-          instagramId
-        );
-
-      return (
-        this.currentInbox.channel_type === INBOX_TYPES.INSTAGRAM &&
-        facebookInbox
-      );
-    },
-
     isAEmailInbox() {
       return this.currentInbox.channel_type === 'Channel::Email';
     },
@@ -88,12 +70,8 @@ export default {
 
 <template>
   <div
-    class="w-full h-full col-span-6 p-6 overflow-auto border border-b-0 rounded-t-lg border-n-weak bg-n-solid-1"
+    class="border border-slate-25 dark:border-slate-800/60 bg-white dark:bg-slate-900 h-full p-6 w-full max-w-full md:w-3/4 md:max-w-[75%] flex-shrink-0 flex-grow-0"
   >
-    <DuplicateInboxBanner
-      v-if="hasDuplicateInstagramInbox"
-      :content="$t('INBOX_MGMT.ADD.INSTAGRAM.NEW_INBOX_SUGGESTION')"
-    />
     <EmptyState
       :title="$t('INBOX_MGMT.FINISH.TITLE')"
       :message="message"
@@ -152,28 +130,22 @@ export default {
         </div>
         <div class="flex justify-center gap-2 mt-4">
           <router-link
+            class="rounded button hollow primary"
             :to="{
               name: 'settings_inbox_show',
               params: { inboxId: $route.params.inbox_id },
             }"
           >
-            <NextButton
-              outline
-              slate
-              :label="$t('INBOX_MGMT.FINISH.MORE_SETTINGS')"
-            />
+            {{ $t('INBOX_MGMT.FINISH.MORE_SETTINGS') }}
           </router-link>
           <router-link
+            class="rounded button success"
             :to="{
               name: 'inbox_dashboard',
               params: { inboxId: $route.params.inbox_id },
             }"
           >
-            <NextButton
-              solid
-              teal
-              :label="$t('INBOX_MGMT.FINISH.BUTTON_TEXT')"
-            />
+            {{ $t('INBOX_MGMT.FINISH.BUTTON_TEXT') }}
           </router-link>
         </div>
       </div>

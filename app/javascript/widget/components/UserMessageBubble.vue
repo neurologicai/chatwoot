@@ -37,24 +37,32 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+@import '~widget/assets/scss/variables.scss';
+
 .chat-bubble.user::v-deep {
   p code {
-    @apply bg-n-alpha-2 dark:bg-n-alpha-1 text-white;
+    background-color: var(--w-600);
+    color: var(--white);
   }
 
   pre {
-    @apply text-white bg-n-alpha-2 dark:bg-n-alpha-1;
+    background-color: var(--w-800);
+    border-color: var(--w-700);
+    color: var(--white);
 
     code {
-      @apply bg-transparent text-white;
+      background-color: transparent;
+      color: var(--white);
     }
   }
 
   blockquote {
-    @apply bg-transparent border-n-slate-7 ltr:border-l-2 rtl:border-r-2 border-solid;
+    border-left: $space-micro solid var(--w-400);
+    background: var(--s-25);
+    border-color: var(--s-200);
 
     p {
-      @apply text-n-slate-5 dark:text-n-slate-12/90;
+      color: var(--s-800);
     }
   }
 }

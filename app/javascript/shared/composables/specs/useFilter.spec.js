@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useFilter } from '../useFilter';
 import { useStore } from 'dashboard/composables/store';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'dashboard/composables/useI18n';
 
 // Mock the dependencies
 vi.mock('dashboard/composables/store');
-vi.mock('vue-i18n');
+vi.mock('dashboard/composables/useI18n');
 
 describe('useFilter', () => {
   // Setup mocks

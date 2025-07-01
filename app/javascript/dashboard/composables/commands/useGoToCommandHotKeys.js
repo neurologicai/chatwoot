@@ -1,7 +1,7 @@
 import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'dashboard/composables/useI18n';
 import { useMapGetter } from 'dashboard/composables/store';
-import { useRouter } from 'vue-router';
+import { useRouter } from 'dashboard/composables/route';
 import { useAdmin } from 'dashboard/composables/useAdmin';
 import {
   ICON_ACCOUNT_SETTINGS,

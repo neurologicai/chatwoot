@@ -1,13 +1,7 @@
 import { frontendURL } from 'dashboard/helper/URLHelper';
-import InboxListView from './InboxList.vue';
-import InboxDetailView from './InboxView.vue';
-import InboxEmptyStateView from './InboxEmptyState.vue';
-import {
-  ROLES,
-  CONVERSATION_PERMISSIONS,
-} from 'dashboard/constants/permissions.js';
-
-import { FEATURE_FLAGS } from 'dashboard/featureFlags';
+const InboxListView = () => import('./InboxList.vue');
+const InboxDetailView = () => import('./InboxView.vue');
+const InboxEmptyStateView = () => import('./InboxEmptyState.vue');
 
 export const routes = [
   {
@@ -19,8 +13,7 @@ export const routes = [
         name: 'inbox_view',
         component: InboxEmptyStateView,
         meta: {
-          permissions: [...ROLES, ...CONVERSATION_PERMISSIONS],
-          featureFlag: FEATURE_FLAGS.CHATWOOT_V4,
+          permissions: ['administrator', 'agent'],
         },
       },
       {
@@ -28,8 +21,7 @@ export const routes = [
         name: 'inbox_view_conversation',
         component: InboxDetailView,
         meta: {
-          permissions: [...ROLES, ...CONVERSATION_PERMISSIONS],
-          featureFlag: FEATURE_FLAGS.CHATWOOT_V4,
+          permissions: ['administrator', 'agent'],
         },
       },
     ],

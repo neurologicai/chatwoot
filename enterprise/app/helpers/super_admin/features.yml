@@ -1,35 +1,28 @@
 # TODO: Move this values to features.yml itself
 # No need to replicate the same values in two places
-captain:
-  name: 'Captain'
-  description: 'Enable AI-powered conversations with your customers.'
-  enabled: <%= (ChatwootHub.pricing_plan != 'community') %>
-  icon: 'icon-captain'
-  config_key: 'captain'
-  enterprise: true
 custom_branding:
   name: 'Custom Branding'
   description: 'Apply your own branding to this installation.'
-  enabled: <%= (ChatwootHub.pricing_plan != 'community') %>
+  enabled: true
   icon: 'icon-paint-brush-line'
   config_key: 'custom_branding'
   enterprise: true
 agent_capacity:
   name: 'Agent Capacity'
   description: 'Set limits to auto-assigning conversations to your agents.'
-  enabled: <%= (ChatwootHub.pricing_plan != 'community') %>
+  enabled: true
   icon: 'icon-hourglass-line'
   enterprise: true
 audit_logs:
   name: 'Audit Logs'
   description: 'Track and trace account activities with ease with detailed audit logs.'
-  enabled: <%= (ChatwootHub.pricing_plan != 'community') %>
+  enabled: true
   icon: 'icon-menu-search-line'
   enterprise: true
 disable_branding:
   name: 'Disable Branding'
   description: 'Disable branding on live-chat widget and external emails.'
-  enabled: <%= (ChatwootHub.pricing_plan != 'community') %>
+  enabled: true
   icon: 'icon-sailbot-fill'
   enterprise: true
 live_chat:
@@ -48,12 +41,6 @@ messenger:
   enabled: true
   icon: 'icon-messenger-line'
   config_key: 'facebook'
-instagram:
-  name: 'Instagram'
-  description: 'Stay connected with your customers on Instagram'
-  enabled: true
-  icon: 'icon-instagram'
-  config_key: 'instagram'
 whatsapp:
   name: 'WhatsApp'
   description: 'Manage your WhatsApp business interactions from Chatwoot.'
@@ -85,21 +72,15 @@ microsoft:
   enabled: true
   icon: 'icon-microsoft'
   config_key: 'microsoft'
-linear:
-  name: 'Linear'
-  description: 'Configuration for setting up Linear Integration'
+captain:
+  name: 'Captain'
+  description: 'Configuration for setting up Captain'
   enabled: true
-  icon: 'icon-linear'
-  config_key: 'linear'
-slack:
-  name: 'Slack'
-  description: 'Configuration for setting up Slack Integration'
+  icon: 'captain-outline'
+  config_key: 'captain'
+unoapi:
+  name: '🅷🆄🅱 API'
+  description: 'Configuration for setting up 🅷🆄🅱 API'
   enabled: true
-  icon: 'icon-slack'
-  config_key: 'slack'
-shopify:
-  name: 'Shopify'
-  description: 'Configuration for setting up Shopify Integration'
-  enabled: true
-  icon: 'icon-shopify'
-  config_key: 'shopify'
+  icon: 'icon-whatsapp-line'
+  config_key: 'unoapi'

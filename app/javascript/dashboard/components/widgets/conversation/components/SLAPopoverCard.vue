@@ -3,7 +3,6 @@ import { ref, computed } from 'vue';
 
 import wootConstants from 'dashboard/constants/globals';
 import SLAEventItem from './SLAEventItem.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
 
 const props = defineProps({
   slaMissedEvents: {
@@ -41,9 +40,9 @@ const toggleShowAllNRT = () => {
 
 <template>
   <div
-    class="absolute flex flex-col items-start border-n-strong bg-n-solid-3 w-96 backdrop-blur-[100px] px-6 py-5 z-50 shadow rounded-xl gap-4 max-h-96 overflow-auto"
+    class="absolute flex flex-col items-start bg-white dark:bg-slate-800 z-50 p-4 border border-solid border-slate-75 dark:border-slate-700 w-[384px] rounded-xl gap-4 max-h-96 overflow-auto"
   >
-    <span class="text-sm font-medium text-n-slate-12">
+    <span class="text-sm font-medium text-slate-900 dark:text-slate-25">
       {{ $t('SLA.EVENTS.TITLE') }}
     </span>
     <SLAEventItem
@@ -61,19 +60,20 @@ const toggleShowAllNRT = () => {
           v-if="shouldShowMoreNRTButton"
           class="flex flex-col items-end w-full"
         >
-          <Button
-            link
-            xs
-            slate
-            class="hover:!no-underline"
-            :icon="!shouldShowAllNrts ? 'i-lucide-plus' : ''"
-            :label="
+          <woot-button
+            size="small"
+            :icon="!shouldShowAllNrts ? 'plus-sign' : ''"
+            variant="link"
+            color-scheme="secondary"
+            class="hover:!no-underline !gap-1 hover:!bg-transparent dark:hover:!bg-transparent"
+            @click="toggleShowAllNRT"
+          >
+            {{
               shouldShowAllNrts
                 ? $t('SLA.EVENTS.HIDE', { count: nrtMisses.length })
                 : $t('SLA.EVENTS.SHOW_MORE', { count: nrtMisses.length })
-            "
-            @click="toggleShowAllNRT"
-          />
+            }}
+          </woot-button>
         </div>
       </template>
     </SLAEventItem>

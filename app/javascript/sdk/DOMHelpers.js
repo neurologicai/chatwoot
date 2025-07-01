@@ -5,7 +5,6 @@ export const loadCSS = () => {
   const css = document.createElement('style');
   css.innerHTML = `${SDK_CSS}`;
   css.id = 'cw-widget-styles';
-  css.dataset.turboPermanent = true;
   document.body.appendChild(css);
 };
 

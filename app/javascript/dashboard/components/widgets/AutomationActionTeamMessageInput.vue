@@ -1,10 +1,8 @@
 <script>
 export default {
-  props: {
-    teams: { type: Array, required: true },
-    modelValue: { type: Object, required: true },
-  },
-  emits: ['update:modelValue'],
+  // The value types are dynamic, hence prop validation removed to work with our action schema
+  // eslint-disable-next-line vue/require-prop-types
+  props: ['teams', 'value'],
   data() {
     return {
       selectedTeams: [],
@@ -12,13 +10,13 @@ export default {
     };
   },
   mounted() {
-    const { team_ids: teamIds } = this.modelValue;
+    const { team_ids: teamIds } = this.value;
     this.selectedTeams = teamIds;
-    this.message = this.modelValue.message;
+    this.message = this.value.message;
   },
   methods: {
     updateValue() {
-      this.$emit('update:modelValue', {
+      this.$emit('input', {
         team_ids: this.selectedTeams.map(team => team.id),
         message: this.message,
       });
@@ -29,7 +27,7 @@ export default {
 
 <template>
   <div>
-    <div class="multiselect-wrap--small flex flex-col gap-1 mt-1">
+    <div class="multiselect-wrap--small">
       <multiselect
         v-model="selectedTeams"
         track-by="id"
@@ -42,7 +40,7 @@ export default {
         :max-height="160"
         :options="teams"
         :allow-empty="false"
-        @update:model-value="updateValue"
+        @input="updateValue"
       />
       <textarea
         v-model="message"

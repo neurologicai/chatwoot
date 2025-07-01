@@ -12,13 +12,9 @@ export default {
       required: true,
     },
   },
-  emits: ['channelItemClick'],
   computed: {
     hasFbConfigured() {
       return window.chatwootConfig?.fbAppId;
-    },
-    hasInstagramConfigured() {
-      return window.chatwootConfig?.instagramAppId;
     },
     isActive() {
       const { key } = this.channel;
@@ -34,11 +30,23 @@ export default {
       if (key === 'email') {
         return this.enabledFeatures.channel_email;
       }
-
-      if (key === 'instagram') {
-        return (
-          this.enabledFeatures.channel_instagram && this.hasInstagramConfigured
-        );
+      if (key === 'sms') {
+        return this.enabledFeatures.channel_sms;
+      }
+      if (key === 'whatsapp') {
+        return this.enabledFeatures.channel_whatsapp;
+      }
+      if (key === 'telegram') {
+        return this.enabledFeatures.channel_telegram;
+      }
+      if (key === 'line') {
+        return this.enabledFeatures.channel_line;
+      }
+      if (key === 'api') {
+        return this.enabledFeatures.channel_api;
+      }
+      if (key === 'internal') {
+        return this.enabledFeatures.channel_internal;
       }
 
       return [
@@ -49,7 +57,7 @@ export default {
         'sms',
         'telegram',
         'line',
-        'instagram',
+        'internal',
       ].includes(key);
     },
   },

@@ -218,14 +218,14 @@ const emitDateRange = () => {
     />
     <div
       v-if="showDatePicker"
-      class="flex absolute top-9 ltr:left-0 rtl:right-0 z-30 shadow-md select-none w-[880px] h-[490px] rounded-2xl bg-n-alpha-3 backdrop-blur-[100px] border-0 outline outline-1 outline-n-container"
+      class="flex absolute top-9 ltr:left-0 rtl:right-0 z-30 shadow-md select-none w-[880px] h-[490px] rounded-2xl border border-slate-50 dark:border-slate-800 bg-white dark:bg-slate-800"
     >
       <CalendarDateRange
         :selected-range="selectedRange"
-        @set-range="setDateRange"
+        @setRange="setDateRange"
       />
       <div
-        class="flex flex-col w-[680px] ltr:border-l rtl:border-r border-n-strong"
+        class="flex flex-col w-[680px] ltr:border-l rtl:border-r border-slate-50 dark:border-slate-700/50"
       >
         <div class="flex justify-around h-fit">
           <!-- Calendars for Start and End Dates -->
@@ -251,12 +251,12 @@ const emitDateRange = () => {
               @validate="updateManualInput($event, calendar)"
               @error="handleManualInputError($event)"
             />
-            <div class="py-5 border-b border-n-strong">
+            <div class="py-5 border-b border-slate-50 dark:border-slate-700/50">
               <div
                 class="flex flex-col items-center gap-2 px-5 min-w-[340px] max-h-[352px]"
                 :class="
                   calendar === START_CALENDAR &&
-                  'ltr:border-r rtl:border-l border-n-strong'
+                  'ltr:border-r rtl:border-l border-slate-50 dark:border-slate-700/50'
                 "
               >
                 <CalendarYear
@@ -264,15 +264,15 @@ const emitDateRange = () => {
                   :calendar-type="calendar"
                   :start-current-date="startCurrentDate"
                   :end-current-date="endCurrentDate"
-                  @select-year="openCalendar($event, calendar, YEAR)"
+                  @selectYear="openCalendar($event, calendar, YEAR)"
                 />
                 <CalendarMonth
                   v-else-if="calendarViews[calendar] === MONTH"
                   :calendar-type="calendar"
                   :start-current-date="startCurrentDate"
                   :end-current-date="endCurrentDate"
-                  @select-month="openCalendar($event, calendar)"
-                  @set-view="setViewMode"
+                  @selectMonth="openCalendar($event, calendar)"
+                  @setView="setViewMode"
                   @prev="moveCalendar(calendar, 'prev', YEAR)"
                   @next="moveCalendar(calendar, 'next', YEAR)"
                 />
@@ -286,9 +286,9 @@ const emitDateRange = () => {
                   :selected-end-date="selectedEndDate"
                   :selecting-end-date="selectingEndDate"
                   :hovered-end-date="hoveredEndDate"
-                  @update-hovered-end-date="hoveredEndDate = $event"
-                  @select-date="selectDate"
-                  @set-view="setViewMode"
+                  @updateHoveredEndDate="hoveredEndDate = $event"
+                  @selectDate="selectDate"
+                  @setView="setViewMode"
                   @prev="moveCalendar(calendar, 'prev')"
                   @next="moveCalendar(calendar, 'next')"
                 />

@@ -6,14 +6,12 @@ import { useAgentsList } from 'dashboard/composables/useAgentsList';
 
 import ThumbnailGroup from 'dashboard/components/widgets/ThumbnailGroup.vue';
 import MultiselectDropdownItems from 'shared/components/ui/MultiselectDropdownItems.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     Spinner,
     ThumbnailGroup,
     MultiselectDropdownItems,
-    NextButton,
   },
   props: {
     conversationId: {
@@ -167,14 +165,13 @@ export default {
             {{ $t('CONVERSATION_PARTICIPANTS.NO_PARTICIPANTS_TEXT') }}
           </p>
         </div>
-        <NextButton
+        <woot-button
           v-tooltip.left="$t('CONVERSATION_PARTICIPANTS.ADD_PARTICIPANTS')"
-          slate
-          ghost
-          sm
-          icon="i-lucide-settings"
-          class="relative -top-1"
           :title="$t('CONVERSATION_PARTICIPANTS.ADD_PARTICIPANTS')"
+          icon="settings"
+          size="tiny"
+          variant="smooth"
+          color-scheme="secondary"
           @click="onOpenDropdown"
         />
       </div>
@@ -191,15 +188,15 @@ export default {
       >
         {{ $t('CONVERSATION_PARTICIPANTS.YOU_ARE_WATCHING') }}
       </p>
-      <NextButton
+      <woot-button
         v-else
-        link
-        xs
-        icon="i-lucide-arrow-right"
-        class="!gap-1"
-        :label="$t('CONVERSATION_PARTICIPANTS.WATCH_CONVERSATION')"
+        icon="arrow-right"
+        variant="link"
+        size="small"
         @click="onSelfAssign"
-      />
+      >
+        {{ $t('CONVERSATION_PARTICIPANTS.WATCH_CONVERSATION') }}
+      </woot-button>
     </div>
     <div
       v-on-clickaway="
@@ -216,13 +213,19 @@ export default {
         >
           {{ $t('CONVERSATION_PARTICIPANTS.ADD_PARTICIPANTS') }}
         </h4>
-        <NextButton ghost slate xs icon="i-lucide-x" @click="onCloseDropdown" />
+        <woot-button
+          icon="dismiss"
+          size="tiny"
+          color-scheme="secondary"
+          variant="clear"
+          @click="onCloseDropdown"
+        />
       </div>
       <MultiselectDropdownItems
         :options="agentsList"
         :selected-items="selectedWatchers"
         has-thumbnail
-        @select="onClickItem"
+        @click="onClickItem"
       />
     </div>
   </div>

@@ -1,13 +1,11 @@
 <script>
 import { mapGetters } from 'vuex';
-import { useTrack } from 'dashboard/composables';
 import InboxItemHeader from './components/InboxItemHeader.vue';
 import ConversationBox from 'dashboard/components/widgets/conversation/ConversationBox.vue';
 import InboxEmptyState from './InboxEmptyState.vue';
 import { useUISettings } from 'dashboard/composables/useUISettings';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
 import { INBOX_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
-import { emitter } from 'shared/helpers/mitt';
 
 export default {
   components: {
@@ -113,7 +111,7 @@ export default {
       this.$store
         .dispatch('setActiveChat', { data: selectedConversation })
         .then(() => {
-          emitter.emit(BUS_EVENTS.SCROLL_TO_MESSAGE);
+          this.$emitter.emit(BUS_EVENTS.SCROLL_TO_MESSAGE);
         });
     },
     findConversation() {
@@ -143,7 +141,7 @@ export default {
         notification_type: notificationType,
       } = notification;
 
-      useTrack(INBOX_EVENTS.OPEN_CONVERSATION_VIA_INBOX, {
+      this.$track(INBOX_EVENTS.OPEN_CONVERSATION_VIA_INBOX, {
         notificationType,
       });
 
@@ -175,7 +173,7 @@ export default {
 </script>
 
 <template>
-  <div class="h-full w-full xl:w-[calc(100%-400px)]">
+  <div class="h-full w-full md:w-[calc(100%-360px)]">
     <div v-if="showEmptyState" class="flex w-full h-full">
       <InboxEmptyState
         :empty-state-message="$t('INBOX.LIST.NO_MESSAGES_AVAILABLE')"
@@ -198,12 +196,12 @@ export default {
       </div>
       <ConversationBox
         v-else
-        class="h-[calc(100%-56px)] [&.conversation-details-wrap]:!border-0"
+        class="h-[calc(100%-56px)]"
         is-inbox-view
         :inbox-id="inboxId"
         :is-contact-panel-open="isContactPanelOpen"
         :is-on-expanded-layout="false"
-        @contact-panel-toggle="onToggleContactPanel"
+        @contactPanelToggle="onToggleContactPanel"
       />
     </div>
   </div>

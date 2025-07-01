@@ -2,10 +2,11 @@
 import { mapGetters } from 'vuex';
 import CsatMetricCard from './ReportMetricCard.vue';
 import { CSAT_RATINGS } from 'shared/constants/messages';
-import BarChart from 'shared/components/charts/BarChart.vue';
 
 export default {
-  components: { BarChart, CsatMetricCard },
+  components: {
+    CsatMetricCard,
+  },
   props: {
     filters: {
       type: Object,
@@ -43,33 +44,6 @@ export default {
         ? this.metrics.totalResponseCount.toLocaleString()
         : '--';
     },
-    chartOptions() {
-      return {
-        indexAxis: 'y',
-        responsive: true,
-        plugins: {
-          legend: {
-            display: false,
-          },
-          title: {
-            display: false,
-          },
-          tooltip: {
-            enabled: false,
-          },
-        },
-        scales: {
-          x: {
-            display: false,
-            stacked: true,
-          },
-          y: {
-            display: false,
-            stacked: true,
-          },
-        },
-      };
-    },
   },
   methods: {
     formatToPercent(value) {
@@ -86,7 +60,7 @@ export default {
 <!-- Added ref for writing specs -->
 <template>
   <div
-    class="flex-col lg:flex-row flex flex-wrap mx-0 shadow outline-1 outline outline-n-container rounded-xl bg-n-solid-2 px-6 py-8 gap-4"
+    class="flex-col lg:flex-row flex flex-wrap mx-0 bg-white dark:bg-slate-800 rounded-[4px] p-4 mb-5 border border-solid border-slate-75 dark:border-slate-700"
   >
     <CsatMetricCard
       :label="$t('CSAT_REPORTS.METRIC.TOTAL_RESPONSES.LABEL')"
@@ -110,11 +84,11 @@ export default {
 
     <div
       v-if="metrics.totalResponseCount && !ratingFilterEnabled"
-      ref="csatBarChart"
-      class="w-full md:w-1/2 md:max-w-[50%] flex-1 rtl:[direction:initial]"
+      ref="csatHorizontalBarChart"
+      class="w-full md:w-1/2 md:max-w-[50%] flex-1 rtl:[direction:initial] p-4"
     >
       <h3
-        class="flex items-center m-0 text-xs font-medium md:text-sm text-n-slate-12"
+        class="flex items-center m-0 text-xs font-medium md:text-sm text-slate-800 dark:text-slate-100"
       >
         <div class="flex flex-row-reverse justify-end">
           <div
@@ -127,8 +101,8 @@ export default {
           </div>
         </div>
       </h3>
-      <div class="mt-2 h-6">
-        <BarChart :collection="chartData" :chart-options="chartOptions" />
+      <div class="mt-2">
+        <woot-horizontal-bar :collection="chartData" :height="24" />
       </div>
     </div>
   </div>

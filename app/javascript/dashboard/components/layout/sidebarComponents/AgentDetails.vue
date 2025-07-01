@@ -1,14 +1,11 @@
 <script>
 import { mapGetters } from 'vuex';
 import Thumbnail from '../../widgets/Thumbnail.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     Thumbnail,
-    NextButton,
   },
-  emits: ['toggleMenu'],
   computed: {
     ...mapGetters({
       currentUser: 'getCurrentUser',
@@ -27,10 +24,10 @@ export default {
 </script>
 
 <template>
-  <NextButton
+  <woot-button
     v-tooltip.right="$t(`SIDEBAR.PROFILE_SETTINGS`)"
-    link
-    class="rounded-full"
+    variant="link"
+    class="flex items-center rounded-full"
     @click="handleClick"
   >
     <Thumbnail
@@ -39,7 +36,6 @@ export default {
       :status="statusOfAgent"
       should-show-status-always
       size="32px"
-      class="flex-shrink-0"
     />
-  </NextButton>
+  </woot-button>
 </template>

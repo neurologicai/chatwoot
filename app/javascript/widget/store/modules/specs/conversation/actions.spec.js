@@ -17,7 +17,6 @@ describe('#actions', () => {
           messages: [{ id: 1, content: 'This is a test message' }],
         },
       });
-
       let windowSpy = vi.spyOn(window, 'window', 'get');
       windowSpy.mockImplementation(() => ({
         WOOT_WIDGET: {

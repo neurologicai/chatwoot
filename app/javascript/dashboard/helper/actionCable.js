@@ -3,9 +3,6 @@ import BaseActionCableConnector from '../../shared/helpers/BaseActionCableConnec
 import DashboardAudioNotificationHelper from './AudioAlerts/DashboardAudioNotificationHelper';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
 import { emitter } from 'shared/helpers/mitt';
-import { useImpersonation } from 'dashboard/composables/useImpersonation';
-
-const { isImpersonating } = useImpersonation();
 
 class ActionCableConnector extends BaseActionCableConnector {
   constructor(app, pubsubToken) {
@@ -30,10 +27,10 @@ class ActionCableConnector extends BaseActionCableConnector {
       'notification.created': this.onNotificationCreated,
       'notification.deleted': this.onNotificationDeleted,
       'notification.updated': this.onNotificationUpdated,
+      'first.reply.created': this.onFirstReplyCreated,
       'conversation.read': this.onConversationRead,
       'conversation.updated': this.onConversationUpdated,
       'account.cache_invalidated': this.onCacheInvalidate,
-      'copilot.message.created': this.onCopilotMessageCreated,
     };
   }
 
@@ -56,7 +53,6 @@ class ActionCableConnector extends BaseActionCableConnector {
   };
 
   onPresenceUpdate = data => {
-    if (isImpersonating.value) return;
     this.app.$store.dispatch('contacts/updatePresence', data.contacts);
     this.app.$store.dispatch('agents/updatePresence', data.users);
     this.app.$store.dispatch('setCurrentUserAvailability', data.users);
@@ -100,10 +96,12 @@ class ActionCableConnector extends BaseActionCableConnector {
     } = data;
     DashboardAudioNotificationHelper.onNewMessage(data);
     this.app.$store.dispatch('addMessage', data);
-    this.app.$store.dispatch('updateConversationLastActivity', {
-      lastActivityAt,
-      conversationId,
-    });
+    if (lastActivityAt && conversationId) {
+      this.app.$store.dispatch('updateConversationLastActivity', {
+        lastActivityAt,
+        conversationId,
+      });
+    }
   };
 
   // eslint-disable-next-line class-methods-use-this
@@ -164,6 +162,7 @@ class ActionCableConnector extends BaseActionCableConnector {
   // eslint-disable-next-line class-methods-use-this
   fetchConversationStats = () => {
     emitter.emit('fetch_conversation_stats');
+    emitter.emit('fetch_overview_reports');
   };
 
   onContactDelete = data => {
@@ -190,8 +189,9 @@ class ActionCableConnector extends BaseActionCableConnector {
     this.app.$store.dispatch('notifications/updateNotification', data);
   };
 
-  onCopilotMessageCreated = data => {
-    this.app.$store.dispatch('copilotMessages/upsert', data);
+  // eslint-disable-next-line class-methods-use-this
+  onFirstReplyCreated = () => {
+    emitter.emit('fetch_overview_reports');
   };
 
   onCacheInvalidate = data => {
@@ -203,7 +203,7 @@ class ActionCableConnector extends BaseActionCableConnector {
 }
 
 export default {
-  init(store, pubsubToken) {
-    return new ActionCableConnector({ $store: store }, pubsubToken);
+  init(pubsubToken) {
+    return new ActionCableConnector(window.WOOT, pubsubToken);
   },
 };

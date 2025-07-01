@@ -2,34 +2,24 @@
 import { mapGetters } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import { useUISettings } from 'dashboard/composables/useUISettings';
-import { useFontSize } from 'dashboard/composables/useFontSize';
 import { clearCookiesOnLogout } from 'dashboard/store/utils/api.js';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
-import { parseAPIErrorResponse } from 'dashboard/store/utils/api';
-import globalConfigMixin from 'shared/mixins/globalConfigMixin';
+import { useGlobalConfig } from 'shared/composables/useGlobalConfig';
 import UserProfilePicture from './UserProfilePicture.vue';
 import UserBasicDetails from './UserBasicDetails.vue';
 import MessageSignature from './MessageSignature.vue';
-import FontSize from './FontSize.vue';
 import HotKeyCard from './HotKeyCard.vue';
 import ChangePassword from './ChangePassword.vue';
 import NotificationPreferences from './NotificationPreferences.vue';
 import AudioNotifications from './AudioNotifications.vue';
 import FormSection from 'dashboard/components/FormSection.vue';
 import AccessToken from './AccessToken.vue';
-import Policy from 'dashboard/components/policy.vue';
-import {
-  ROLES,
-  CONVERSATION_PERMISSIONS,
-} from 'dashboard/constants/permissions.js';
 
 export default {
   components: {
     MessageSignature,
     FormSection,
-    FontSize,
     UserProfilePicture,
-    Policy,
     UserBasicDetails,
     HotKeyCard,
     ChangePassword,
@@ -37,16 +27,16 @@ export default {
     AudioNotifications,
     AccessToken,
   },
-  mixins: [globalConfigMixin],
   setup() {
-    const { isEditorHotKeyEnabled, updateUISettings } = useUISettings();
-    const { currentFontSize, updateFontSize } = useFontSize();
+    const { useInstallationName } = useGlobalConfig();
+    const { uiSettings, updateUISettings, isEditorHotKeyEnabled } =
+      useUISettings();
 
     return {
-      currentFontSize,
-      updateFontSize,
-      isEditorHotKeyEnabled,
+      uiSettings,
       updateUISettings,
+      isEditorHotKeyEnabled,
+      useInstallationName,
     };
   },
   data() {
@@ -82,8 +72,6 @@ export default {
             '/assets/images/dashboard/profile/hot-key-ctrl-enter-dark.svg',
         },
       ],
-      notificationPermissions: [...ROLES, ...CONVERSATION_PERMISSIONS],
-      audioNotificationPermissions: [...ROLES, ...CONVERSATION_PERMISSIONS],
     };
   },
   computed: {
@@ -114,7 +102,9 @@ export default {
 
         return true; // return the value so that the status can be known
       } catch (error) {
-        alertMessage = parseAPIErrorResponse(error) || errorMessage;
+        alertMessage = error?.response?.data?.error
+          ? error.response.data.error
+          : errorMessage;
 
         return false; // return the value so that the status can be known
       } finally {
@@ -186,7 +176,7 @@ export default {
 </script>
 
 <template>
-  <div class="grid py-16 px-5 font-inter mx-auto gap-16 sm:max-w-screen-md">
+  <div class="grid py-16 px-5 font-inter mx-auto gap-16 sm:max-w-[720px]">
     <div class="flex flex-col gap-6">
       <h2 class="text-2xl font-medium text-ash-900">
         {{ $t('PROFILE_SETTINGS.TITLE') }}
@@ -194,6 +184,7 @@ export default {
       <UserProfilePicture
         :src="avatarUrl"
         :name="name"
+        size="72px"
         @change="updateProfilePicture"
         @delete="deleteProfilePicture"
       />
@@ -202,29 +193,17 @@ export default {
         :display-name="displayName"
         :email="email"
         :email-enabled="!globalConfig.disableUserProfileUpdate"
-        @update-user="updateProfile"
+        @updateUser="updateProfile"
       />
     </div>
-    <FormSection
-      :title="$t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.TITLE')"
-      :description="$t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.NOTE')"
-    >
-      <FontSize
-        :value="currentFontSize"
-        :label="$t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.FONT_SIZE.TITLE')"
-        :description="
-          $t('PROFILE_SETTINGS.FORM.INTERFACE_SECTION.FONT_SIZE.NOTE')
-        "
-        @change="updateFontSize"
-      />
-    </FormSection>
+
     <FormSection
       :title="$t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE_SECTION.TITLE')"
       :description="$t('PROFILE_SETTINGS.FORM.MESSAGE_SIGNATURE_SECTION.NOTE')"
     >
       <MessageSignature
         :message-signature="messageSignature"
-        @update-signature="updateSignature"
+        @updateSignature="updateSignature"
       />
     </FormSection>
     <FormSection
@@ -237,7 +216,7 @@ export default {
         <button
           v-for="hotKey in hotKeys"
           :key="hotKey.key"
-          class="px-0 reset-base w-full sm:flex-1"
+          class="px-0 reset-base"
         >
           <HotKeyCard
             :key="hotKey.title"
@@ -257,21 +236,17 @@ export default {
     >
       <ChangePassword />
     </FormSection>
-    <Policy :permissions="audioNotificationPermissions">
-      <FormSection
-        :title="$t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.TITLE')"
-        :description="
-          $t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.NOTE')
-        "
-      >
-        <AudioNotifications />
-      </FormSection>
-    </Policy>
-    <Policy :permissions="notificationPermissions">
-      <FormSection :title="$t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TITLE')">
-        <NotificationPreferences />
-      </FormSection>
-    </Policy>
+    <FormSection
+      :title="$t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.TITLE')"
+      :description="
+        $t('PROFILE_SETTINGS.FORM.AUDIO_NOTIFICATIONS_SECTION.NOTE')
+      "
+    >
+      <AudioNotifications />
+    </FormSection>
+    <FormSection :title="$t('PROFILE_SETTINGS.FORM.NOTIFICATIONS.TITLE')">
+      <NotificationPreferences />
+    </FormSection>
     <FormSection
       :title="$t('PROFILE_SETTINGS.FORM.ACCESS_TOKEN.TITLE')"
       :description="
@@ -281,7 +256,7 @@ export default {
         )
       "
     >
-      <AccessToken :value="currentUser.access_token" @on-copy="onCopyToken" />
+      <AccessToken :value="currentUser.access_token" @onCopy="onCopyToken" />
     </FormSection>
   </div>
 </template>

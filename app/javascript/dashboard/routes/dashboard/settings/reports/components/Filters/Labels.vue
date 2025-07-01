@@ -3,7 +3,6 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'ReportsFiltersLabels',
-  emits: ['labelsFilterSelection'],
   data() {
     return {
       selectedOption: null,
@@ -36,28 +35,31 @@ export default {
       :options="options"
       :option-height="24"
       :show-labels="false"
-      @update:model-value="handleInput"
+      @input="handleInput"
     >
-      <template #singleLabel="props">
-        <div class="flex items-center min-w-0 gap-2">
+      <template slot="singleLabel" slot-scope="props">
+        <div class="flex items-center gap-2">
           <div
             :style="{ backgroundColor: props.option.color }"
             class="w-5 h-5 rounded-full"
           />
-          <span class="my-0 text-slate-800 dark:text-slate-75">
-            {{ props.option.title }}
+          <span class="reports-option__desc">
+            <span class="my-0 text-slate-800 dark:text-slate-75">
+              {{ props.option.title }}
+            </span>
           </span>
         </div>
       </template>
-      <template #option="props">
+      <template slot="option" slot-scope="props">
         <div class="flex items-center gap-2">
           <div
             :style="{ backgroundColor: props.option.color }"
             class="flex-shrink-0 w-5 h-5 border border-solid rounded-full border-slate-100 dark:border-slate-800"
           />
-
-          <span class="my-0 text-slate-800 truncate min-w-0 dark:text-slate-75">
-            {{ props.option.title }}
+          <span class="reports-option__desc">
+            <span class="my-0 text-slate-800 dark:text-slate-75">
+              {{ props.option.title }}
+            </span>
           </span>
         </div>
       </template>

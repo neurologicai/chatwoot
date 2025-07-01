@@ -1,6 +1,6 @@
 <script>
 import addDays from 'date-fns/addDays';
-import DatePicker from 'vue-datepicker-next';
+import DatePicker from 'vue2-datepicker';
 export default {
   components: { DatePicker },
   props: {
@@ -17,7 +17,6 @@ export default {
       default: [],
     },
   },
-  emits: ['change'],
 
   methods: {
     handleChange(value) {

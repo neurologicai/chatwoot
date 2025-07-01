@@ -85,8 +85,7 @@ class ReconnectService {
   };
 
   fetchConversationMessagesOnReconnect = async () => {
-    const { conversation_id: conversationId } =
-      this.router.currentRoute.value.params;
+    const { conversation_id: conversationId } = this.router.currentRoute.params;
     if (conversationId) {
       await this.store.dispatch('syncActiveConversationMessages', {
         conversationId: Number(conversationId),
@@ -110,7 +109,7 @@ class ReconnectService {
   };
 
   handleRouteSpecificFetch = async () => {
-    const currentRoute = this.router.currentRoute.value.name;
+    const currentRoute = this.router.currentRoute.name;
     if (isAConversationRoute(currentRoute, true)) {
       await this.fetchConversationsOnReconnect();
       await this.fetchConversationMessagesOnReconnect();
@@ -124,8 +123,7 @@ class ReconnectService {
   };
 
   setConversationLastMessageId = async () => {
-    const { conversation_id: conversationId } =
-      this.router.currentRoute.value.params;
+    const { conversation_id: conversationId } = this.router.currentRoute.params;
     if (conversationId) {
       await this.store.dispatch('setConversationLastMessageId', {
         conversationId: Number(conversationId),

@@ -17,7 +17,7 @@ class Api::V1::ProfilesController < Api::BaseController
 
   def avatar
     @user.avatar.attachment.destroy! if @user.avatar.attached?
-    @user.reload
+    head :ok
   end
 
   def auto_offline

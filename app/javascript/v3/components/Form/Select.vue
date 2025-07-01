@@ -29,7 +29,7 @@ export default {
       type: String,
       required: true,
     },
-    modelValue: {
+    value: {
       type: String,
       default: '',
     },
@@ -42,10 +42,9 @@ export default {
       default: '',
     },
   },
-  emits: ['update:modelValue'],
   methods: {
     onInput(e) {
-      this.$emit('update:modelValue', e.target.value);
+      this.$emit('input', e.target.value);
     },
   },
 };
@@ -61,14 +60,14 @@ export default {
   >
     <select
       :id="id"
-      :selected="modelValue"
+      :selected="value"
       :name="name"
       :class="{
-        'text-ash-400': !modelValue,
-        'text-ash-900': modelValue,
+        'text-ash-400': !value,
+        'text-ash-900': value,
         'pl-9': icon,
       }"
-      class="block w-full px-3 py-2 pr-6 mb-0 border-0 shadow-sm outline-none appearance-none rounded-xl select-caret ring-ash-200 ring-1 ring-inset placeholder:text-ash-900 focus:ring-2 focus:ring-inset focus:ring-primary-500 text-sm leading-6"
+      class="block w-full px-3 py-2 pr-6 mb-0 border-0 shadow-sm outline-none appearance-none rounded-xl select-caret ring-ash-200 ring-1 ring-inset placeholder:text-ash-900 focus:ring-2 focus:ring-inset focus:ring-primary-500 sm:text-sm sm:leading-6"
       @input="onInput"
     >
       <option value="" disabled selected class="hidden">

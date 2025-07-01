@@ -2,17 +2,14 @@
 import AutomationActionTeamMessageInput from './AutomationActionTeamMessageInput.vue';
 import AutomationActionFileInput from './AutomationFileInput.vue';
 import WootMessageEditor from 'dashboard/components/widgets/WootWriter/Editor.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
-
 export default {
   components: {
     AutomationActionTeamMessageInput,
     AutomationActionFileInput,
     WootMessageEditor,
-    NextButton,
   },
   props: {
-    modelValue: {
+    value: {
       type: Object,
       default: () => null,
     },
@@ -41,27 +38,24 @@ export default {
       default: false,
     },
   },
-  emits: ['update:modelValue', 'input', 'removeAction', 'resetAction'],
   computed: {
     action_name: {
       get() {
-        if (!this.modelValue) return null;
-        return this.modelValue.action_name;
+        if (!this.value) return null;
+        return this.value.action_name;
       },
       set(value) {
-        const payload = this.modelValue || {};
-        this.$emit('update:modelValue', { ...payload, action_name: value });
+        const payload = this.value || {};
         this.$emit('input', { ...payload, action_name: value });
       },
     },
     action_params: {
       get() {
-        if (!this.modelValue) return null;
-        return this.modelValue.action_params;
+        if (!this.value) return null;
+        return this.value.action_params;
       },
       set(value) {
-        const payload = this.modelValue || {};
-        this.$emit('update:modelValue', { ...payload, action_params: value });
+        const payload = this.value || {};
         this.$emit('input', { ...payload, action_params: value });
       },
     },
@@ -175,12 +169,11 @@ export default {
           />
         </div>
       </div>
-      <NextButton
+      <woot-button
         v-if="!isMacro"
-        icon="i-lucide-x"
-        slate
-        ghost
-        class="flex-shrink-0"
+        icon="dismiss"
+        variant="clear"
+        color-scheme="secondary"
         @click="removeAction"
       />
     </div>
@@ -205,10 +198,10 @@ export default {
 
 <style lang="scss" scoped>
 .filter {
-  @apply bg-n-background p-2 border border-solid border-n-strong dark:border-n-strong rounded-lg mb-2;
+  @apply bg-slate-50 dark:bg-slate-800 p-2 border border-solid border-slate-75 dark:border-slate-600 rounded-md mb-2;
 
   &.is-a-macro {
-    @apply mb-0 bg-n-background dark:bg-n-solid-1 p-0 border-0 rounded-none;
+    @apply mb-0 bg-white dark:bg-slate-700 p-0 border-0 rounded-none;
   }
 }
 
@@ -217,19 +210,15 @@ export default {
 }
 
 .filter.has-error {
-  @apply bg-n-ruby-8/20 border-n-ruby-5 dark:border-n-ruby-5;
-
-  &.is-a-macro {
-    @apply bg-transparent;
-  }
+  @apply bg-red-50 dark:bg-red-800/50 border-red-100 dark:border-red-700/50;
 }
 
 .filter-inputs {
-  @apply flex gap-1;
+  @apply flex;
 }
 
 .filter-error {
-  @apply text-n-ruby-9 dark:text-n-ruby-9 block my-1 mx-0;
+  @apply text-red-500 dark:text-red-200 block my-1 mx-0;
 }
 
 .action__question,

@@ -76,6 +76,7 @@ class Integrations::Linear::ProcessorService
   end
 
   def linear_client
-    @linear_client ||= Linear.new(linear_hook.access_token)
+    credentials = linear_hook.settings
+    @linear_client ||= Linear.new(credentials['api_key'])
   end
 end

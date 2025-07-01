@@ -4,7 +4,6 @@ import { ref, computed } from 'vue';
 import microsoftClient from 'dashboard/api/channel/microsoftClient';
 import googleClient from 'dashboard/api/channel/googleClient';
 import SettingsSubPageHeader from '../../../SettingsSubPageHeader.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 import { useAlert } from 'dashboard/composables';
 
@@ -68,7 +67,7 @@ async function requestAuthorization() {
 
 <template>
   <div
-    class="border border-n-weak bg-n-solid-1 rounded-t-lg border-b-0 h-full w-full p-6 col-span-6 overflow-auto"
+    class="border border-slate-25 dark:border-slate-800/60 bg-white dark:bg-slate-900 h-full p-6 w-full max-w-full md:w-3/4 md:max-w-[75%] flex-shrink-0 flex-grow-0"
   >
     <SettingsSubPageHeader
       :header-title="title"
@@ -80,12 +79,11 @@ async function requestAuthorization() {
         type="email"
         :placeholder="inputPlaceholder"
       />
-      <NextButton
-        :is-loading="isRequestingAuthorization"
+      <woot-submit-button
+        icon="brand-twitter"
         type="submit"
-        solid
-        blue
-        :label="submitButtonText"
+        :button-text="submitButtonText"
+        :loading="isRequestingAuthorization"
       />
     </form>
   </div>

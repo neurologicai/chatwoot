@@ -1,11 +1,9 @@
 <script setup>
 import { computed } from 'vue';
 import { useStoreGetters } from 'dashboard/composables/store';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'dashboard/composables/useI18n';
 import { frontendURL } from 'dashboard/helper/URLHelper';
 import { useInstallationName } from 'shared/mixins/globalConfigMixin';
-
-import Button from 'dashboard/components-next/button/Button.vue';
 
 const props = defineProps({
   id: {
@@ -39,7 +37,7 @@ const integrationStatus = computed(() =>
 );
 
 const integrationStatusColor = computed(() =>
-  props.enabled ? 'bg-n-teal-9' : 'bg-n-slate-8'
+  props.enabled ? 'bg-green-500' : 'bg-slate-200'
 );
 
 const actionURL = computed(() =>
@@ -49,37 +47,39 @@ const actionURL = computed(() =>
 
 <template>
   <div
-    class="flex flex-col flex-1 p-6 m-[1px] outline outline-n-container outline-1 bg-n-alpha-3 rounded-md shadow"
+    class="flex flex-col flex-1 p-6 bg-white border border-solid rounded-md dark:bg-slate-800 border-slate-50 dark:border-slate-700/50"
   >
     <div class="flex items-start justify-between">
       <div class="flex h-12 w-12 mb-4">
         <img
           :src="`/dashboard/images/integrations/${id}.png`"
-          class="max-w-full rounded-md border border-n-weak shadow-sm block dark:hidden bg-n-alpha-3 dark:bg-n-alpha-2"
+          class="max-w-full rounded-md border border-slate-50 dark:border-slate-700/50 shadow-sm block dark:hidden bg-white dark:bg-slate-900"
         />
         <img
           :src="`/dashboard/images/integrations/${id}-dark.png`"
-          class="max-w-full rounded-md border border-n-weak shadow-sm hidden dark:block bg-n-alpha-3 dark:bg-n-alpha-2"
+          class="max-w-full rounded-md border border-slate-50 dark:border-slate-700/50 shadow-sm hidden dark:block bg-white dark:bg-slate-900"
         />
       </div>
-      <span
+      <fluent-icon
         v-tooltip="integrationStatus"
-        class="text-white p-0.5 rounded-full w-5 h-5 flex items-center justify-center"
+        size="20"
+        class="text-white p-0.5 rounded-full"
         :class="integrationStatusColor"
-      >
-        <i class="i-ph-check-bold text-sm" />
-      </span>
+        icon="checkmark"
+      />
     </div>
     <div class="flex flex-col m-0 flex-1">
       <div
-        class="font-medium mb-2 text-n-slate-12 flex justify-between items-center"
+        class="font-medium mb-2 text-slate-800 dark:text-slate-100 flex justify-between items-center"
       >
         <span class="text-base font-semibold">{{ name }}</span>
         <router-link :to="actionURL">
-          <Button :label="$t('INTEGRATION_APPS.CONFIGURE')" link />
+          <woot-button class="clear link">
+            {{ $t('INTEGRATION_APPS.CONFIGURE') }}
+          </woot-button>
         </router-link>
       </div>
-      <p class="text-n-slate-11">
+      <p class="text-slate-700 dark:text-slate-200">
         {{ useInstallationName(description, globalConfig.installationName) }}
       </p>
     </div>

@@ -87,7 +87,6 @@ export const generateCustomAttributeTypes = (customAttributes, type) => {
 };
 
 export const generateConditionOptions = (options, key = 'id') => {
-  if (!options || !Array.isArray(options)) return [];
   return options.map(i => {
     return {
       id: i[key],
@@ -96,17 +95,25 @@ export const generateConditionOptions = (options, key = 'id') => {
   });
 };
 
+// Add the "None" option to the agent list
+export const addNoneToList = agents => [
+  {
+    id: 'nil',
+    name: 'None',
+  },
+  ...(agents || []),
+];
+
 export const getActionOptions = ({
   agents,
   teams,
   labels,
   slaPolicies,
   type,
-  addNoneToListFn,
 }) => {
   const actionsMap = {
-    assign_agent: addNoneToListFn ? addNoneToListFn(agents) : agents,
-    assign_team: addNoneToListFn ? addNoneToListFn(teams) : teams,
+    assign_agent: addNoneToList(agents),
+    assign_team: addNoneToList(teams),
     send_email_to_team: teams,
     add_label: generateConditionOptions(labels, 'title'),
     remove_label: generateConditionOptions(labels, 'title'),

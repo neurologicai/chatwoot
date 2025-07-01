@@ -3,7 +3,6 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'ReportsFiltersInboxes',
-  emits: ['inboxFilterSelection'],
   data() {
     return {
       selectedOption: null,
@@ -36,7 +35,7 @@ export default {
       :options="options"
       :option-height="24"
       :show-labels="false"
-      @update:model-value="handleInput"
+      @input="handleInput"
     />
   </div>
 </template>

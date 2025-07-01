@@ -3,6 +3,7 @@ import PageHeader from '../../SettingsSubPageHeader.vue';
 import Twilio from './Twilio.vue';
 import ThreeSixtyDialogWhatsapp from './360DialogWhatsapp.vue';
 import CloudWhatsapp from './CloudWhatsapp.vue';
+import Unoapi from './Unoapi.vue';
 
 export default {
   components: {
@@ -10,6 +11,7 @@ export default {
     Twilio,
     ThreeSixtyDialogWhatsapp,
     CloudWhatsapp,
+    Unoapi,
   },
   data() {
     return {
@@ -21,13 +23,13 @@ export default {
 
 <template>
   <div
-    class="border border-n-weak bg-n-solid-1 rounded-t-lg border-b-0 h-full w-full p-6 col-span-6 overflow-auto"
+    class="border border-slate-25 dark:border-slate-800/60 bg-white dark:bg-slate-900 h-full p-6 w-full max-w-full md:w-3/4 md:max-w-[75%] flex-shrink-0 flex-grow-0"
   >
     <PageHeader
       :header-title="$t('INBOX_MGMT.ADD.WHATSAPP.TITLE')"
       :header-content="$t('INBOX_MGMT.ADD.WHATSAPP.DESC')"
     />
-    <div class="flex-shrink-0 flex-grow-0">
+    <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
       <label>
         {{ $t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.LABEL') }}
         <select v-model="provider">
@@ -37,12 +39,16 @@ export default {
           <option value="twilio">
             {{ $t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.TWILIO') }}
           </option>
+          <option value="unoapi">
+            {{ $t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.UNOAPI') }}
+          </option>
         </select>
       </label>
     </div>
 
     <Twilio v-if="provider === 'twilio'" type="whatsapp" />
     <ThreeSixtyDialogWhatsapp v-else-if="provider === '360dialog'" />
-    <CloudWhatsapp v-else />
+    <CloudWhatsapp v-else-if="provider === 'whatsapp_cloud'" />
+    <Unoapi v-else />
   </div>
 </template>

@@ -1,12 +1,10 @@
 <script>
 import Thumbnail from 'dashboard/components/widgets/Thumbnail.vue';
 import { dynamicTime } from 'shared/helpers/timeHelper';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     Thumbnail,
-    NextButton,
   },
   props: {
     notificationItem: {
@@ -14,7 +12,6 @@ export default {
       default: () => {},
     },
   },
-  emits: ['openNotification'],
   computed: {
     notificationAssignee() {
       const { primary_actor: primaryActor } = this.notificationItem;
@@ -41,10 +38,11 @@ export default {
 
 <template>
   <div class="w-full">
-    <NextButton
-      link
-      slate
-      class="!w-full !h-auto"
+    <woot-button
+      size="expanded"
+      color-scheme="secondary"
+      variant="link"
+      class="w-full"
       @click="onClickOpenNotification()"
     >
       <div
@@ -101,6 +99,6 @@ export default {
           </span>
         </div>
       </div>
-    </NextButton>
+    </woot-button>
   </div>
 </template>

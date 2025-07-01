@@ -1,11 +1,10 @@
 class Integrations::OpenaiBaseService
-  # gpt-4o-mini supports 128,000 tokens
+  # 3.5 support 16,385 tokens
   # 1 token is approx 4 characters
-  # sticking with 120000 to be safe
-  # 120000 * 4 = 480,000 characters (rounding off downwards to 400,000 to be safe)
-  TOKEN_LIMIT = 400_000
+  # 16385 * 4 = 65540 characters, sticking to 50,000 to be safe
+  TOKEN_LIMIT = 50_000
   API_URL = 'https://api.openai.com/v1/chat/completions'.freeze
-  GPT_MODEL = ENV.fetch('OPENAI_GPT_MODEL', 'gpt-4o-mini').freeze
+  GPT_MODEL = 'gpt-3.5-turbo'.freeze
 
   ALLOWED_EVENT_NAMES = %w[rephrase summarize reply_suggestion fix_spelling_grammar shorten expand make_friendly make_formal simplify].freeze
   CACHEABLE_EVENTS = %w[].freeze

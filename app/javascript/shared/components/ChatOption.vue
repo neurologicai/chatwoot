@@ -13,7 +13,6 @@ export default {
       default: false,
     },
   },
-  emits: ['optionSelect'],
   computed: {
     ...mapGetters({
       widgetColor: 'appConfig/getWidgetColor',
@@ -21,7 +20,7 @@ export default {
   },
   methods: {
     onClick() {
-      this.$emit('optionSelect', this.action);
+      this.$emit('click', this.action);
     },
   },
 };
@@ -40,15 +39,34 @@ export default {
 </template>
 
 <style scoped lang="scss">
+@import '~widget/assets/scss/variables.scss';
+
 .option {
-  @apply rounded-[5rem] border border-solid border-n-brand ltr:float-left rtl:float-right m-1 max-w-full;
+  border-radius: $space-jumbo;
+  border: 1px solid $color-woot;
+  float: left;
+  margin: $space-smaller;
+  max-width: 100%;
 
   .option-button {
-    @apply bg-transparent border-0 cursor-pointer h-auto leading-normal ltr:text-left rtl:text-right whitespace-normal rounded-[2rem] min-h-[2.5rem];
+    background: transparent;
+    border-radius: $space-large;
+    border: 0;
+    cursor: pointer;
+    height: auto;
+    line-height: 1.5;
+    min-height: $space-two * 2;
+    text-align: left;
+    white-space: normal;
 
     span {
       display: inline-block;
       vertical-align: middle;
+    }
+
+    > .icon {
+      margin-right: $space-smaller;
+      font-size: $font-size-medium;
     }
   }
 }

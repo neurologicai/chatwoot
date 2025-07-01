@@ -10,7 +10,6 @@ export default {
       default: () => {},
     },
   },
-  emits: ['dismiss'],
   computed: {
     replyToAttachment() {
       if (!this.inReplyTo?.attachments?.length) {

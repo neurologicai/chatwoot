@@ -5,11 +5,12 @@
 # Table name: inboxes
 #
 #  id                            :integer          not null, primary key
+#  allow_agent_to_delete_message :boolean          default(TRUE), not null
 #  allow_messages_after_resolved :boolean          default(TRUE)
 #  auto_assignment_config        :jsonb
 #  business_name                 :string
 #  channel_type                  :string
-#  csat_config                   :jsonb            not null
+#  csat_response_visible         :boolean          default(FALSE), not null
 #  csat_survey_enabled           :boolean          default(FALSE)
 #  email_address                 :string
 #  enable_auto_assignment        :boolean          default(TRUE)
@@ -83,24 +84,14 @@ class Inbox < ApplicationRecord
 
   scope :order_by_name, -> { order('lower(name) ASC') }
 
-  # Adds multiple members to the inbox
-  # @param user_ids [Array<Integer>] Array of user IDs to add as members
-  # @return [void]
-  def add_members(user_ids)
-    inbox_members.create!(user_ids.map { |user_id| { user_id: user_id } })
-    update_account_cache
+  def add_member(user_id)
+    member = inbox_members.new(user_id: user_id)
+    member.save!
   end
 
-  # Removes multiple members from the inbox
-  # @param user_ids [Array<Integer>] Array of user IDs to remove
-  # @return [void]
-  def remove_members(user_ids)
-    inbox_members.where(user_id: user_ids).destroy_all
-    update_account_cache
-  end
-
-  def sms?
-    channel_type == 'Channel::Sms'
+  def remove_member(user_id)
+    member = inbox_members.find_by!(user_id: user_id)
+    member.try(:destroy)
   end
 
   def facebook?
@@ -108,11 +99,7 @@ class Inbox < ApplicationRecord
   end
 
   def instagram?
-    (facebook? || instagram_direct?) && channel.instagram_id.present?
-  end
-
-  def instagram_direct?
-    channel_type == 'Channel::Instagram'
+    facebook? && channel.instagram_id.present?
   end
 
   def web_widget?
@@ -139,13 +126,29 @@ class Inbox < ApplicationRecord
     channel_type == 'Channel::Whatsapp'
   end
 
+  def internal?
+    channel_type == 'Channel::Internal'
+  end
+
+  def internal?
+    channel_type == 'Channel::Internal'
+  end
+
   def assignable_agents
     (account.users.where(id: members.select(:user_id)) + account.administrators).uniq
   end
 
   def active_bot?
     agent_bot_inbox&.active? || hooks.where(app_id: %w[dialogflow],
-                                            status: 'enabled').count.positive?
+                                            status: 'enabled').count.positive? || captain_enabled?
+  end
+
+  def captain_enabled?
+    captain_hook = account.hooks.where(
+      app_id: %w[captain], status: 'enabled'
+    ).first
+
+    captain_hook.present? && captain_hook.settings['inbox_ids'].split(',').include?(id.to_s)
   end
 
   def inbox_type

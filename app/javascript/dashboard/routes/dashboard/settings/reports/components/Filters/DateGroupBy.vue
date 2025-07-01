@@ -13,7 +13,6 @@ export default {
       default: () => GROUP_BY_OPTIONS.DAY,
     },
   },
-  emits: ['onGroupingChange'],
   data() {
     return {
       currentSelectedFilter: null,

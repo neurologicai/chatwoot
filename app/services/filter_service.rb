@@ -1,7 +1,7 @@
 require 'json'
 
 class FilterService
-  include Filters::FilterHelper
+  include FilterHelper
   include CustomExceptions::CustomFilter
 
   ATTRIBUTE_MODEL = 'conversation_attribute'.freeze
@@ -43,15 +43,18 @@ class FilterService
   end
 
   def filter_values(query_hash)
-    attribute_key = query_hash['attribute_key']
-    values = query_hash['values']
+    case query_hash['attribute_key']
+    when 'status'
+      return Conversation.statuses.values if query_hash['values'].include?('all')
 
-    return conversation_status_values(values) if attribute_key == 'status'
-    return conversation_priority_values(values) if attribute_key == 'priority'
-    return message_type_values(values) if attribute_key == 'message_type'
-    return downcase_array_values(values) if attribute_key == 'content'
-
-    case_insensitive_values(query_hash)
+      query_hash['values'].map { |x| Conversation.statuses[x.to_sym] }
+    when 'message_type'
+      query_hash['values'].map { |x| Message.message_types[x.to_sym] }
+    when 'content'
+      downcase_array_values(query_hash['values'])
+    else
+      case_insensitive_values(query_hash)
+    end
   end
 
   def downcase_array_values(values)
@@ -200,11 +203,5 @@ class FilterService
       @query_string += " #{build_condition_query(model_filters, query_hash, current_index).strip}"
     end
     base_relation.where(@query_string, @filter_values.with_indifferent_access)
-  end
-
-  def validate_query_operator
-    @params[:payload].each do |query_hash|
-      validate_single_condition(query_hash)
-    end
   end
 end

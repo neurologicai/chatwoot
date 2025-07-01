@@ -17,7 +17,7 @@
 #To learn more, please read the Rails Internationalization guide
 #available at https://guides.rubyonrails.org/i18n.html.
 pt_BR:
-  hello: 'Olá, mundo'
+  hello: "Olá, mundo"
   messages:
     reset_password_success: Legal! A solicitação de alteração de senha foi bem sucedida. Verifique seu e-mail para obter instruções.
     reset_password_failure: Uh ho! Não conseguimos encontrar nenhum usuário com o e-mail especificado.
@@ -29,9 +29,8 @@ pt_BR:
       invalid: Eventos inválidos
     signup:
       disposable_email: Não permitimos e-mails descartáveis
-      blocked_domain: Este domínio não é permitido. Se você acredita que isso é um erro, por favor contate o suporte.
       invalid_email: Você digitou um email inválido
-      email_already_exists: 'Você já se cadastrou para uma conta com %{email}'
+      email_already_exists: "Você já se cadastrou para uma conta com %{email}"
       invalid_params: 'Inválido, por favor, verifique os parâmetros de inscrição e tente novamente'
       failed: Registro falhou
     data_import:
@@ -50,9 +49,9 @@ pt_BR:
       locale:
         unique: deve ser único na categoria e no portal
     dyte:
-      invalid_message_type: 'Tipo de mensagem inválido. Ação não permitida'
+      invalid_message_type: "Tipo de mensagem inválido. Ação não permitida"
     slack:
-      invalid_channel_id: 'Canal de slack inválido. Por favor, tente novamente'
+      invalid_channel_id: "Canal de slack inválido. Por favor, tente novamente"
     inboxes:
       imap:
         socket_error: Por favor, verifique a conexão de rede, endereço IMAP e tente novamente.
@@ -66,10 +65,7 @@ pt_BR:
       number_of_records: Limite atingido. O número máximo de filtros personalizados permitidos para um usuário por conta é de 50.
       invalid_attribute: Chave de atributo inválido - [%{key}]. A chave deve ser uma das [%{allowed_keys}] ou um atributo personalizado definido na conta.
       invalid_operator: Operador inválido. Os operadores permitidos para %{attribute_name} são [%{allowed_keys}].
-      invalid_query_operator: Operador de consulta deve ser "E" ou "OU".
       invalid_value: Valor inválido. Os valores fornecidos para %{attribute_name} são inválidos
-    custom_attribute_definition:
-      key_conflict: A chave fornecida não é permitida pois pode entrar em conflito com os atributos padrão.
   reports:
     period: Reportando o período %{since} a %{until}
     utc_warning: O relatório gerado está em fuso horário UTC
@@ -87,12 +83,12 @@ pt_BR:
       avg_first_response_time: Tempo médio de primeira resposta
       avg_resolution_time: Tempo médio de resolução
     label_csv:
-      label_title: Etiqueta
+      label_title: Nome do campo
       conversations_count: Nº de Conversas
       avg_first_response_time: Tempo médio de primeira resposta
       avg_resolution_time: Tempo médio de resolução
     team_csv:
-      team_name: Nome do Time
+      team_name: Nome do departamento
       conversations_count: Contagem de conversas
       avg_first_response_time: Tempo médio de primeira resposta
       avg_resolution_time: Tempo médio de resolução
@@ -101,13 +97,13 @@ pt_BR:
     conversation_traffic_csv:
       timezone: Fuso horário
     sla_csv:
-      conversation_id: ID da conversa
+      conversation_id: Conversas
       sla_policy_breached: Política SLA
-      assignee: Agente atribuído
-      team: Time
+      assignee: Responsável
+      team: Times
       inbox: Caixa de Entrada
-      labels: Etiquetas
-      conversation_link: Link para a Conversa
+      labels: Marcadores
+      conversation_link: Link para a conversa
       breached_events: Eventos Violados
     default_group_by: dia
     csat:
@@ -122,118 +118,108 @@ pt_BR:
         recorded_at: Data de gravação
   notifications:
     notification_title:
-      conversation_creation: ''
-      conversation_assignment: 'Uma conversa (#%{display_id}) foi atribuída a você'
-      assigned_conversation_new_message: 'Uma nova mensagem foi criada na conversa (#%{display_id})'
-      conversation_mention: 'Você foi mencionado em uma conversa (#%{display_id})'
-      sla_missed_first_response: 'Meta de SLA de Primeira Resposta não alcançada para a conversa (#%{display_id})'
-      sla_missed_next_response: 'Meta de SLA de Próxima Resposta não alcançada para a conversa (#%{display_id})'
-      sla_missed_resolution: 'Meta de SLA de Resolução não alcançada para a conversa (#%{display_id})'
-    attachment: 'Anexo'
-    no_content: 'Sem conteúdo'
+      conversation_creation: ""
+      conversation_assignment: "Uma conversa (#%{display_id}) foi atribuída a você"
+      assigned_conversation_new_message: "Uma nova mensagem foi criada na conversa (#%{display_id})"
+      conversation_mention: "Você foi mencionado em uma conversa (#%{display_id})"
+      sla_missed_first_response: "Primeira resposta da meta de SLA perdida para conversa (#%{display_id})"
+      sla_missed_next_response: ""
+      sla_missed_resolution: "Resolução de meta de SLA perdida para conversa (#%{display_id})"
+    attachment: "Anexo"
+    no_content: "Sem conteúdo"
   conversations:
-    captain:
-      handoff: 'Transferindo para outro agente para mais assistência.'
     messages:
-      instagram_story_content: '%{story_sender} mencionou você na conversa: '
+      instagram_story_content: "%{story_sender} mencionou você na conversa: "
       instagram_deleted_story_content: Este Story não está mais disponível.
-      deleted: Esta mensagem foi excluída
+      deleted: Esta mensagem foi apagada
       delivery_status:
-        error_code: 'Código de erro: %{error_code}'
+        error_code: "Código de erro: %{error_code}"
     activity:
-      captain:
-        resolved: 'A conversa foi marcada como resolvida por %{user_name} por inatividade'
-        open: 'A conversa foi marcada como aberta por %{user_name}'
       status:
-        resolved: 'Conversa foi marcada como resolvida por %{user_name}'
-        contact_resolved: 'A conversa foi resolvida por %{contact_name}'
-        open: 'Conversa foi reaberta por %{user_name}'
-        pending: 'Conversa foi marcada como pendente por %{user_name}'
-        snoozed: 'Conversa foi adiada por %{user_name}'
-        auto_resolved_days: 'A conversa foi marcada como resolvida pelo sistema por ter %{count} dias de inatividade'
-        auto_resolved_hours: 'A conversa foi marcada como resolvida pelo sistema por ter %{count} horas de inatividade'
-        auto_resolved_minutes: 'A conversa foi marcada como resolvida pelo sistema por ter %{count} minutos de inatividade'
+        resolved: "Conversa foi marcada como resolvida por %{user_name}"
+        contact_resolved: "A conversa foi resolvida por %{contact_name}"
+        open: "Conversa foi reaberta por %{user_name}"
+        pending: "Conversa foi marcada como pendente por %{user_name}"
+        snoozed: "Conversa não atribuída por %{user_name}"
+        auto_resolved: "Conversa foi marcada como resolvida pelo sistema por ter %{duration} dias de inatividade"
         system_auto_open: O sistema reabriu a conversa devido a uma nova mensagem recebida.
       priority:
         added: '%{user_name} definiu a prioridade para %{new_priority}'
         updated: '%{user_name} mudou a prioridade de %{old_priority} para %{new_priority}'
         removed: '%{user_name} removeu a prioridade'
       assignee:
-        self_assigned: '%{user_name} atribuiu a si mesmo essa conversa'
-        assigned: 'Atribuído a %{assignee_name} por %{user_name}'
-        removed: 'Conversa desatribuída por %{user_name}'
+        self_assigned: "%{user_name} atribuiu a si mesmo essa conversa"
+        assigned: "Atribuído a %{assignee_name} por %{user_name}"
+        removed: "Conversa não atribuída por %{user_name}"
       team:
-        assigned: 'Atribuído a %{team_name} por %{user_name}'
-        assigned_with_assignee: 'Atribuído a %{assignee_name} via %{team_name} por %{user_name}'
-        removed: 'Desatribuído de %{team_name} por %{user_name}'
+        assigned: "Atribuído a %{team_name} por %{user_name}"
+        assigned_with_assignee: "Atribuído a %{assignee_name} via %{team_name} por %{user_name}"
+        removed: "Desatribuído de %{team_name} por %{user_name}"
       labels:
-        added: '%{user_name} adicionou %{labels}'
-        removed: '%{user_name} removeu %{labels}'
+        added: "%{user_name} adicionou %{labels}"
+        removed: "%{user_name} removeu %{labels}"
       sla:
-        added: '%{user_name} adicionou política de SLA %{sla_name}'
-        removed: '%{user_name} removeu a política de SLA %{sla_name}'
-      muted: '%{user_name} silenciou a conversa'
-      unmuted: '%{user_name} reativou a conversa'
-      auto_resolution_message: 'Resolvendo a conversa dado que está inativa por um tempo. Por favor, inicie uma nova conversa se precisar de mais ajuda.'
+        added: "%{user_name} adicionou política de SLA %{sla_name}"
+        removed: "%{user_name} removeu a política de SLA %{sla_name}"
+      muted: "%{user_name} silenciou a conversa"
+      unmuted: "%{user_name} reativou a conversa"
     templates:
-      greeting_message_body: '%{account_name} normalmente responde em algumas horas.'
-      ways_to_reach_you_message_body: 'Informe à equipe uma forma de contatá-lo.'
-      email_input_box_message_body: 'Seja notificado por e-mail'
-      csat_input_message_body: 'Por favor, classifique a conversa'
+      greeting_message_body: "%{account_name} normalmente responde em algumas horas."
+      ways_to_reach_you_message_body: "Informe uma forma para entrarmos em contato com você."
+      email_input_box_message_body: "Seja notificado por e-mail"
+      csat_input_message_body: "Por favor, classifique a conversa"
     reply:
       email:
         header:
-          from_with_name: '%{assignee_name} de %{inbox_name} <%{from_email}>'
-          reply_with_name: '%{assignee_name} de %{inbox_name} <reply+%{reply_email}>'
-          friendly_name: '%{sender_name} de %{business_name} <%{from_email}>'
-          professional_name: '%{business_name} <%{from_email}>'
+          from_with_name: "%{assignee_name} de %{inbox_name} <reply+%{from_email}>"
+          reply_with_name: "%{assignee_name} de %{inbox_name} <reply+%{reply_email}>"
+          friendly_name: "%{sender_name} de %{business_name} <reply+%{from_email}>"
+          professional_name: "%{business_name} <%{from_email}>"
       channel_email:
         header:
-          reply_with_name: '%{assignee_name} de %{inbox_name} <%{from_email}>'
-          reply_with_inbox_name: '%{inbox_name} <%{from_email}>'
-      email_subject: 'Novas mensagens nesta conversa'
-      transcript_subject: 'Transcrição da conversa'
+          reply_with_name: "%{assignee_name} de %{inbox_name} <reply+%{from_email}>"
+          reply_with_inbox_name: "%{inbox_name} <%{from_email}>"
+      email_subject: "Novas mensagens nesta conversa"
+      transcript_subject: "Transcrição da conversa"
     survey:
-      response: 'Por favor, classifique esta conversa, %{link}'
+      response: "Por favor, classifique esta conversa, %{link}"
   contacts:
     online:
-      delete: '%{contact_name} está Online, por favor, tente novamente mais tarde'
+      delete: "%{contact_name} está Online, por favor, tente novamente mais tarde"
   integration_apps:
     dashboard_apps:
-      name: 'Painel de Aplicativos'
-      description: 'O Painel de Aplicativos permite que você crie e incorpore aplicativos que exibem informações, pedidos ou histórico de pagamento, fornecendo mais contexto aos seus agentes de suporte ao cliente.'
+      name: "Apps da Dashboard"
+      description: "Dashboard Apps permitem que você crie e incorpore aplicativos que exibem informações do usuário, pedidos ou histórico de pagamentos, proporcionando mais contexto para seus agentes de suporte ao cliente."
     dyte:
-      name: 'Dyte'
-      description: 'Dyte é um produto que integra as funcionalidades de áudio e vídeo em sua aplicação. Com esta integração, os seus agentes podem iniciar chamadas de vídeo/voz com seus clientes diretamente do chatwoot.'
-      meeting_name: '%{agent_name} começou a reunião'
+      name: "Dyte"
+      description: "Dyte é um produto que integra funcionalidades de áudio e vídeo em sua aplicação. Com esta integração, seus agentes podem iniciar chamadas de vídeo/voz com seus clientes diretamente no 🅷🆄🅱."
+      meeting_name: "%{agent_name} começou a reunião"
     slack:
-      name: 'Slack'
-      description: 'Integre Chatwoot com Slack para manter seu time em sincronia. Essa integração permite que você receba notificações de novas conversas e as responda diretamente na interface do Slack.'
+      name: "Slack"
+      description: "Integre o 🅷🆄🅱 com o Slack para manter sua equipe sincronizada. Esta integração permite que você receba notificações de novas conversas e responda a elas diretamente na interface do Slack."
     webhooks:
-      name: 'Webhooks'
-      description: 'Eventos webhook fornecem atualizações sobre atividades em tempo real na sua conta Chatwoot. Você pode se inscrever em seus eventos preferidos, e o Chatwoot enviará as chamadas HTTP com as atualizações.'
+      name: "Webhooks"
+      description: "Eventos de Webhook fornecem atualizações em tempo real sobre atividades na sua conta do 🅷🆄🅱. Você pode se inscrever para seus eventos preferidos, e o 🅷🆄🅱 enviará callbacks HTTP com as atualizações."
     dialogflow:
-      name: 'Dialogflow'
-      description: 'Construa chatbots com o Dialogflow e integre-os facilmente na sua caixa de entrada. Esses bots podem lidar com as consultas iniciais antes de transferi-las para um agente de atendimento ao cliente.'
+      name: "Dialogflow"
+      description: "Construa chatbots com o Dialogflow e os integre facilmente na sua caixa de entrada. Esses bots podem lidar com consultas iniciais antes de transferi-las para um agente de atendimento ao cliente."
     google_translate:
-      name: 'Tradutor do Google'
-      description: 'Integre o Google Tradutor para ajudar os agentes a traduzir facilmente as mensagens dos clientes. Esta integração detecta automaticamente o idioma e o converte para o idioma preferido do agente ou do administrador.'
+      name: "Tradutor do Google"
+      description: "Integre o Google Translate para ajudar os agentes a traduzir facilmente as mensagens dos clientes. Esta integração detecta automaticamente o idioma e o converte para o idioma preferido do agente ou administrador."
     openai:
-      name: 'OpenAI'
-      description: 'Aproveite o poder dos grandes modelos de linguagem do OpenAI com recursos como sugestões de resposta, resumo, reformulação de mensagens, verificação ortográfica e classificação de rótulos.'
+      name: "OpenAI"
+      description: "Aproveite o poder dos modelos de linguagem avançados da OpenAI com funcionalidades como sugestões de resposta, resumo, reescrita de mensagens, correção ortográfica e classificação de etiquetas."
     linear:
-      name: 'Linear'
-      description: 'Crie issues em Linear diretamente da sua janela de conversa. Alternativamente, vincule as issues lineares existentes para um processo de rastreamento de problemas mais simples e eficiente.'
-    shopify:
-      name: 'Shopify'
-      description: 'Conecte sua loja Shopify para acessar detalhes de pedidos, informações de clientes e dados de produtos diretamente em suas conversas e ajudar sua equipe de suporte a fornecer um atendimento mais rápido e contextual aos seus clientes.'
-    leadsquared:
-      name: 'LeadSquared'
-      short_description: 'Sincronize seus contatos e conversas com LeadSquared CRM.'
-      description: 'Sincronize seus contatos e conversas com LeadSquared CRM. Essa integração cria automaticamente leads em LeadSquared quando novos contatos são adicionados, e registra a atividade de conversação para fornecer à sua equipe de vendas um contexto completo.'
-  captain:
-    copilot_error: 'Conecte com um assistente a esta caixa de entrada para usar Copilot'
-    copilot_limit: 'Você está sem créditos de Copilot. Pode comprar mais créditos na seção de faturamento.'
+      name: "Linear"
+      description: "Crie issues no Linear diretamente da sua janela de conversa. Alternativamente, vincule issues existentes do Linear para um processo de rastreamento de issues mais eficiente."
+    captain:
+      name: "Captain"
+      description: "Captain é um assistente de IA nativo construído para o seu produto e treinado na base de conhecimento da sua empresa. Ele responde como um humano e resolve consultas dos clientes de forma eficaz. Configure-o facilmente em suas caixas de entrada."
+    typebot:
+      name: "Typebot"
+      description: "Typebot é um construtor de chatbot de código aberto. Ele permite que você crie chatbots avançados visualmente, incorpore-os ao 🅷🆄🅱 e colete resultados em tempo real."
+      settings:
+        frontend_url: "URL do Frontend"
   public_portal:
     search:
       search_placeholder: Pesquisar por artigo por título ou corpo...
@@ -280,36 +266,15 @@ pt_BR:
     button: Abrir conversa
   time_units:
     days:
-      one: '%{count} dia'
-      other: '%{count} dias'
+      one: "%{count} dia"
+      other: "%{count} dias"
     hours:
-      one: '%{count} hora'
-      other: '%{count} horas'
+      one: "%{count} hora"
+      other: "%{count} horas"
     minutes:
-      one: '%{count} minuto'
-      other: '%{count} minutos'
+      one: "%{count} minuto"
+      other: "%{count} minutos"
     seconds:
-      one: '%{count} segundo'
-      other: '%{count} segundos'
-  automation:
-    system_name: 'Sistema de Automação'
-  crm:
-    no_message: 'Nenhuma mensagem na conversa'
-    attachment: '[Anexo: %{type}]'
-    no_content: '[Sem conteúdo]'
-    created_activity: |
-      Nova conversa iniciada em %{brand_name}
+      one: "%{count} segundo"
+      other: "%{count} segundos"
 
-      Canal: %{channel_info}
-      Criada: %{formatted_creation_time}
-      ID de conversa: %{display_id}
-      Veja em %{brand_name}: %{url}
-    transcript_activity: |
-      Transcrição de conversa de %{brand_name}
-
-      Canal: %{channel_info}
-      ID da conversa: %{display_id}
-      Veja em %{brand_name}: %{url}
-
-      Transcrição:
-      %{format_messages}

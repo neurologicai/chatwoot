@@ -5,12 +5,10 @@ import { minValue } from '@vuelidate/validators';
 import { useAlert } from 'dashboard/composables';
 import { useConfig } from 'dashboard/composables/useConfig';
 import SettingsSection from '../../../../../components/SettingsSection.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     SettingsSection,
-    NextButton,
   },
   props: {
     inbox: {
@@ -28,6 +26,7 @@ export default {
       selectedAgents: [],
       isAgentListUpdating: false,
       enableAutoAssignment: false,
+      allowAgentToDeleteMessage: false,
       maxAssignmentLimit: null,
     };
   },
@@ -57,6 +56,7 @@ export default {
       this.enableAutoAssignment = this.inbox.enable_auto_assignment;
       this.maxAssignmentLimit =
         this.inbox?.auto_assignment_config?.max_assignment_limit || null;
+        this.allowAgentToDeleteMessage = this.inbox.allow_agent_to_delete_message;
       this.fetchAttachedAgents();
     },
     async fetchAttachedAgents() {
@@ -73,6 +73,9 @@ export default {
       }
     },
     handleEnableAutoAssignment() {
+      this.updateInbox();
+    },
+    handleAllowAgentToDeleteMessage() {
       this.updateInbox();
     },
     async updateAgents() {
@@ -98,6 +101,7 @@ export default {
           auto_assignment_config: {
             max_assignment_limit: this.maxAssignmentLimit,
           },
+          allow_agent_to_delete_message: this.allowAgentToDeleteMessage,
         };
         await this.$store.dispatch('inboxes/updateInbox', payload);
         useAlert(this.$t('INBOX_MGMT.EDIT.API.SUCCESS_MESSAGE'));
@@ -141,9 +145,9 @@ export default {
         @select="v$.selectedAgents.$touch"
       />
 
-      <NextButton
-        :label="$t('INBOX_MGMT.SETTINGS_POPUP.UPDATE')"
-        :is-loading="isAgentListUpdating"
+      <woot-submit-button
+        :button-text="$t('INBOX_MGMT.SETTINGS_POPUP.UPDATE')"
+        :loading="isAgentListUpdating"
         @click="updateAgents"
       />
     </SettingsSection>
@@ -165,7 +169,7 @@ export default {
           </label>
         </div>
 
-        <p class="pb-1 text-sm not-italic text-n-slate-11">
+        <p class="pb-1 text-sm not-italic text-slate-600 dark:text-slate-400">
           {{ $t('INBOX_MGMT.SETTINGS_POPUP.AUTO_ASSIGNMENT_SUB_TEXT') }}
         </p>
       </label>
@@ -175,7 +179,7 @@ export default {
         class="max-assignment-container"
       >
         <woot-input
-          v-model="maxAssignmentLimit"
+          v-model.trim="maxAssignmentLimit"
           type="number"
           :class="{ error: v$.maxAssignmentLimit.$error }"
           :error="maxAssignmentLimitErrors"
@@ -183,23 +187,49 @@ export default {
           @blur="v$.maxAssignmentLimit.$touch"
         />
 
-        <p class="pb-1 text-sm not-italic text-n-slate-11">
+        <p class="pb-1 text-sm not-italic text-slate-600 dark:text-slate-400">
           {{ $t('INBOX_MGMT.AUTO_ASSIGNMENT.MAX_ASSIGNMENT_LIMIT_SUB_TEXT') }}
         </p>
 
-        <NextButton
-          :label="$t('INBOX_MGMT.SETTINGS_POPUP.UPDATE')"
+        <woot-submit-button
+          :button-text="$t('INBOX_MGMT.SETTINGS_POPUP.UPDATE')"
           :disabled="v$.maxAssignmentLimit.$invalid"
           @click="updateInbox"
         />
       </div>
     </SettingsSection>
+    <SettingsSection
+      :title="$t('INBOX_MGMT.SETTINGS_POPUP.AGENT_PERMISSIONS')"
+      :sub-title="$t('INBOX_MGMT.SETTINGS_POPUP.AGENT_PERMISSIONS_SUB_TEXT')"
+    >
+      <label class="w-[75%] settings-item">
+        <div>
+          <input
+            id="allowAgentToDeleteMessage"
+            v-model="allowAgentToDeleteMessage"
+            type="checkbox"
+            @change="handleAllowAgentToDeleteMessage"
+          />
+          <label for="allowAgentToDeleteMessage">
+            {{ $t('INBOX_MGMT.SETTINGS_POPUP.AGENT_ALLOW_TO_DELETE_MESSAGE') }}
+          </label>
+        </div>
+
+        <p class="text-slate-600 dark:text-slate-400 pb-1 text-sm not-italic">
+          {{
+            $t(
+              'INBOX_MGMT.SETTINGS_POPUP.AGENT_ALLOW_TO_DELETE_MESSAGE_SUB_TEXT'
+            )
+          }}
+        </p>
+      </label>
+    </SettingsSection>
   </div>
 </template>
 
 <style scoped lang="scss">
-@import 'dashboard/assets/scss/variables';
-@import 'dashboard/assets/scss/mixins';
+@import '~dashboard/assets/scss/variables';
+@import '~dashboard/assets/scss/mixins';
 
 .max-assignment-container {
   padding-top: var(--space-slab);

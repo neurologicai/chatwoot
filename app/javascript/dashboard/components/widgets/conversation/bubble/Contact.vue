@@ -4,12 +4,8 @@ import {
   DuplicateContactException,
   ExceptionWithMessage,
 } from 'shared/helpers/CustomErrors';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
-  components: {
-    NextButton,
-  },
   props: {
     name: {
       type: String,
@@ -95,12 +91,9 @@ export default {
       </p>
     </div>
     <div v-if="formattedPhoneNumber" class="link-wrap">
-      <NextButton
-        ghost
-        xs
-        :label="$t('CONVERSATION.SAVE_CONTACT')"
-        @click.prevent="addContact"
-      />
+      <woot-button variant="clear" size="small" @click.prevent="addContact">
+        {{ $t('CONVERSATION.SAVE_CONTACT') }}
+      </woot-button>
     </div>
   </div>
 </template>

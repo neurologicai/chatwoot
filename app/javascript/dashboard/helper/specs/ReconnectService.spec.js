@@ -37,10 +37,8 @@ const storeMock = {
 
 const routerMock = {
   currentRoute: {
-    value: {
-      name: '',
-      params: { conversation_id: null },
-    },
+    name: '',
+    params: { conversation_id: null },
   },
 };
 
@@ -224,7 +222,7 @@ describe('ReconnectService', () => {
 
   describe('fetchConversationMessagesOnReconnect', () => {
     it('should dispatch syncActiveConversationMessages if conversationId exists', async () => {
-      routerMock.currentRoute.value.params.conversation_id = 1;
+      routerMock.currentRoute.params.conversation_id = 1;
       await reconnectService.fetchConversationMessagesOnReconnect();
       expect(storeMock.dispatch).toHaveBeenCalledWith(
         'syncActiveConversationMessages',
@@ -233,7 +231,7 @@ describe('ReconnectService', () => {
     });
 
     it('should not dispatch syncActiveConversationMessages if conversationId does not exist', async () => {
-      routerMock.currentRoute.value.params.conversation_id = null;
+      routerMock.currentRoute.params.conversation_id = null;
       await reconnectService.fetchConversationMessagesOnReconnect();
       expect(storeMock.dispatch).not.toHaveBeenCalledWith(
         'syncActiveConversationMessages',
@@ -307,7 +305,7 @@ describe('ReconnectService', () => {
 
   describe('setConversationLastMessageId', () => {
     it('should dispatch setConversationLastMessageId if conversationId exists', async () => {
-      routerMock.currentRoute.value.params.conversation_id = 1;
+      routerMock.currentRoute.params.conversation_id = 1;
       await reconnectService.setConversationLastMessageId();
       expect(storeMock.dispatch).toHaveBeenCalledWith(
         'setConversationLastMessageId',
@@ -316,7 +314,7 @@ describe('ReconnectService', () => {
     });
 
     it('should not dispatch setConversationLastMessageId if conversationId does not exist', async () => {
-      routerMock.currentRoute.value.params.conversation_id = null;
+      routerMock.currentRoute.params.conversation_id = null;
       await reconnectService.setConversationLastMessageId();
       expect(storeMock.dispatch).not.toHaveBeenCalledWith(
         'setConversationLastMessageId',

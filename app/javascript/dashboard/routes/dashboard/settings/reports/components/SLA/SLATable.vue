@@ -33,7 +33,6 @@ export default {
       default: false,
     },
   },
-  emits: ['pageChange'],
   data() {
     return {
       pageNo: 1,
@@ -57,10 +56,10 @@ export default {
 <template>
   <div>
     <div
-      class="min-w-full shadow outline-1 outline outline-n-container rounded-xl bg-n-solid-2 p-6"
+      class="min-w-full border rounded-xl border-slate-75 dark:border-slate-700/50"
     >
       <div
-        class="grid content-center h-12 grid-cols-12 gap-4 px-6 py-0 bg-n-slate-2 rounded-md"
+        class="grid content-center h-12 grid-cols-12 gap-4 px-6 py-0 border-b bg-slate-25 border-slate-75 dark:border-slate-800 rounded-t-xl dark:bg-slate-900"
       >
         <TableHeaderCell
           :span="6"
@@ -74,10 +73,13 @@ export default {
           :span="2"
           :label="$t('SLA_REPORTS.TABLE.HEADER.AGENT')"
         />
-        <TableHeaderCell :span="1" label="" />
+        <TableHeaderCell :span="2" label="" />
       </div>
 
-      <div v-if="isLoading" class="flex items-center justify-center h-32">
+      <div
+        v-if="isLoading"
+        class="flex items-center justify-center h-32 bg-white rounded-b-xl dark:bg-slate-900"
+      >
         <Spinner />
         <span>{{ $t('SLA_REPORTS.LOADING') }}</span>
       </div>
@@ -91,7 +93,10 @@ export default {
           :sla-events="slaReport.sla_events"
         />
       </div>
-      <div v-else class="flex items-center justify-center h-32">
+      <div
+        v-else
+        class="flex items-center justify-center h-32 bg-white rounded-b-xl dark:bg-slate-900"
+      >
         {{ $t('SLA_REPORTS.NO_RECORDS') }}
       </div>
     </div>
@@ -100,7 +105,7 @@ export default {
       :current-page="currentPage"
       :total-count="totalCount"
       :page-size="pageSize"
-      @page-change="onPageChange"
+      @pageChange="onPageChange"
     />
   </div>
 </template>

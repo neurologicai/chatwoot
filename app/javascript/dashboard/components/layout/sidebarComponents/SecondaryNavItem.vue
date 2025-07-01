@@ -13,17 +13,15 @@ import {
   isOnUnattendedView,
 } from '../../../store/modules/conversations/helpers/actionHelpers';
 import Policy from '../../policy.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
-  components: { SecondaryChildNavItem, Policy, NextButton },
+  components: { SecondaryChildNavItem, Policy },
   props: {
     menuItem: {
       type: Object,
       default: () => ({}),
     },
   },
-  emits: ['addLabel', 'open'],
   setup() {
     const { isAdmin } = useAdmin();
     const { isEnterprise } = useConfig();
@@ -49,6 +47,13 @@ export default {
       return !!this.menuItem.children;
     },
     isMenuItemVisible() {
+      if (this.menuItem.globalConfigFlag) {
+        // this checks for the `csmlEditorHost` flag in the global config
+        // if this is present, we toggle the CSML editor menu item
+        // TODO: This is very specific, and can be handled better, fix it
+        return !!this.globalConfig[this.menuItem.globalConfigFlag];
+      }
+
       let isFeatureEnabled = true;
       if (this.menuItem.featureFlag) {
         isFeatureEnabled = this.isFeatureEnabledonAccount(
@@ -97,7 +102,7 @@ export default {
     },
     isInboxSettings() {
       return (
-        this.$route.name === 'settings_inbox_show' &&
+        this.$store.state.route.name === 'settings_inbox_show' &&
         this.menuItem.toStateName === 'settings_inbox_list'
       );
     },
@@ -113,13 +118,6 @@ export default {
         this.menuItem.toStateName === 'settings_applications'
       );
     },
-    isContactsDefaultRoute() {
-      return (
-        this.menuItem.toStateName === 'contacts_dashboard_index' &&
-        (this.$store.state.route.name === 'contacts_dashboard_index' ||
-          this.$store.state.route.name === 'contacts_edit')
-      );
-    },
     isCurrentRoute() {
       return this.$store.state.route.name.includes(this.menuItem.toStateName);
     },
@@ -131,7 +129,6 @@ export default {
         this.isAllConversations ||
         this.isMentions ||
         this.isUnattended ||
-        this.isContactsDefaultRoute ||
         this.isCurrentRoute
       ) {
         return 'bg-woot-25 dark:bg-slate-800 text-woot-500 dark:text-woot-500 hover:text-woot-500 dark:hover:text-woot-500 active-view';
@@ -199,12 +196,19 @@ export default {
         {{ $t(`SIDEBAR.${menuItem.label}`) }}
       </span>
       <div v-if="menuItem.showNewButton" class="flex items-center">
-        <NextButton ghost xs slate icon="i-lucide-plus" @click="onClickOpen" />
+        <woot-button
+          size="tiny"
+          variant="clear"
+          color-scheme="secondary"
+          icon="add"
+          class="p-0 ml-2"
+          @click="onClickOpen"
+        />
       </div>
     </div>
     <router-link
       v-else
-      class="flex items-center p-2 m-0 text-sm leading-4 rounded-lg text-slate-700 dark:text-slate-100 hover:bg-slate-25 dark:hover:bg-slate-800"
+      class="flex items-center p-2 m-0 text-sm font-medium leading-4 rounded-lg text-slate-700 dark:text-slate-100 hover:bg-slate-25 dark:hover:bg-slate-800"
       :class="computedClass"
       :to="menuItem && menuItem.toState"
     >
@@ -216,7 +220,7 @@ export default {
       {{ $t(`SIDEBAR.${menuItem.label}`) }}
       <span
         v-if="showChildCount(menuItem.count)"
-        class="px-1 py-0 mx-1 rounded-md text-xxs"
+        class="px-1 py-0 mx-1 font-medium rounded-md text-xxs"
         :class="{
           'text-slate-300 dark:text-slate-600': isCountZero && !isActiveView,
           'text-slate-600 dark:text-slate-50': !isCountZero && !isActiveView,
@@ -231,13 +235,13 @@ export default {
         v-if="menuItem.beta"
         data-view-component="true"
         label="Beta"
-        class="inline-block px-1 mx-1 leading-4 text-green-500 border border-green-400 rounded-lg text-xxs"
+        class="inline-block px-1 mx-1 font-medium leading-4 text-green-500 border border-green-400 rounded-lg text-xxs"
       >
         {{ $t('SIDEBAR.BETA') }}
       </span>
     </router-link>
 
-    <ul v-if="hasSubMenu" class="list-none reset-base">
+    <ul v-if="hasSubMenu" class="mb-0 ml-0 list-none">
       <SecondaryChildNavItem
         v-for="child in menuItem.children"
         :key="child.id"
@@ -259,15 +263,16 @@ export default {
         >
           <li class="pl-1">
             <a :href="href">
-              <NextButton
-                ghost
-                xs
-                slate
-                icon="i-lucide-plus"
-                :label="$t(`SIDEBAR.${menuItem.newLinkTag}`)"
+              <woot-button
+                size="tiny"
+                variant="clear"
+                color-scheme="secondary"
+                icon="add"
                 :data-testid="menuItem.dataTestid"
                 @click="e => newLinkClick(e, navigate)"
-              />
+              >
+                {{ $t(`SIDEBAR.${menuItem.newLinkTag}`) }}
+              </woot-button>
             </a>
           </li>
         </router-link>

@@ -62,7 +62,7 @@ const selectMonth = index => {
           MONTH
         )
       "
-      @set-view="setViewMode"
+      @setView="setViewMode"
       @prev="onClickPrev"
       @next="onClickNext"
     />
@@ -71,12 +71,10 @@ const selectMonth = index => {
       <button
         v-for="(month, index) in months"
         :key="index"
-        class="p-2 text-sm font-medium text-center text-n-slate-12 w-[92px] h-10 rounded-lg py-2.5 px-2"
+        class="p-2 text-sm font-medium text-center text-slate-800 dark:text-slate-50 w-[92px] h-10 rounded-lg py-2.5 px-2 hover:bg-slate-75 dark:hover:bg-slate-700"
         :class="{
-          'bg-n-brand text-white hover:bg-n-blue-10':
+          'bg-woot-600 dark:bg-woot-600 text-white dark:text-white hover:bg-woot-500 dark:bg-woot-700':
             index === activeMonthIndex,
-          'hover:bg-n-alpha-2 dark:hover:bg-n-solid-3':
-            index !== activeMonthIndex,
         }"
         @click="selectMonth(index)"
       >

@@ -6,14 +6,7 @@ import { useUISettings } from 'dashboard/composables/useUISettings';
 import { useAI } from 'dashboard/composables/useAI';
 import { OPEN_AI_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 
-import NextButton from 'dashboard/components-next/button/Button.vue';
-
 export default {
-  components: {
-    NextButton,
-  },
-  emits: ['close'],
-
   setup() {
     const { updateUISettings } = useUISettings();
     const { recordAnalytics } = useAI();
@@ -99,30 +92,16 @@ export default {
         />
       </div>
       <div class="flex flex-row justify-between w-full gap-2 px-0 py-2">
-        <NextButton
-          ghost
-          type="button"
-          class="!px-3"
-          :label="
-            $t('INTEGRATION_SETTINGS.OPEN_AI.CTA_MODAL.BUTTONS.NEED_HELP')
-          "
-          @click.prevent="openOpenAIDoc"
-        />
+        <woot-button variant="link" @click.prevent="openOpenAIDoc">
+          {{ $t('INTEGRATION_SETTINGS.OPEN_AI.CTA_MODAL.BUTTONS.NEED_HELP') }}
+        </woot-button>
         <div class="flex items-center gap-1">
-          <NextButton
-            faded
-            slate
-            type="reset"
-            :label="
-              $t('INTEGRATION_SETTINGS.OPEN_AI.CTA_MODAL.BUTTONS.DISMISS')
-            "
-            @click.prevent="onDismiss"
-          />
-          <NextButton
-            type="submit"
-            :disabled="v$.value.$invalid"
-            :label="$t('INTEGRATION_SETTINGS.OPEN_AI.CTA_MODAL.BUTTONS.FINISH')"
-          />
+          <woot-button variant="clear" @click.prevent="onDismiss">
+            {{ $t('INTEGRATION_SETTINGS.OPEN_AI.CTA_MODAL.BUTTONS.DISMISS') }}
+          </woot-button>
+          <woot-button :is-disabled="v$.value.$invalid">
+            {{ $t('INTEGRATION_SETTINGS.OPEN_AI.CTA_MODAL.BUTTONS.FINISH') }}
+          </woot-button>
         </div>
       </div>
     </form>

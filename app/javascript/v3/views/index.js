@@ -1,10 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import VueRouter from 'vue-router';
 
 import routes from './routes';
 import AnalyticsHelper from 'dashboard/helper/AnalyticsHelper';
 import { validateRouteAccess } from '../helpers/RouteHelper';
 
-export const router = createRouter({ history: createWebHistory(), routes });
+export const router = new VueRouter({ mode: 'history', routes });
 
 const sensitiveRouteNames = ['auth_password_edit'];
 

@@ -21,12 +21,11 @@ import { ACCOUNT_EVENTS } from 'dashboard/helper/AnalyticsHelper/events';
 import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
 import { LocalStorage } from 'shared/helpers/localStorage';
 import { getDayDifferenceFromNow } from 'shared/helpers/DateHelper';
-import * as Sentry from '@sentry/vue';
-import { useTrack } from 'dashboard/composables';
-import { emitter } from 'shared/helpers/mitt';
+import * as Sentry from '@sentry/browser';
 
-import NextButton from 'dashboard/components-next/button/Button.vue';
-
+// stores and apis
+import { mapGetters } from 'vuex';
+  
 export default {
   components: {
     BubbleActions,
@@ -42,7 +41,6 @@ export default {
     InstagramStory,
     InstagramStoryReply,
     Spinner,
-    NextButton,
   },
   props: {
     data: {
@@ -74,8 +72,8 @@ export default {
       default: () => ({}),
     },
     inReplyTo: {
-      type: Object,
-      default: () => ({}),
+      type: Promise,
+      default: Promise.resolve({}),
     },
   },
   setup() {
@@ -90,9 +88,15 @@ export default {
       hasMediaLoadError: false,
       contextMenuPosition: {},
       showBackgroundHighlight: false,
+      inReplyToMessage: {},
     };
   },
   computed: {
+    ...mapGetters({
+      isFeatureEnabledonAccount: 'accounts/isFeatureEnabledonAccount',
+      currentRole: 'getCurrentRole',
+      accountId: 'getCurrentAccountId',
+    }),    
     attachments() {
       // Here it is used to get sender and created_at for each attachment
       return this.data?.attachments.map(attachment => ({
@@ -186,19 +190,21 @@ export default {
       return {
         copy: this.hasText,
         delete:
-          (this.hasText || this.hasAttachments) &&
-          !this.isMessageDeleted &&
-          !this.isFailed,
-        cannedResponse:
-          this.isOutgoing && this.hasText && !this.isMessageDeleted,
-        copyLink: !this.isFailed || !this.isProcessing,
-        translate:
-          (!this.isFailed || !this.isProcessing) &&
-          !this.isMessageDeleted &&
-          this.hasText,
+          !this.hideDeleteMessageForAgents &&
+          (this.hasText || this.hasAttachments),
+        cannedResponse: this.isOutgoing && this.hasText,
         replyTo: !this.data.private && this.inboxSupportsReplyTo.outgoing,
       };
     },
+    hideDeleteMessageForAgents() {
+      return (
+        this.currentRole !== 'administrator' &&
+        this.isFeatureEnabledonAccount(
+          this.accountId,
+          'hide_delete_message_for_agent'
+        )
+      );
+    },    
     contentAttributes() {
       return this.data.content_attributes || {};
     },
@@ -308,6 +314,7 @@ export default {
         'is-pending': this.isPending,
         'is-failed': this.isFailed,
         'is-email': this.isEmailContentType,
+        'is-deleted': this.isMessageDeleted,
       };
     },
     bubbleClass() {
@@ -321,6 +328,7 @@ export default {
         'is-from-bot': this.isSentByBot,
         'is-failed': this.isFailed,
         'is-email': this.isEmailContentType,
+        'is-deleted': this.isMessageDeleted,
       };
     },
     isUnsupported() {
@@ -337,7 +345,7 @@ export default {
       return !this.sender.type || this.sender.type === 'agent_bot';
     },
     shouldShowContextMenu() {
-      return !this.isUnsupported;
+      return !(this.isFailed || this.isPending || this.isUnsupported);
     },
     showAvatar() {
       if (this.isOutgoing || this.isTemplate) {
@@ -361,13 +369,14 @@ export default {
       this.hasMediaLoadError = false;
     },
   },
-  mounted() {
+  async mounted() {
     this.hasMediaLoadError = false;
-    emitter.on(BUS_EVENTS.ON_MESSAGE_LIST_SCROLL, this.closeContextMenu);
+    this.$emitter.on(BUS_EVENTS.ON_MESSAGE_LIST_SCROLL, this.closeContextMenu);
     this.setupHighlightTimer();
+    this.inReplyToMessage = await this.inReplyTo;
   },
-  unmounted() {
-    emitter.off(BUS_EVENTS.ON_MESSAGE_LIST_SCROLL, this.closeContextMenu);
+  beforeDestroy() {
+    this.$emitter.off(BUS_EVENTS.ON_MESSAGE_LIST_SCROLL, this.closeContextMenu);
     clearTimeout(this.higlightTimeout);
   },
   methods: {
@@ -379,6 +388,9 @@ export default {
     hasMediaAttachment(type) {
       if (this.hasAttachments && this.data.attachments.length > 0) {
         return this.compareMessageFileType(this.data, type);
+      }
+      if (this.storyReply) {
+        return true;
       }
       return false;
     },
@@ -417,7 +429,7 @@ export default {
 
       e.preventDefault();
       if (e.type === 'contextmenu') {
-        useTrack(ACCOUNT_EVENTS.OPEN_MESSAGE_CONTEXT_MENU);
+        this.$track(ACCOUNT_EVENTS.OPEN_MESSAGE_CONTEXT_MENU);
       }
       this.contextMenuPosition = {
         x: e.pageX || e.clientX,
@@ -434,7 +446,7 @@ export default {
       const { conversation_id: conversationId, id: replyTo } = this.data;
 
       LocalStorage.updateJsonStore(replyStorageKey, conversationId, replyTo);
-      emitter.emit(BUS_EVENTS.TOGGLE_REPLY_TO_MESSAGE, this.data);
+      this.$emitter.emit(BUS_EVENTS.TOGGLE_REPLY_TO_MESSAGE, this.data);
     },
     setupHighlightTimer() {
       if (Number(this.$route.query.messageId) !== Number(this.data.id)) {
@@ -451,25 +463,24 @@ export default {
 };
 </script>
 
-<!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
   <li
     v-if="shouldRenderMessage"
     :id="`message${data.id}`"
-    class="group/context-menu"
+    class="group"
     :class="[alignBubble]"
   >
     <div :class="wrapClass">
       <div
-        v-if="isFailed && !hasOneDayPassed && !isAnEmailInbox"
+        v-if="isFailed && !data.source_id && !hasOneDayPassed && !isAnEmailInbox"
         class="message-failed--alert"
       >
-        <NextButton
+        <woot-button
           v-tooltip.top-end="$t('CONVERSATION.TRY_AGAIN')"
-          ghost
-          xs
-          ruby
-          icon="i-lucide-refresh-ccw"
+          size="tiny"
+          color-scheme="alert"
+          variant="clear"
+          icon="arrow-clockwise"
           @click="retrySendMessage"
         />
       </div>
@@ -483,7 +494,8 @@ export default {
         <InstagramStoryReply v-if="storyUrl" :story-url="storyUrl" />
         <BubbleReplyTo
           v-if="inReplyToMessageId && inboxSupportsReplyTo.incoming"
-          :message="inReplyTo"
+          :message="inReplyToMessage"
+          :message-id="inReplyToMessageId"
           :message-type="data.message_type"
           :parent-has-attachments="hasAttachments"
         />
@@ -567,7 +579,7 @@ export default {
         <woot-thumbnail
           :src="sender.thumbnail"
           :username="senderNameForAvatar"
-          size="16px"
+          size="30px"
         />
         <a
           v-if="isATweet && isIncoming"
@@ -580,7 +592,10 @@ export default {
         </a>
       </div>
     </div>
-    <div v-if="shouldShowContextMenu" class="context-menu-wrap">
+    <div
+      v-if="shouldShowContextMenu"
+      class="invisible context-menu-wrap group-hover:visible"
+    >
       <ContextMenu
         v-if="isBubble && !isMessageDeleted"
         :context-menu-position="contextMenuPosition"
@@ -589,7 +604,7 @@ export default {
         :message="data"
         @open="openContextMenu"
         @close="closeContextMenu"
-        @reply-to="handleReplyTo"
+        @replyTo="handleReplyTo"
       />
     </div>
   </li>
@@ -672,10 +687,18 @@ export default {
     }
 
     &.is-failed {
-      @apply bg-n-ruby-4 dark:bg-n-ruby-4 text-n-slate-12;
+      @apply bg-red-200 dark:bg-red-200;
 
       .message-text--metadata .time {
-        @apply text-n-ruby-12 dark:text-n-ruby-12;
+        @apply text-red-50 dark:text-red-50;
+      }
+    }
+
+    &.is-deleted {
+      @apply bg-slate-700 dark:bg-slate-700;
+
+      .message-text--metadata .time {
+        @apply text-red-50 dark:text-red-50;
       }
     }
   }
@@ -736,7 +759,7 @@ li.right {
   }
 
   .wrap.is-failed {
-    @apply flex items-end ltr:ml-auto rtl:mr-auto;
+    @apply flex items-end ml-auto;
   }
 }
 

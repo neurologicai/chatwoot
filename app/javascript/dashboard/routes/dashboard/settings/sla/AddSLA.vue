@@ -6,7 +6,6 @@ export default {
   components: {
     SlaForm,
   },
-  emits: ['close'],
   methods: {
     onClose() {
       this.$emit('close');
@@ -34,7 +33,7 @@ export default {
     />
     <SlaForm
       :submit-label="$t('SLA.FORM.CREATE')"
-      @submit-sla="addSLA"
+      @submit="addSLA"
       @close="onClose"
     />
   </div>

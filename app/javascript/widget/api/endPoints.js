@@ -103,7 +103,6 @@ const getMostReadArticles = (slug, locale) => ({
     page: 1,
     sort: 'views',
     status: 1,
-    per_page: 6,
   },
 });
 

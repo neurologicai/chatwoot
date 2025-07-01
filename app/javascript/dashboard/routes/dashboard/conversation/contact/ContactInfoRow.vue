@@ -2,12 +2,10 @@
 import { useAlert } from 'dashboard/composables';
 import EmojiOrIcon from 'shared/components/EmojiOrIcon.vue';
 import { copyTextToClipboard } from 'shared/helpers/clipboard';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     EmojiOrIcon,
-    NextButton,
   },
   props: {
     href: {
@@ -46,7 +44,7 @@ export default {
     <a
       v-if="href"
       :href="href"
-      class="flex items-center gap-2 text-n-slate-11 hover:underline"
+      class="flex items-center gap-2 text-slate-800 dark:text-slate-100 hover:underline"
     >
       <EmojiOrIcon
         :icon="icon"
@@ -61,21 +59,26 @@ export default {
       >
         {{ value }}
       </span>
-      <span v-else class="text-sm text-n-slate-11">
-        {{ $t('CONTACT_PANEL.NOT_AVAILABLE') }}
-      </span>
-      <NextButton
+      <span v-else class="text-sm text-slate-300 dark:text-slate-600">{{
+        $t('CONTACT_PANEL.NOT_AVAILABLE')
+      }}</span>
+
+      <woot-button
         v-if="showCopy"
-        ghost
-        xs
-        slate
-        class="ltr:-ml-1 rtl:-mr-1"
-        icon="i-lucide-clipboard"
+        type="submit"
+        variant="clear"
+        size="tiny"
+        color-scheme="secondary"
+        icon="clipboard"
+        class-names="p-0"
         @click="onCopy"
       />
     </a>
 
-    <div v-else class="flex items-center gap-2 text-n-slate-11">
+    <div
+      v-else
+      class="flex items-center gap-2 text-slate-800 dark:text-slate-100"
+    >
       <EmojiOrIcon
         :icon="icon"
         :emoji="emoji"
@@ -84,12 +87,13 @@ export default {
       />
       <span
         v-if="value"
-        v-dompurify-html="value"
         class="overflow-hidden text-sm whitespace-nowrap text-ellipsis"
-      />
-      <span v-else class="text-sm text-n-slate-11">
-        {{ $t('CONTACT_PANEL.NOT_AVAILABLE') }}
+      >
+        {{ value }}
       </span>
+      <span v-else class="text-sm text-slate-300 dark:text-slate-600">{{
+        $t('CONTACT_PANEL.NOT_AVAILABLE')
+      }}</span>
     </div>
   </div>
 </template>

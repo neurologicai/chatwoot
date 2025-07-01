@@ -7,13 +7,11 @@ import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
 import { LocalStorage } from 'shared/helpers/localStorage';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     Widget,
     InputRadioGroup,
-    NextButton,
   },
   props: {
     inbox: {
@@ -268,9 +266,9 @@ export default {
 
 <template>
   <div class="mx-8">
-    <div class="flex p-2.5">
-      <div class="w-100 lg:w-[40%]">
-        <div class="min-h-full py-4 overflow-y-scroll px-px">
+    <div class="widget-builder-container">
+      <div class="settings-container w-100 lg:w-[40%]">
+        <div class="settings-content">
           <form @submit.prevent="updateWidget">
             <woot-avatar-uploader
               :label="
@@ -278,11 +276,11 @@ export default {
               "
               :src="avatarUrl"
               delete-avatar
-              @on-avatar-select="handleImageUpload"
-              @on-avatar-delete="handleAvatarDelete"
+              @change="handleImageUpload"
+              @onAvatarDelete="handleAvatarDelete"
             />
             <woot-input
-              v-model="websiteName"
+              v-model.trim="websiteName"
               :class="{ error: v$.websiteName.$error }"
               :label="
                 $t(
@@ -298,7 +296,7 @@ export default {
               @blur="v$.websiteName.$touch"
             />
             <woot-input
-              v-model="welcomeHeading"
+              v-model.trim="welcomeHeading"
               :label="
                 $t(
                   'INBOX_MGMT.WIDGET_BUILDER.WIDGET_OPTIONS.WELCOME_HEADING.LABEL'
@@ -311,7 +309,7 @@ export default {
               "
             />
             <woot-input
-              v-model="welcomeTagline"
+              v-model.trim="welcomeTagline"
               :label="
                 $t(
                   'INBOX_MGMT.WIDGET_BUILDER.WIDGET_OPTIONS.WELCOME_TAGLINE.LABEL'
@@ -366,7 +364,7 @@ export default {
               :action="handleWidgetBubbleTypeChange"
             />
             <woot-input
-              v-model="widgetBubbleLauncherTitle"
+              v-model.trim="widgetBubbleLauncherTitle"
               :label="
                 $t(
                   'INBOX_MGMT.WIDGET_BUILDER.WIDGET_OPTIONS.WIDGET_BUBBLE_LAUNCHER_TITLE.LABEL'
@@ -378,31 +376,27 @@ export default {
                 )
               "
             />
-            <NextButton
-              type="submit"
-              class="mt-4"
-              :label="
+            <woot-submit-button
+              class="submit-button"
+              :button-text="
                 $t(
                   'INBOX_MGMT.WIDGET_BUILDER.WIDGET_OPTIONS.UPDATE.BUTTON_TEXT'
                 )
               "
-              :is-loading="uiFlags.isUpdating"
+              :loading="uiFlags.isUpdating"
               :disabled="v$.$invalid || uiFlags.isUpdating"
             />
           </form>
         </div>
       </div>
-      <div class="w-100 lg:w-3/5">
+      <div class="widget-container w-100 lg:w-3/5">
         <InputRadioGroup
           name="widget-view-options"
           class="text-center"
           :items="getWidgetViewOptions"
           :action="handleWidgetViewChange"
         />
-        <div
-          v-if="isWidgetPreview"
-          class="flex flex-col items-center justify-end min-h-[40.625rem] mx-5 mb-5 p-2.5 bg-slate-50 dark:bg-slate-900/50 rounded-lg"
-        >
+        <div v-if="isWidgetPreview" class="widget-preview">
           <Widget
             :welcome-heading="welcomeHeading"
             :welcome-tagline="welcomeTagline"
@@ -416,13 +410,56 @@ export default {
             :widget-bubble-type="widgetBubbleType"
           />
         </div>
-        <div
-          v-else
-          class="mx-5 p-2.5 bg-n-slate-3 rounded-lg dark:bg-n-solid-3"
-        >
+        <div v-else class="widget-script">
           <woot-code :script="widgetScript" />
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+@import '~dashboard/assets/scss/woot';
+
+.widget-builder-container {
+  display: flex;
+  flex-direction: row;
+  padding: var(--space-one);
+  // @include breakpoint(900px down) {
+  //   flex-direction: column;
+  // }
+}
+
+.settings-container {
+  .settings-content {
+    padding: var(--space-normal) var(--space-zero);
+    overflow-y: scroll;
+    min-height: 100%;
+
+    .submit-button {
+      margin-top: var(--space-normal);
+    }
+  }
+}
+
+.widget-container {
+  .widget-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 40.625rem;
+    margin: var(--space-zero) var(--space-two) var(--space-two) var(--space-two);
+    padding: var(--space-one) var(--space-one) var(--space-one) var(--space-one);
+    @apply bg-slate-50 dark:bg-slate-700;
+
+    // @include breakpoint(500px down) {
+    //   background: none;
+    // }
+  }
+
+  .widget-script {
+    @apply mx-5 p-2.5 bg-slate-50 dark:bg-slate-700;
+  }
+}
+</style>

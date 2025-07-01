@@ -1,15 +1,9 @@
 <script>
-import NextButton from 'dashboard/components-next/button/Button.vue';
-
 export default {
-  name: 'FilterInput',
-  components: {
-    NextButton,
-  },
   props: {
-    modelValue: {
+    value: {
       type: Object,
-      default: () => {},
+      default: () => null,
     },
     filterAttributes: {
       type: Array,
@@ -52,46 +46,45 @@ export default {
       default: '',
     },
   },
-  emits: ['update:modelValue', 'removeFilter', 'resetFilter'],
   computed: {
     attributeKey: {
       get() {
-        if (!this.modelValue) return null;
-        return this.modelValue.attribute_key;
+        if (!this.value) return null;
+        return this.value.attribute_key;
       },
       set(value) {
-        const payload = this.modelValue || {};
-        this.$emit('update:modelValue', { ...payload, attribute_key: value });
+        const payload = this.value || {};
+        this.$emit('input', { ...payload, attribute_key: value });
       },
     },
     filterOperator: {
       get() {
-        if (!this.modelValue) return null;
-        return this.modelValue.filter_operator;
+        if (!this.value) return null;
+        return this.value.filter_operator;
       },
       set(value) {
-        const payload = this.modelValue || {};
-        this.$emit('update:modelValue', { ...payload, filter_operator: value });
+        const payload = this.value || {};
+        this.$emit('input', { ...payload, filter_operator: value });
       },
     },
     values: {
       get() {
-        if (!this.modelValue) return null;
-        return this.modelValue.values;
+        if (!this.value) return null;
+        return this.value.values;
       },
       set(value) {
-        const payload = this.modelValue || {};
-        this.$emit('update:modelValue', { ...payload, values: value });
+        const payload = this.value || {};
+        this.$emit('input', { ...payload, values: value });
       },
     },
     query_operator: {
       get() {
-        if (!this.modelValue) return null;
-        return this.modelValue.query_operator;
+        if (!this.value) return null;
+        return this.value.query_operator;
       },
       set(value) {
-        const payload = this.modelValue || {};
-        this.$emit('update:modelValue', { ...payload, query_operator: value });
+        const payload = this.value || {};
+        this.$emit('input', { ...payload, query_operator: value });
       },
     },
     custom_attribute_type: {
@@ -100,8 +93,8 @@ export default {
         return this.customAttributeType;
       },
       set() {
-        const payload = this.modelValue || {};
-        this.$emit('update:modelValue', {
+        const payload = this.value || {};
+        this.$emit('input', {
           ...payload,
           custom_attribute_type: this.customAttributeType,
         });
@@ -116,9 +109,9 @@ export default {
           value === 'contact_attribute'
         ) {
           // eslint-disable-next-line vue/no-mutating-props
-          this.modelValue.custom_attribute_type = this.customAttributeType;
+          this.value.custom_attribute_type = this.customAttributeType;
           // eslint-disable-next-line vue/no-mutating-props
-        } else this.modelValue.custom_attribute_type = '';
+        } else this.value.custom_attribute_type = '';
       },
       immediate: true,
     },
@@ -132,8 +125,8 @@ export default {
     },
     getInputErrorClass(errorMessage) {
       return errorMessage
-        ? 'bg-n-ruby-8/20 border-n-ruby-5 dark:border-n-ruby-5'
-        : 'bg-n-background border-n-weak dark:border-n-weak';
+        ? 'bg-red-50 dark:bg-red-800/50 border-red-100 dark:border-red-700/50'
+        : 'bg-slate-50 dark:bg-slate-800 border-slate-75 dark:border-slate-700/50';
     },
   },
 };
@@ -143,14 +136,14 @@ export default {
 <template>
   <div>
     <div
-      class="p-2 border border-solid rounded-lg"
+      class="p-2 border border-solid rounded-md"
       :class="getInputErrorClass(errorMessage)"
     >
-      <div class="flex gap-1">
+      <div class="flex">
         <select
           v-if="groupedFilters"
           v-model="attributeKey"
-          class="max-w-[30%] mb-0 mr-1"
+          class="bg-white max-w-[30%] dark:bg-slate-900 mb-0 mr-1 text-slate-800 dark:text-slate-100 border-slate-75 dark:border-slate-600"
           @change="resetFilter()"
         >
           <optgroup
@@ -162,7 +155,6 @@ export default {
               v-for="attribute in group.attributes"
               :key="attribute.key"
               :value="attribute.key"
-              :selected="true"
             >
               {{ attribute.name }}
             </option>
@@ -171,7 +163,7 @@ export default {
         <select
           v-else
           v-model="attributeKey"
-          class="max-w-[30%] mb-0 mr-1"
+          class="bg-white max-w-[30%] dark:bg-slate-900 mb-0 mr-1 text-slate-800 dark:text-slate-100 border-slate-75 dark:border-slate-600"
           @change="resetFilter()"
         >
           <option
@@ -184,7 +176,10 @@ export default {
           </option>
         </select>
 
-        <select v-model="filterOperator" class="max-w-[20%] mb-0 mr-1">
+        <select
+          v-model="filterOperator"
+          class="bg-white dark:bg-slate-900 max-w-[20%] mb-0 mr-1 text-slate-800 dark:text-slate-100 border-slate-75 dark:border-slate-600"
+        >
           <option
             v-for="(operator, o) in operators"
             :key="o"
@@ -236,22 +231,21 @@ export default {
               v-model="values"
               type="date"
               :editable="false"
-              class="!mb-0 datepicker"
+              class="mb-0 datepicker"
             />
           </div>
           <input
             v-else
             v-model="values"
             type="text"
-            class="!mb-0"
+            class="mb-0"
             :placeholder="$t('FILTER.INPUT_PLACEHOLDER')"
           />
         </div>
-        <NextButton
-          icon="i-lucide-x"
-          slate
-          ghost
-          class="flex-shrink-0"
+        <woot-button
+          icon="dismiss"
+          variant="clear"
+          color-scheme="secondary"
           @click="removeFilter"
         />
       </div>
@@ -290,7 +284,7 @@ export default {
 }
 
 .filter-error {
-  @apply text-n-ruby-9 dark:text-n-ruby-9 block my-1 mx-0;
+  @apply text-red-500 dark:text-red-200 block my-1 mx-0;
 }
 
 .multiselect {

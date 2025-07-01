@@ -2,12 +2,10 @@
 import { useMessageFormatter } from 'shared/composables/useMessageFormatter';
 import { useAI } from 'dashboard/composables/useAI';
 import AILoader from './AILoader.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     AILoader,
-    NextButton,
   },
   props: {
     aiOption: {
@@ -15,7 +13,6 @@ export default {
       required: true,
     },
   },
-  emits: ['close', 'applyText'],
   setup() {
     const { formatMessage } = useMessageFormatter();
     const { draftMessage, processEvent, recordAnalytics } = useAI();
@@ -86,22 +83,16 @@ export default {
       </div>
 
       <div class="flex flex-row justify-end w-full gap-2 px-0 py-2">
-        <NextButton
-          faded
-          slate
-          type="reset"
-          :label="
+        <woot-button variant="clear" @click.prevent="onClose">
+          {{
             $t('INTEGRATION_SETTINGS.OPEN_AI.ASSISTANCE_MODAL.BUTTONS.CANCEL')
-          "
-          @click.prevent="onClose"
-        />
-        <NextButton
-          type="submit"
-          :disabled="!generatedContent"
-          :label="
+          }}
+        </woot-button>
+        <woot-button :disabled="!generatedContent">
+          {{
             $t('INTEGRATION_SETTINGS.OPEN_AI.ASSISTANCE_MODAL.BUTTONS.APPLY')
-          "
-        />
+          }}
+        </woot-button>
       </div>
     </form>
   </div>

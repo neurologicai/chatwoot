@@ -22,15 +22,15 @@
     "IN_A_DAY": "Normalmente respondemos num dia",
     "BACK_IN": "Voltaremos online"
   },
-  "DAY_NAMES": {
-    "SUNDAY": "Domingo",
-    "MONDAY": "Segunda-feira",
-    "TUESDAY": "Terça-feira",
-    "WEDNESDAY": "Quarta-feira",
-    "THURSDAY": "Quinta-feira",
-    "FRIDAY": "Sexta-feira",
-    "SATURDAY": "Sábado"
-  },
+  "DAY_NAMES": [
+    "Domingo",
+    "Segunda-feira",
+    "Terça-feira",
+    "Quarta-feira",
+    "Quinta-feira",
+    "Sexta-feira",
+    "Sábado"
+  ],
   "START_CONVERSATION": "Iniciar Conversa",
   "END_CONVERSATION": "Terminar Conversa",
   "CONTINUE_CONVERSATION": "Continuar conversa",
@@ -46,7 +46,7 @@
   "BUBBLE": {
     "LABEL": "Fale connosco"
   },
-  "POWERED_BY": "Desenvolvido por Chatwoot",
+  "POWERED_BY": "Desenvolvido por 🅷🆄🅱",
   "EMAIL_PLACEHOLDER": "Por favor, digite seu e-mail",
   "CHAT_PLACEHOLDER": "Escreva a sua mensagem",
   "TODAY": "Hoje",
@@ -70,8 +70,7 @@
         "REQUIRED_ERROR": "O número de telefone é obrigatório",
         "DIAL_CODE_VALID_ERROR": "Por favor, selecione um código de país",
         "VALID_ERROR": "Por favor, insira um número de telefone válido",
-        "DROPDOWN_EMPTY": "Nenhum resultado encontrado",
-        "DROPDOWN_SEARCH": "Search country"
+        "DROPDOWN_EMPTY": "Nenhum resultado encontrado"
       },
       "MESSAGE": {
         "LABEL": "Messagem",
@@ -92,8 +91,7 @@
   },
   "EMOJI": {
     "PLACEHOLDER": "Pesquisar emojis",
-    "NOT_FOUND": "Nenhum emoji corresponde à sua pesquisa",
-    "ARIA_LABEL": "Emoji picker"
+    "NOT_FOUND": "Nenhum emoji corresponde à sua pesquisa"
   },
   "CSAT": {
     "TITLE": "Avalie a sua conversa",
@@ -135,8 +133,5 @@
     "fallback": {
       "CONTENT": "compartilhou uma url"
     }
-  },
-  "FOOTER_REPLY_TO": {
-    "REPLY_TO": "Em resposta a:"
   }
 }

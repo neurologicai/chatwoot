@@ -1,6 +1,4 @@
 class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::Conversations::BaseController
-  before_action :ensure_api_inbox, only: :update
-
   def index
     @messages = message_finder.perform
   end
@@ -13,14 +11,13 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
     render_could_not_create_error(e.message)
   end
 
-  def update
-    Messages::StatusUpdateService.new(message, permitted_params[:status], permitted_params[:external_error]).perform
-    @message = message
-  end
-
   def destroy
+    return head :bad_request unless message.can_delete_message?
+  
     ActiveRecord::Base.transaction do
-      message.update!(content: I18n.t('conversations.messages.deleted'), content_type: :text, content_attributes: { deleted: true })
+      original_content = message.content
+      new_content = "⛔#{I18n.t('conversations.messages.deleted')}\n#{original_content}"
+      message.update!(content: new_content, content_attributes: { deleted: true })
       message.attachments.destroy_all
     end
   end
@@ -28,9 +25,7 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
   def retry
     return if message.blank?
 
-    service = Messages::StatusUpdateService.new(message, 'sent')
-    service.perform
-    message.update!(content_attributes: {})
+    message.update!(status: :sent, content_attributes: {})
     ::SendReplyJob.perform_later(message.id)
   rescue StandardError => e
     render_could_not_create_error(e.message)
@@ -54,6 +49,13 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
     render json: { content: translated_content }
   end
 
+  def forward
+    ::Conversations::ForwardMessageJob.perform_later(forward_message_params)
+    head :ok
+    rescue StandardError => e
+      render e
+  end
+
   private
 
   def message
@@ -65,16 +67,19 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
   end
 
   def permitted_params
-    params.permit(:id, :target_language, :status, :external_error)
+    params.permit(:id, :target_language)
   end
 
   def already_translated_content_available?
     message.translations.present? && message.translations[permitted_params[:target_language]].present?
   end
 
-  # API inbox check
-  def ensure_api_inbox
-    # Only API inboxes can update messages
-    render json: { error: 'Message status update is only allowed for API inboxes' }, status: :forbidden unless @conversation.inbox.api?
+  def forward_message_params
+    {
+      user_id: Current.user.id,
+      account_id: Current.account.id,
+      message_id: message.id,
+      contacts: params[:contacts]
+    }
   end
 end

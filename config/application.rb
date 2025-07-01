@@ -27,12 +27,6 @@ if ENV.fetch('SENTRY_DSN', false).present?
   require 'sentry-sidekiq'
 end
 
-# heroku autoscaling
-if ENV.fetch('JUDOSCALE_URL', false).present?
-  require 'judoscale-rails'
-  require 'judoscale-sidekiq'
-end
-
 module Chatwoot
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -40,12 +34,9 @@ module Chatwoot
 
     config.eager_load_paths << Rails.root.join('lib')
     config.eager_load_paths << Rails.root.join('enterprise/lib')
-    config.eager_load_paths << Rails.root.join('enterprise/listeners')
     # rubocop:disable Rails/FilePath
     config.eager_load_paths += Dir["#{Rails.root}/enterprise/app/**"]
     # rubocop:enable Rails/FilePath
-    # Add enterprise views to the view paths
-    config.paths['app/views'].unshift('enterprise/app/views')
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
@@ -61,6 +52,11 @@ module Chatwoot
     # https://discuss.rubyonrails.org/t/cve-2022-32224-possible-rce-escalation-bug-with-serialized-columns-in-active-record/81017
     # FIX ME : fixes breakage of installation config. we need to migrate.
     config.active_record.yaml_column_permitted_classes = [ActiveSupport::HashWithIndifferentAccess]
+
+    # Adiciona cabeçalho para permitir iframes
+    config.action_dispatch.default_headers = {
+      'X-Frame-Options' => 'ALLOWALL'
+    }
   end
 
   def self.config

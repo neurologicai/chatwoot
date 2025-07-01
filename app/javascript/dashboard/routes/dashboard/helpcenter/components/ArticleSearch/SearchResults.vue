@@ -20,7 +20,6 @@ export default {
       default: '',
     },
   },
-  emits: ['preview', 'insert'],
   computed: {
     showNoResults() {
       return this.searchQuery && this.articles.length === 0;

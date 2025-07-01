@@ -3,7 +3,6 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'ReportsFiltersAgents',
-  emits: ['agentsFilterSelection'],
   data() {
     return {
       selectedOptions: [],
@@ -41,7 +40,7 @@ export default {
       selected-label
       :select-label="$t('FORMS.MULTISELECT.ENTER_TO_SELECT')"
       :deselect-label="$t('FORMS.MULTISELECT.ENTER_TO_REMOVE')"
-      @update:model-value="handleInput"
+      @input="handleInput"
     />
   </div>
 </template>

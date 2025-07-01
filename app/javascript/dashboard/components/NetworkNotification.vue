@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onBeforeUnmount } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
+import { useI18n } from 'dashboard/composables/useI18n';
+import { useRoute } from 'dashboard/composables/route';
 import { useEmitter } from 'dashboard/composables/emitter';
 import { BUS_EVENTS } from 'shared/constants/busEvents';
 import {
@@ -10,8 +10,6 @@ import {
   isNotificationRoute,
 } from 'dashboard/helper/routeHelpers';
 import { useEventListener } from '@vueuse/core';
-
-import Button from 'dashboard/components-next/button/Button.vue';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -109,31 +107,34 @@ onBeforeUnmount(() => {
 
 <template>
   <transition name="network-notification-fade" tag="div">
-    <div v-show="showNotification" class="fixed z-50 top-2 left-2 group">
+    <div v-show="showNotification" class="fixed z-50 top-4 left-2 group">
       <div
-        class="relative flex items-center justify-between w-full px-2 py-1 bg-n-amber-4 dark:bg-n-amber-8 rounded-lg shadow-lg"
+        class="relative flex items-center justify-between w-full px-2 py-1 bg-yellow-200 rounded-lg shadow-lg dark:bg-yellow-700"
       >
-        <fluent-icon :icon="iconName" class="text-n-amber-12" size="18" />
-        <span class="px-2 text-xs font-medium tracking-wide text-n-amber-12">
+        <fluent-icon
+          :icon="iconName"
+          class="text-yellow-700/50 dark:text-yellow-50"
+          size="18"
+        />
+        <span
+          class="px-2 text-xs font-medium tracking-wide text-yellow-700/70 dark:text-yellow-50"
+        >
           {{ bannerText }}
         </span>
-        <Button
+        <woot-button
           v-if="canRefresh"
-          ghost
-          sm
-          amber
-          icon="i-lucide-refresh-ccw"
           :title="$t('NETWORK.BUTTON.REFRESH')"
-          class="!text-n-amber-12 dark:!text-n-amber-9"
+          variant="clear"
+          size="small"
+          color-scheme="warning"
+          icon="arrow-clockwise"
           @click="refreshPage"
         />
-
-        <Button
-          ghost
-          sm
-          amber
-          icon="i-lucide-x"
-          class="!text-n-amber-12 dark:!text-n-amber-9"
+        <woot-button
+          variant="clear"
+          size="small"
+          color-scheme="warning"
+          icon="dismiss"
           @click="closeNotification"
         />
       </div>

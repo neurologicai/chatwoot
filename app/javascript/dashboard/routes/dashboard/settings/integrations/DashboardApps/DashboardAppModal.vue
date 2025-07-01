@@ -3,12 +3,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, url } from '@vuelidate/validators';
 import { useAlert } from 'dashboard/composables';
 
-import NextButton from 'dashboard/components-next/button/Button.vue';
-
 export default {
-  components: {
-    NextButton,
-  },
   props: {
     show: {
       type: Boolean,
@@ -23,7 +18,6 @@ export default {
       default: () => ({}),
     },
   },
-  emits: ['close'],
   setup() {
     return { v$: useVuelidate() };
   },
@@ -116,7 +110,7 @@ export default {
       <woot-modal-header :header-title="header" />
       <form class="w-full" @submit.prevent="submit">
         <woot-input
-          v-model="app.title"
+          v-model.trim="app.title"
           :class="{ error: v$.app.title.$error }"
           class="w-full"
           :label="$t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.TITLE_LABEL')"
@@ -130,10 +124,9 @@ export default {
           "
           data-testid="app-title"
           @input="v$.app.title.$touch"
-          @blur="v$.app.title.$touch"
         />
         <woot-input
-          v-model="app.content.url"
+          v-model.trim="app.content.url"
           :class="{ error: v$.app.content.url.$error }"
           class="w-full"
           :label="$t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.URL_LABEL')"
@@ -147,24 +140,18 @@ export default {
           "
           data-testid="app-url"
           @input="v$.app.content.url.$touch"
-          @blur="v$.app.content.url.$touch"
         />
         <div class="flex flex-row justify-end w-full gap-2 px-0 py-2">
-          <NextButton
-            faded
-            slate
-            type="reset"
-            :label="
-              $t('INTEGRATION_SETTINGS.DASHBOARD_APPS.CREATE.FORM_CANCEL')
-            "
-            @click.prevent="closeModal"
-          />
-          <NextButton
-            type="submit"
-            :label="submitButtonLabel"
-            :disabled="v$.$invalid"
+          <woot-button
             :is-loading="isLoading"
-          />
+            :is-disabled="v$.$invalid"
+            data-testid="label-submit"
+          >
+            {{ submitButtonLabel }}
+          </woot-button>
+          <woot-button class="button clear" @click.prevent="closeModal">
+            {{ $t('INTEGRATION_SETTINGS.DASHBOARD_APPS.CREATE.FORM_CANCEL') }}
+          </woot-button>
         </div>
       </form>
     </div>

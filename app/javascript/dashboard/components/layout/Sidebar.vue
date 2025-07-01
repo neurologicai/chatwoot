@@ -2,8 +2,7 @@
 import { mapGetters } from 'vuex';
 import { getSidebarItems } from './config/default-sidebar';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
-import { useAccount } from 'dashboard/composables/useAccount';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'dashboard/composables/route';
 
 import PrimarySidebar from './sidebarComponents/Primary.vue';
 import SecondarySidebar from './sidebarComponents/Secondary.vue';
@@ -23,18 +22,14 @@ export default {
       type: Boolean,
       default: true,
     },
+    sidebarClassName: {
+      type: String,
+      default: '',
+    },
   },
-  emits: [
-    'toggleAccountModal',
-    'showAddLabelPopup',
-    'openNotificationPanel',
-    'closeKeyShortcutModal',
-    'openKeyShortcutModal',
-  ],
   setup(props, { emit }) {
     const route = useRoute();
     const router = useRouter();
-    const { accountId } = useAccount();
 
     const toggleKeyShortcutModal = () => {
       emit('openKeyShortcutModal');
@@ -74,7 +69,6 @@ export default {
 
     return {
       toggleKeyShortcutModal,
-      accountId,
     };
   },
   data() {
@@ -85,6 +79,8 @@ export default {
 
   computed: {
     ...mapGetters({
+      accountId: 'getCurrentAccountId',
+      currentRole: 'getCurrentRole',
       currentUser: 'getCurrentUser',
       globalConfig: 'globalConfig/get',
       inboxes: 'inboxes/getInboxes',
@@ -104,9 +100,6 @@ export default {
       return '';
     },
     customViews() {
-      if (!this.activeCustomView) {
-        return [];
-      }
       return this.$store.getters['customViews/getCustomViewsByFilterType'](
         this.activeCustomView
       );
@@ -127,6 +120,13 @@ export default {
       );
       const menuItems = this.sideMenuConfig.primaryMenu;
       return menuItems.filter(menuItem => {
+        if (
+          menuItem.key === 'contacts' &&
+          this.currentRole === 'agent' &&
+          this.hideContactsForAgents
+        ) {
+          return false;
+        }
         const isAvailableForTheUser = hasPermissions(
           routesWithPermissions[menuItem.toStateName],
           userPermissions
@@ -167,16 +167,13 @@ export default {
         ) || {};
       return activePrimaryMenu;
     },
-    hasSecondaryMenu() {
+    hideContactsForAgents() {
       return (
-        this.activeSecondaryMenu.menuItems &&
-        this.activeSecondaryMenu.menuItems.length
+        this.isFeatureEnabledonAccount(
+          this.accountId,
+          'hide_contacts_for_agent'
+        ) && this.currentRole !== 'administrator'
       );
-    },
-    hasSecondarySidebar() {
-      // if it is explicitly stated to show and it has secondary menu items to show
-      // showSecondarySidebar corresponds to the UI settings, indicating if the user has toggled it
-      return this.showSecondarySidebar && this.hasSecondaryMenu;
     },
   },
 
@@ -225,12 +222,13 @@ export default {
       :account-id="accountId"
       :menu-items="primaryMenuItems"
       :active-menu-item="activePrimaryMenu.key"
-      @toggle-accounts="toggleAccountModal"
-      @open-key-shortcut-modal="toggleKeyShortcutModal"
-      @open-notification-panel="openNotificationPanel"
+      @toggleAccounts="toggleAccountModal"
+      @openKeyShortcutModal="toggleKeyShortcutModal"
+      @openNotificationPanel="openNotificationPanel"
     />
     <SecondarySidebar
-      v-if="hasSecondarySidebar"
+      v-if="showSecondarySidebar"
+      :class="sidebarClassName"
       :account-id="accountId"
       :inboxes="inboxes"
       :labels="labels"
@@ -239,8 +237,8 @@ export default {
       :menu-config="activeSecondaryMenu"
       :current-user="currentUser"
       :is-on-chatwoot-cloud="isOnChatwootCloud"
-      @add-label="showAddLabelPopup"
-      @toggle-accounts="toggleAccountModal"
+      @addLabel="showAddLabelPopup"
+      @toggleAccounts="toggleAccountModal"
     />
   </aside>
 </template>

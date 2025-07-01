@@ -1,37 +1,45 @@
-<script setup>
-import { useI18n } from 'vue-i18n';
-import { useMapGetter } from 'dashboard/composables/store.js';
-
+<script>
+import { mapGetters } from 'vuex';
 import SearchResultConversationItem from './SearchResultConversationItem.vue';
 import SearchResultSection from './SearchResultSection.vue';
 import MessageContent from './MessageContent.vue';
 
-defineProps({
-  messages: {
-    type: Array,
-    default: () => [],
+export default {
+  components: {
+    SearchResultConversationItem,
+    SearchResultSection,
+    MessageContent,
   },
-  query: {
-    type: String,
-    default: '',
+  props: {
+    messages: {
+      type: Array,
+      default: () => [],
+    },
+    query: {
+      type: String,
+      default: '',
+    },
+    isFetching: {
+      type: Boolean,
+      default: false,
+    },
+    showTitle: {
+      type: Boolean,
+      default: true,
+    },
   },
-  isFetching: {
-    type: Boolean,
-    default: false,
+  computed: {
+    ...mapGetters({
+      accountId: 'getCurrentAccountId',
+    }),
   },
-  showTitle: {
-    type: Boolean,
-    default: true,
+  methods: {
+    getName(message) {
+      return message && message.sender && message.sender.name
+        ? message.sender.name
+        : this.$t('SEARCH.BOT_LABEL');
+    },
   },
-});
-const { t } = useI18n();
-
-const accountId = useMapGetter('getCurrentAccountId');
-
-const getName = message => {
-  return message && message.sender && message.sender.name
-    ? message.sender.name
-    : t('SEARCH.BOT_LABEL');
 };
 </script>
 
@@ -43,7 +51,7 @@ const getName = message => {
     :show-title="showTitle"
     :is-fetching="isFetching"
   >
-    <ul v-if="messages.length" class="space-y-1.5 list-none">
+    <ul v-if="messages.length" class="search-list">
       <li v-for="message in messages" :key="message.id">
         <SearchResultConversationItem
           :id="message.conversation_id"

@@ -108,13 +108,20 @@ export default {
 </script>
 
 <template>
-  <div class="overflow-auto p-4 w-full my-auto flex flex-wrap h-full">
+  <div class="overflow-auto p-4 max-w-full my-auto flex flex-wrap h-full">
+    <woot-button
+      v-if="showAddButton"
+      color-scheme="success"
+      class-names="button--fixed-top"
+      icon="add-circle"
+      @click="openAddHookModal"
+    >
+      {{ $t('INTEGRATION_APPS.ADD_BUTTON') }}
+    </woot-button>
     <div v-if="showIntegrationHooks" class="w-full">
       <div v-if="isIntegrationMultiple">
         <MultipleIntegrationHooks
           :integration-id="integrationId"
-          :show-add-button="showAddButton"
-          @add="openAddHookModal"
           @delete="openDeletePopup"
         />
       </div>
@@ -128,12 +135,12 @@ export default {
       </div>
     </div>
 
-    <woot-modal v-model:show="showAddHookModal" :on-close="hideAddHookModal">
+    <woot-modal :show.sync="showAddHookModal" :on-close="hideAddHookModal">
       <NewHook :integration-id="integrationId" @close="hideAddHookModal" />
     </woot-modal>
 
     <woot-delete-modal
-      v-model:show="showDeleteConfirmationPopup"
+      :show.sync="showDeleteConfirmationPopup"
       :on-close="closeDeletePopup"
       :on-confirm="confirmDeletion"
       :title="deleteTitle"

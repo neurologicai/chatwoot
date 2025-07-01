@@ -10,7 +10,6 @@ export default {
       default: '',
     },
   },
-  emits: ['replace'],
   computed: {
     ...mapGetters({
       cannedMessages: 'getCannedResponses',
@@ -36,17 +35,20 @@ export default {
       this.$store.dispatch('getCannedResponse', { searchKey: this.searchKey });
     },
     handleMentionClick(item = {}) {
-      this.$emit('replace', item.description);
+      this.$emit('click', item.description);
     },
   },
 };
 </script>
 
-<!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
   <MentionBox
     v-if="items.length"
     :items="items"
-    @mention-select="handleMentionClick"
-  />
+    @mentionSelect="handleMentionClick"
+  >
+    <template slot-scope="{ item }">
+      <strong>{{ item.label }}</strong> - {{ item.description }}
+    </template>
+  </MentionBox>
 </template>

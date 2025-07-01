@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch, provide } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'dashboard/composables/route';
+import { useI18n } from 'dashboard/composables/useI18n';
 import { useStore, useStoreGetters } from 'dashboard/composables/store';
 import MacroForm from './MacroForm.vue';
 import { MACRO_ACTION_TYPES } from './constants';
@@ -21,13 +21,7 @@ const { getMacroDropdownValues } = useMacros();
 
 const macro = ref(null);
 const mode = ref('CREATE');
-
-const macroActionTypes = computed(() => {
-  return MACRO_ACTION_TYPES.map(type => ({
-    ...type,
-    label: t(`MACROS.ACTIONS.${type.label}`),
-  }));
-});
+const macroActionTypes = MACRO_ACTION_TYPES;
 
 provide('macroActionTypes', macroActionTypes);
 
@@ -44,7 +38,7 @@ const formatMacro = macroData => {
   const formattedActions = macroData.actions.map(action => {
     let actionParams = [];
     if (action.action_params.length) {
-      const inputType = macroActionTypes.value.find(
+      const inputType = macroActionTypes.find(
         item => item.key === action.action_name
       ).inputType;
       if (inputType === 'multi_select' || inputType === 'search_select') {

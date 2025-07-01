@@ -22,6 +22,11 @@ class Macros::ExecutionService < ActionService
 
   private
 
+  def send_webhook_event(webhook_url)
+    payload = @conversation.webhook_data.merge(event: "macro_event.#{@macro.name}")
+    WebhookJob.perform_later(webhook_url[0], payload)
+  end
+
   def assign_agent(agent_ids)
     agent_ids = agent_ids.map { |id| id == 'self' ? @user.id : id }
     super(agent_ids)
@@ -61,10 +66,5 @@ class Macros::ExecutionService < ActionService
     # Added reload here to ensure conversation us persistent with the latest updates
     mb = Messages::MessageBuilder.new(@user, @conversation.reload, params)
     mb.perform
-  end
-
-  def send_webhook_event(webhook_url)
-    payload = @conversation.webhook_data.merge(event: 'macro.executed')
-    WebhookJob.perform_later(webhook_url.first, payload)
   end
 end

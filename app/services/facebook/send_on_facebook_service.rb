@@ -16,32 +16,17 @@ class Facebook::SendOnFacebookService < Base::SendOnChannelService
   rescue Facebook::Messenger::FacebookError => e
     # TODO : handle specific errors or else page will get disconnected
     handle_facebook_error(e)
-    Messages::StatusUpdateService.new(message, 'failed', e.message).perform
+    message.update!(status: :failed, external_error: e.message)
   end
 
   def send_message_to_facebook(delivery_params)
-    parsed_result = deliver_message(delivery_params)
-    return if parsed_result.nil?
-
-    if parsed_result['error'].present?
-      Messages::StatusUpdateService.new(message, 'failed', external_error(parsed_result)).perform
-      Rails.logger.info "Facebook::SendOnFacebookService: Error sending message to Facebook : Page - #{channel.page_id} : #{parsed_result}"
-    end
-
-    message.update!(source_id: parsed_result['message_id']) if parsed_result['message_id'].present?
-  end
-
-  def deliver_message(delivery_params)
     result = Facebook::Messenger::Bot.deliver(delivery_params, page_id: channel.page_id)
-    JSON.parse(result)
-  rescue JSON::ParserError
-    Messages::StatusUpdateService.new(message, 'failed', 'Facebook was unable to process this request').perform
-    Rails.logger.error "Facebook::SendOnFacebookService: Error parsing JSON response from Facebook : Page - #{channel.page_id} : #{result}"
-    nil
-  rescue Net::OpenTimeout
-    Messages::StatusUpdateService.new(message, 'failed', 'Request timed out, please try again later').perform
-    Rails.logger.error "Facebook::SendOnFacebookService: Timeout error sending message to Facebook : Page - #{channel.page_id}"
-    nil
+    parsed_result = JSON.parse(result)
+    if parsed_result['error'].present?
+      message.update!(status: :failed, external_error: external_error(parsed_result))
+      Rails.logger.info "Facebook::SendOnFacebookService: Error sending message to Facebook : Page - #{channel.page_id} : #{result}"
+    end
+    message.update!(source_id: parsed_result['message_id']) if parsed_result['message_id'].present?
   end
 
   def fb_text_message_params

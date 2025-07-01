@@ -46,7 +46,7 @@ rvm autolibs disable
 rvm install "ruby-3.0.4"
 rvm use 3.0.4 --default
 
-git clone https://github.com/chatwoot/chatwoot.git
+git clone https://github.com/neurologicai/chatwoot.git
 cd chatwoot
 if [[ -z "$1" ]]; then
   git checkout master;

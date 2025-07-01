@@ -8,15 +8,12 @@ import MultiselectDropdown from 'shared/components/ui/MultiselectDropdown.vue';
 import ConversationLabels from './labels/LabelBox.vue';
 import { CONVERSATION_PRIORITY } from '../../../../shared/constants/messages';
 import { CONVERSATION_EVENTS } from '../../../helper/AnalyticsHelper/events';
-import { useTrack } from 'dashboard/composables';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     ContactDetailsItem,
     MultiselectDropdown,
     ConversationLabels,
-    NextButton,
   },
   props: {
     conversationId: {
@@ -131,7 +128,7 @@ export default {
         this.$store
           .dispatch('assignPriority', { conversationId, priority })
           .then(() => {
-            useTrack(CONVERSATION_EVENTS.CHANGE_PRIORITY, {
+            this.$track(CONVERSATION_EVENTS.CHANGE_PRIORITY, {
               oldValue,
               newValue: priority,
               from: 'Conversation Sidebar',
@@ -214,15 +211,15 @@ export default {
         :title="$t('CONVERSATION_SIDEBAR.ASSIGNEE_LABEL')"
       >
         <template #button>
-          <NextButton
+          <woot-button
             v-if="showSelfAssign"
-            link
-            xs
-            icon="i-lucide-arrow-right"
-            class="!gap-1"
-            :label="$t('CONVERSATION_SIDEBAR.SELF_ASSIGN')"
+            icon="arrow-right"
+            variant="link"
+            size="small"
             @click="onSelfAssign"
-          />
+          >
+            {{ $t('CONVERSATION_SIDEBAR.SELF_ASSIGN') }}
+          </woot-button>
         </template>
       </ContactDetailsItem>
       <MultiselectDropdown
@@ -236,7 +233,7 @@ export default {
         :input-placeholder="
           $t('AGENT_MGMT.MULTI_SELECTOR.SEARCH.PLACEHOLDER.AGENT')
         "
-        @select="onClickAssignAgent"
+        @click="onClickAssignAgent"
       />
     </div>
     <div class="multiselect-wrap--small">
@@ -253,9 +250,9 @@ export default {
           $t('AGENT_MGMT.MULTI_SELECTOR.SEARCH.NO_RESULTS.TEAM')
         "
         :input-placeholder="
-          $t('AGENT_MGMT.MULTI_SELECTOR.SEARCH.PLACEHOLDER.TEAM')
+          $t('AGENT_MGMT.MULTI_SELECTOR.SEARCH.PLACEHOLDER.INPUT')
         "
-        @select="onClickAssignTeam"
+        @click="onClickAssignTeam"
       />
     </div>
     <div class="multiselect-wrap--small">
@@ -273,7 +270,7 @@ export default {
         :input-placeholder="
           $t('CONVERSATION.PRIORITY.CHANGE_PRIORITY.INPUT_PLACEHOLDER')
         "
-        @select="onClickAssignPriority"
+        @click="onClickAssignPriority"
       />
     </div>
     <ContactDetailsItem

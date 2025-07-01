@@ -7,16 +7,12 @@ import getDay from 'date-fns/getDay';
 import { getQuantileIntervals } from '@chatwoot/utils';
 
 import { groupHeatmapByDay } from 'helpers/ReportsDataHelper';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'dashboard/composables/useI18n';
 
 const props = defineProps({
-  heatmapData: {
+  heatData: {
     type: Array,
     default: () => [],
-  },
-  numberOfRows: {
-    type: Number,
-    default: 7,
   },
   isLoading: {
     type: Boolean,
@@ -25,11 +21,11 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const processedData = computed(() => {
-  return groupHeatmapByDay(props.heatmapData);
+  return groupHeatmapByDay(props.heatData);
 });
 
 const quantileRange = computed(() => {
-  const flattendedData = props.heatmapData.map(data => data.value);
+  const flattendedData = props.heatData.map(data => data.value);
   return getQuantileIntervals(flattendedData, [0.2, 0.4, 0.6, 0.8, 0.9, 0.99]);
 });
 
@@ -67,7 +63,8 @@ function getDayOfTheWeek(date) {
   return days[dayIndex];
 }
 function getHeatmapLevelClass(value) {
-  if (!value) return 'outline-n-container dark:bg-slate-700/40 bg-slate-50/50';
+  if (!value)
+    return 'outline-slate-100 dark:outline-slate-700 dark:bg-slate-700/40 bg-slate-50/50';
 
   let level = [...quantileRange.value, Infinity].findIndex(
     range => value <= range && value > 0
@@ -76,7 +73,7 @@ function getHeatmapLevelClass(value) {
   if (level > 6) level = 5;
 
   if (level === 0) {
-    return 'outline-n-container dark:bg-slate-700/40 bg-slate-50/50';
+    return 'outline-slate-100 dark:outline-slate-700 dark:bg-slate-700/40 bg-slate-50/50';
   }
 
   const classes = [
@@ -99,14 +96,14 @@ function getHeatmapLevelClass(value) {
     <template v-if="isLoading">
       <div class="grid gap-[5px] flex-shrink-0">
         <div
-          v-for="ii in numberOfRows"
+          v-for="ii in 7"
           :key="ii"
           class="w-full rounded-sm bg-slate-100 dark:bg-slate-900 animate-loader-pulse h-8 min-w-[70px]"
         />
       </div>
       <div class="grid gap-[5px] w-full min-w-[700px]">
         <div
-          v-for="ii in numberOfRows"
+          v-for="ii in 7"
           :key="ii"
           class="grid gap-[5px] grid-cols-[repeat(24,_1fr)]"
         >

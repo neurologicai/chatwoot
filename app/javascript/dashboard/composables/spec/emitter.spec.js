@@ -1,7 +1,6 @@
 import { shallowMount } from '@vue/test-utils';
 import { emitter } from 'shared/helpers/mitt';
 import { useEmitter } from '../emitter';
-import { defineComponent } from 'vue';
 
 vi.mock('shared/helpers/mitt', () => ({
   emitter: {
@@ -11,34 +10,31 @@ vi.mock('shared/helpers/mitt', () => ({
 }));
 
 describe('useEmitter', () => {
+  let wrapper;
   const eventName = 'my-event';
   const callback = vi.fn();
 
-  let wrapper;
-
-  const TestComponent = defineComponent({
-    setup() {
-      return {
-        cleanup: useEmitter(eventName, callback),
-      };
-    },
-    template: '<div>Hello world</div>',
-  });
-
   beforeEach(() => {
-    wrapper = shallowMount(TestComponent);
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
+    wrapper = shallowMount({
+      template: `
+        <div>
+          Hello world
+        </div>
+      `,
+      setup() {
+        return {
+          cleanup: useEmitter(eventName, callback),
+        };
+      },
+    });
   });
 
   it('should add an event listener on mount', () => {
     expect(emitter.on).toHaveBeenCalledWith(eventName, callback);
   });
 
-  it('should remove the event listener when the component is unmounted', async () => {
-    await wrapper.unmount();
+  it('should remove the event listener when the component is unmounted', () => {
+    wrapper.destroy();
     expect(emitter.off).toHaveBeenCalledWith(eventName, callback);
   });
 

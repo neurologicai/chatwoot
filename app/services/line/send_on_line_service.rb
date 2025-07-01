@@ -14,10 +14,10 @@ class Line::SendOnLineService < Base::SendOnChannelService
 
     if response.code == '200'
       # If the request is successful, update the message status to delivered
-      Messages::StatusUpdateService.new(message, 'delivered').perform
+      message.update!(status: :delivered)
     else
       # If the request is not successful, update the message status to failed and save the external error
-      Messages::StatusUpdateService.new(message, 'failed', external_error(parsed_json)).perform
+      message.update!(status: :failed, external_error: external_error(parsed_json))
     end
   end
 

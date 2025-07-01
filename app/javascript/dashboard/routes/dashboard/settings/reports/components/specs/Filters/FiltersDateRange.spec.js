@@ -3,12 +3,10 @@ import ReportFiltersDateRange from '../../Filters/DateRange.vue';
 import { DATE_RANGE_OPTIONS } from '../../../constants';
 
 const mountParams = {
-  global: {
-    mocks: {
-      $t: msg => msg,
-    },
-    stubs: ['multiselect'],
+  mocks: {
+    $t: msg => msg,
   },
+  stubs: ['multiselect'],
 };
 
 describe('ReportFiltersDateRange.vue', () => {

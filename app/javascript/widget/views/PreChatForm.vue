@@ -4,7 +4,6 @@ import configMixin from '../mixins/configMixin';
 import routerMixin from '../mixins/routerMixin';
 import { isEmptyObject } from 'widget/helpers/utils';
 import { ON_CONVERSATION_CREATED } from '../constants/widgetBusEvents';
-import { emitter } from 'shared/helpers/mitt';
 
 export default {
   components: {
@@ -12,20 +11,12 @@ export default {
   },
   mixins: [configMixin, routerMixin],
   mounted() {
-    // Register event listener for conversation creation
-    emitter.on(ON_CONVERSATION_CREATED, this.handleConversationCreated);
-  },
-  beforeUnmount() {
-    emitter.off(ON_CONVERSATION_CREATED, this.handleConversationCreated);
-  },
-  methods: {
-    handleConversationCreated() {
+    this.$emitter.on(ON_CONVERSATION_CREATED, () => {
       // Redirect to messages page after conversation is created
       this.replaceRoute('messages');
-      // Only after successful navigation, reset the isUpdatingRoute UIflag in app/javascript/widget/router.js
-      // See issue: https://github.com/chatwoot/chatwoot/issues/10736
-    },
-
+    });
+  },
+  methods: {
     onSubmit({
       fullName,
       emailAddress,
@@ -36,7 +27,7 @@ export default {
       conversationCustomAttributes,
     }) {
       if (activeCampaignId) {
-        emitter.emit('execute-campaign', {
+        this.$emitter.emit('execute-campaign', {
           campaignId: activeCampaignId,
           customAttributes: conversationCustomAttributes,
         });
@@ -69,6 +60,6 @@ export default {
 
 <template>
   <div class="flex flex-1 overflow-auto">
-    <PreChatForm :options="preChatFormOptions" @submit-pre-chat="onSubmit" />
+    <PreChatForm :options="preChatFormOptions" @submit="onSubmit" />
   </div>
 </template>

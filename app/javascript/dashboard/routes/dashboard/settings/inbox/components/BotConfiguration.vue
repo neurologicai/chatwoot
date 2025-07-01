@@ -3,13 +3,11 @@ import { mapGetters } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import SettingsSection from 'dashboard/components/SettingsSection.vue';
 import LoadingState from 'dashboard/components/widgets/LoadingState.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     LoadingState,
     SettingsSection,
-    NextButton,
   },
   props: {
     inbox: {
@@ -85,7 +83,7 @@ export default {
         :title="$t('AGENT_BOTS.BOT_CONFIGURATION.TITLE')"
         :sub-title="$t('AGENT_BOTS.BOT_CONFIGURATION.DESC')"
       >
-        <div>
+        <div class="w-3/5">
           <label>
             <select v-model="selectedAgentBotId">
               <option value="" disabled selected>
@@ -100,25 +98,31 @@ export default {
               </option>
             </select>
           </label>
-          <div class="button-container space-x-2">
-            <NextButton
-              type="submit"
-              :label="$t('AGENT_BOTS.BOT_CONFIGURATION.SUBMIT')"
-              :is-loading="uiFlags.isSettingAgentBot"
+          <div class="button-container">
+            <woot-submit-button
+              :button-text="$t('AGENT_BOTS.BOT_CONFIGURATION.SUBMIT')"
+              :loading="uiFlags.isSettingAgentBot"
             />
-            <NextButton
+            <woot-button
               type="button"
               :disabled="!selectedAgentBotId"
-              :is-loading="uiFlags.isDisconnecting"
-              faded
-              ruby
+              :loading="uiFlags.isDisconnecting"
+              variant="smooth"
+              color-scheme="alert"
+              class="button--disconnect"
               @click="disconnectBot"
             >
               {{ $t('AGENT_BOTS.BOT_CONFIGURATION.DISCONNECT') }}
-            </NextButton>
+            </woot-button>
           </div>
         </div>
       </SettingsSection>
     </form>
   </div>
 </template>
+
+<style scoped lang="scss">
+.button--disconnect {
+  @apply ml-2;
+}
+</style>

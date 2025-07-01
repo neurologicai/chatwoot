@@ -8,16 +8,15 @@ import {
 
 describe('#getTypingUsersText', () => {
   it('returns the correct text is there is only one typing user', () => {
-    expect(getTypingUsersText([{ name: 'Pranav' }])).toEqual([
-      'TYPING.ONE',
-      { user: 'Pranav' },
-    ]);
+    expect(getTypingUsersText([{ name: 'Pranav' }])).toEqual(
+      'Pranav is typing'
+    );
   });
 
   it('returns the correct text is there are two typing users', () => {
     expect(
       getTypingUsersText([{ name: 'Pranav' }, { name: 'Nithin' }])
-    ).toEqual(['TYPING.TWO', { user: 'Pranav', secondUser: 'Nithin' }]);
+    ).toEqual('Pranav and Nithin are typing');
   });
 
   it('returns the correct text is there are more than two users are typing', () => {
@@ -28,7 +27,7 @@ describe('#getTypingUsersText', () => {
         { name: 'Subin' },
         { name: 'Sojan' },
       ])
-    ).toEqual(['TYPING.MULTIPLE', { user: 'Pranav', count: 3 }]);
+    ).toEqual('Pranav and 3 others are typing');
   });
 });
 

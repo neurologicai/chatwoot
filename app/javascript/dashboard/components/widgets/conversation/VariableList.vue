@@ -11,7 +11,6 @@ export default {
       default: '',
     },
   },
-  emits: ['selectVariable'],
   computed: {
     ...mapGetters({
       customAttributes: 'attributes/getAttributes',
@@ -51,20 +50,26 @@ export default {
   },
   methods: {
     handleVariableClick(item = {}) {
-      this.$emit('selectVariable', item.key);
+      this.$emit('click', item.key);
     },
   },
 };
 </script>
 
-<!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
   <MentionBox
     v-if="items.length"
     type="variable"
     :items="items"
-    @mention-select="handleVariableClick"
-  />
+    @mentionSelect="handleVariableClick"
+  >
+    <template slot-scope="{ item }">
+      <span class="text-capitalize variable--list-label">
+        {{ item.description }}
+      </span>
+      ({{ item.label }})
+    </template>
+  </MentionBox>
 </template>
 
 <style scoped>

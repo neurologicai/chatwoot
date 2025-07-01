@@ -3,12 +3,10 @@ import ReportsFiltersDateGroupBy from '../../Filters/DateGroupBy.vue';
 import { GROUP_BY_OPTIONS } from '../../../constants';
 
 const mountParams = {
-  global: {
-    mocks: {
-      $t: msg => msg,
-    },
-    stubs: ['multiselect'],
+  mocks: {
+    $t: msg => msg,
   },
+  stubs: ['multiselect'],
 };
 
 describe('ReportsFiltersDateGroupBy.vue', () => {

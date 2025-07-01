@@ -257,8 +257,8 @@ export default {
         </span>
       </div>
       <FormSwitch
-        :model-value="hasEnabledPushPermissions"
-        @update:model-value="onRequestPermissions"
+        :value="hasEnabledPushPermissions"
+        @input="onRequestPermissions"
       />
     </div>
   </div>

@@ -86,7 +86,7 @@ export default {
     >
       <div
         v-on-clickaway="closeDropdownLabel"
-        class="label-wrap flex flex-wrap"
+        class="label-wrap"
         @keyup.esc="closeDropdownLabel"
       >
         <AddLabel @add="toggleLabels" />
@@ -99,7 +99,7 @@ export default {
           :color="label.color"
           variant="smooth"
           class="max-w-[calc(100%-0.5rem)]"
-          @remove="removeLabelFromConversation"
+          @click="removeLabelFromConversation"
         />
 
         <div class="dropdown-wrap">

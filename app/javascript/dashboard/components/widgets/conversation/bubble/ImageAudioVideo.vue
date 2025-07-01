@@ -20,12 +20,17 @@ export default {
       type: Object,
       required: true,
     },
+    urlType: {
+      type: String,
+      required: false,
+      default: 'data_url',
+    },
   },
-  emits: ['error'],
   data() {
     return {
       show: false,
       isImageError: false,
+      isImageErrorDelay: false,
     };
   },
   computed: {
@@ -60,7 +65,7 @@ export default {
       return attachments;
     },
     dataUrl() {
-      return this.attachment.data_url;
+      return this.attachment[this.urlType];
     },
     imageWidth() {
       return this.attachment.width ? `${this.attachment.width}px` : 'auto';
@@ -89,6 +94,12 @@ export default {
       this.isImageError = true;
       this.$emit('error');
     },
+    onImgErrorDelay() {
+      setTimeout(() => {
+        this.isImageErrorDelay = true;
+        this.$emit('error');
+      }, 1000);
+    },
   },
 };
 </script>
@@ -99,6 +110,15 @@ export default {
       v-if="isImage && !isImageError"
       class="bg-woot-200 dark:bg-woot-900"
       :src="dataUrl"
+      :width="imageWidth"
+      :height="imageHeight"
+      @click="onClick"
+      @error="onImgErrorDelay"
+    />
+    <img
+      v-else-if="isImageErrorDelay && !isImageError"
+      class="bg-woot-200 dark:bg-woot-900"
+      :src="`${dataUrl}?t=${Date.now()}`"
       :width="imageWidth"
       :height="imageHeight"
       @click="onClick"
@@ -117,7 +137,7 @@ export default {
     </audio>
     <GalleryView
       v-if="show"
-      v-model:show="show"
+      :show.sync="show"
       :attachment="attachment"
       :all-attachments="filteredCurrentChatAttachments"
       @error="onImgError"

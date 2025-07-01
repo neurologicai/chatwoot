@@ -18,19 +18,19 @@
   },
   "REPLY_TIME": {
     "IN_A_FEW_MINUTES": "Normalmente responde em alguns minutos",
-    "IN_A_FEW_HOURS": "Normalmente responde em algumas horas",
-    "IN_A_DAY": "Normalmente responde em um dia",
+    "IN_A_FEW_HOURS": "Responde normalmente em algumas horas",
+    "IN_A_DAY": "Responde normalmente em um dia",
     "BACK_IN": "Estaremos de volta on-line"
   },
-  "DAY_NAMES": {
-    "SUNDAY": "Domingo",
-    "MONDAY": "Segunda-Feira",
-    "TUESDAY": "Terça-feira",
-    "WEDNESDAY": "Quarta-feira",
-    "THURSDAY": "Quinta-feira",
-    "FRIDAY": "Sexta-feira",
-    "SATURDAY": "Sábado"
-  },
+  "DAY_NAMES": [
+    "Domingo",
+    "Segunda-Feira",
+    "Terça-feira",
+    "Quarta-feira",
+    "Quinta-feira",
+    "Sexta-feira",
+    "Sábado"
+  ],
   "START_CONVERSATION": "Iniciar Conversa",
   "END_CONVERSATION": "Finalizar Conversa",
   "CONTINUE_CONVERSATION": "Continuar conversa",
@@ -41,12 +41,12 @@
     "VIEW_MESSAGES_BUTTON": "Ver novas mensagens",
     "CLOSE_MESSAGES_BUTTON": "Fechar",
     "COMPANY_FROM": "De",
-    "BOT": "Robôs"
+    "BOT": "Bot"
   },
   "BUBBLE": {
     "LABEL": "Fale conosco no chat"
   },
-  "POWERED_BY": "Desenvolvido por Chatwoot",
+  "POWERED_BY": "Desenvolvido por 🅷🆄🅱",
   "EMAIL_PLACEHOLDER": "Por favor, insira seu e-mail",
   "CHAT_PLACEHOLDER": "Digite sua mensagem",
   "TODAY": "Hoje",
@@ -70,11 +70,10 @@
         "REQUIRED_ERROR": "O número de telefone é obrigatório",
         "DIAL_CODE_VALID_ERROR": "Por favor, selecione um código de país",
         "VALID_ERROR": "Por favor, insira um número de telefone válido",
-        "DROPDOWN_EMPTY": "Nenhum resultado encontrado",
-        "DROPDOWN_SEARCH": "Selecione o país"
+        "DROPDOWN_EMPTY": "Nenhum resultado encontrado"
       },
       "MESSAGE": {
-        "LABEL": "Mensagem",
+        "LABEL": "Messagem",
         "PLACEHOLDER": "Por favor, digite sua mensagem",
         "ERROR": "Mensagem muito curta"
       }
@@ -92,8 +91,7 @@
   },
   "EMOJI": {
     "PLACEHOLDER": "Pesquisar emojis",
-    "NOT_FOUND": "Nenhum emoji corresponde à sua pesquisa",
-    "ARIA_LABEL": "Seletor de emoji"
+    "NOT_FOUND": "Nenhum emoji corresponde à sua pesquisa"
   },
   "CSAT": {
     "TITLE": "Avalie sua conversa",
@@ -135,8 +133,5 @@
     "fallback": {
       "CONTENT": "compartilhou uma URL"
     }
-  },
-  "FOOTER_REPLY_TO": {
-    "REPLY_TO": "Respondendo a:"
   }
 }

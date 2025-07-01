@@ -1,12 +1,8 @@
 <script>
 import { validEmailsByComma } from './helpers/emailHeadHelper';
 import { useVuelidate } from '@vuelidate/core';
-import ButtonV4 from 'dashboard/components-next/button/Button.vue';
 
 export default {
-  components: {
-    ButtonV4,
-  },
   props: {
     ccEmails: {
       type: String,
@@ -21,7 +17,6 @@ export default {
       default: '',
     },
   },
-  emits: ['update:bccEmails', 'update:ccEmails', 'update:toEmails'],
   setup() {
     return { v$: useVuelidate() };
   },
@@ -93,11 +88,11 @@ export default {
         <label class="input-group-label">
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.TO') }}
         </label>
-        <div class="flex-1 min-w-0 m-0 rounded-none whitespace-nowrap">
+        <div class="rounded-none flex-1 min-w-0 m-0 whitespace-nowrap">
           <woot-input
-            v-model="v$.toEmailsVal.$model"
+            v-model.trim="v$.toEmailsVal.$model"
             type="text"
-            class="[&>input]:!mb-0 [&>input]:border-transparent [&>input]:!outline-none [&>input]:h-8 [&>input]:!text-sm [&>input]:!border-0 [&>input]:border-none [&>input]:!bg-transparent dark:[&>input]:!bg-transparent"
+            class="[&>input]:!mb-0 [&>input]:border-transparent [&>input]:h-8 [&>input]:text-sm [&>input]:!border-0 [&>input]:border-none"
             :class="{ error: v$.toEmailsVal.$error }"
             :placeholder="$t('CONVERSATION.REPLYBOX.EMAIL_HEAD.CC.PLACEHOLDER')"
             @blur="onBlur"
@@ -110,24 +105,24 @@ export default {
         <label class="input-group-label">
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.CC.LABEL') }}
         </label>
-        <div class="flex-1 min-w-0 m-0 rounded-none whitespace-nowrap">
+        <div class="rounded-none flex-1 min-w-0 m-0 whitespace-nowrap">
           <woot-input
-            v-model="v$.ccEmailsVal.$model"
-            class="[&>input]:!mb-0 [&>input]:border-transparent [&>input]:!outline-none [&>input]:h-8 [&>input]:!text-sm [&>input]:!border-0 [&>input]:border-none [&>input]:!bg-transparent dark:[&>input]:!bg-transparent"
+            v-model.trim="v$.ccEmailsVal.$model"
+            class="[&>input]:!mb-0 [&>input]:border-transparent [&>input]:h-8 [&>input]:text-sm [&>input]:!border-0 [&>input]:border-none"
             type="text"
             :class="{ error: v$.ccEmailsVal.$error }"
             :placeholder="$t('CONVERSATION.REPLYBOX.EMAIL_HEAD.CC.PLACEHOLDER')"
             @blur="onBlur"
           />
         </div>
-        <ButtonV4
+        <woot-button
           v-if="!showBcc"
-          :label="$t('CONVERSATION.REPLYBOX.EMAIL_HEAD.ADD_BCC')"
-          ghost
-          xs
-          primary
+          variant="clear"
+          size="small"
           @click="handleAddBcc"
-        />
+        >
+          {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.ADD_BCC') }}
+        </woot-button>
       </div>
       <span v-if="v$.ccEmailsVal.$error" class="message">
         {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.CC.ERROR') }}
@@ -138,11 +133,11 @@ export default {
         <label class="input-group-label">
           {{ $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.BCC.LABEL') }}
         </label>
-        <div class="flex-1 min-w-0 m-0 rounded-none whitespace-nowrap">
+        <div class="rounded-none flex-1 min-w-0 m-0 whitespace-nowrap">
           <woot-input
-            v-model="v$.bccEmailsVal.$model"
+            v-model.trim="v$.bccEmailsVal.$model"
             type="text"
-            class="[&>input]:!mb-0 [&>input]:border-transparent [&>input]:!outline-none [&>input]:h-8 [&>input]:!text-sm [&>input]:!border-0 [&>input]:border-none [&>input]:!bg-transparent dark:[&>input]:!bg-transparent"
+            class="[&>input]:!mb-0 [&>input]:border-transparent [&>input]:h-8 [&>input]:text-sm [&>input]:!border-0 [&>input]:border-none"
             :class="{ error: v$.bccEmailsVal.$error }"
             :placeholder="
               $t('CONVERSATION.REPLYBOX.EMAIL_HEAD.BCC.PLACEHOLDER')
@@ -160,10 +155,10 @@ export default {
 
 <style lang="scss" scoped>
 .input-group-wrap .message {
-  @apply text-sm text-n-ruby-8;
+  @apply text-sm text-red-500 dark:text-red-500;
 }
 .input-group {
-  @apply border-b border-solid border-n-weak my-1 flex items-center gap-2;
+  @apply border-b border-solid border-slate-75 dark:border-slate-700 my-1 flex items-center gap-2;
 
   .input-group-label {
     @apply border-transparent bg-transparent text-xs font-semibold pl-0;
@@ -171,9 +166,9 @@ export default {
 }
 
 .input-group.error {
-  @apply border-n-ruby-8;
+  @apply border-b-red-500 dark:border-b-red-500;
   .input-group-label {
-    @apply text-n-ruby-8;
+    @apply text-red-500 dark:text-red-500;
   }
 }
 </style>

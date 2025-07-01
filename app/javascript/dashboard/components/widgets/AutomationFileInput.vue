@@ -11,7 +11,6 @@ export default {
       default: '',
     },
   },
-  emits: ['update:modelValue'],
   data() {
     return {
       uploadState: 'idle',
@@ -34,7 +33,7 @@ export default {
           'automations/uploadAttachment',
           file
         );
-        this.$emit('update:modelValue', [id]);
+        this.$emit('input', [id]);
         this.uploadState = 'uploaded';
         this.label = this.$t('AUTOMATION.ATTACHMENT.LABEL_UPLOADED');
       } catch (error) {

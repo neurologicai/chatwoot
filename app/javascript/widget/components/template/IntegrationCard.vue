@@ -14,6 +14,10 @@ export default {
       type: Number,
       required: true,
     },
+    meetingData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return { isLoading: false, dyteAuthToken: '', isSDKMounted: false };
@@ -24,18 +28,18 @@ export default {
       return getContrastingTextColor(this.widgetColor);
     },
     meetingLink() {
-      return buildDyteURL(this.dyteAuthToken);
+      return buildDyteURL(this.meetingData.room_name, this.dyteAuthToken);
     },
   },
   methods: {
     async joinTheCall() {
       this.isLoading = true;
       try {
-        const response = await IntegrationAPIClient.addParticipantToDyteMeeting(
-          this.messageId
-        );
-        const { data: { token } = {} } = response;
-        this.dyteAuthToken = token;
+        const { data: { authResponse: { authToken = '' } = {} } = {} } =
+          await IntegrationAPIClient.addParticipantToDyteMeeting(
+            this.messageId
+          );
+        this.dyteAuthToken = authToken;
       } catch (error) {
         // Ignore Error for now
       } finally {
@@ -62,7 +66,7 @@ export default {
       }"
       @click="joinTheCall"
     >
-      <FluentIcon icon="video-add" class="rtl:ml-2 ltr:mr-2" />
+      <FluentIcon icon="video-add" class="mr-2" />
       {{ $t('INTEGRATIONS.DYTE.CLICK_HERE_TO_JOIN') }}
     </button>
     <div v-if="dyteAuthToken" class="video-call--container">
@@ -81,6 +85,8 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+@import '~widget/assets/scss/variables.scss';
+
 .video-call--container {
   position: fixed;
   top: 72px;
@@ -99,10 +105,15 @@ export default {
 }
 
 .join-call-button {
-  @apply flex items-center my-2 rounded-lg;
+  margin: $space-small 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
 }
 
 .leave-room-button {
-  @apply absolute top-0 ltr:right-2 rtl:left-2 px-1 rounded-md;
+  position: absolute;
+  top: 0;
+  right: $space-small;
 }
 </style>

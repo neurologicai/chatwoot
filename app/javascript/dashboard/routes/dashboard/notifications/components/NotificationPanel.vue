@@ -1,16 +1,13 @@
 <script>
 import { mapGetters } from 'vuex';
 import NotificationPanelList from './NotificationPanelList.vue';
-import { useTrack } from 'dashboard/composables';
+
 import { ACCOUNT_EVENTS } from '../../../../helper/AnalyticsHelper/events';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     NotificationPanelList,
-    NextButton,
   },
-  emits: ['close'],
   data() {
     return {
       pageSize: 15,
@@ -63,7 +60,7 @@ export default {
         notification_type: notificationType,
       } = notification;
 
-      useTrack(ACCOUNT_EVENTS.OPEN_CONVERSATION_VIA_NOTIFICATION, {
+      this.$track(ACCOUNT_EVENTS.OPEN_CONVERSATION_VIA_NOTIFICATION, {
         notificationType,
       });
       this.$store.dispatch('notifications/read', {
@@ -103,7 +100,7 @@ export default {
       }
     },
     onMarkAllDoneClick() {
-      useTrack(ACCOUNT_EVENTS.MARK_AS_READ_NOTIFICATIONS);
+      this.$track(ACCOUNT_EVENTS.MARK_AS_READ_NOTIFICATIONS);
       this.$store.dispatch('notifications/readAll');
     },
     openAudioNotificationSettings() {
@@ -150,27 +147,28 @@ export default {
           </span>
         </div>
         <div class="flex gap-2">
-          <NextButton
+          <woot-button
             v-if="!noUnreadNotificationAvailable"
-            faded
-            xs
-            icon="i-lucide-list-check"
+            color-scheme="primary"
+            variant="smooth"
+            size="tiny"
             :is-loading="uiFlags.isUpdating"
-            :label="$t('NOTIFICATIONS_PAGE.MARK_ALL_DONE')"
             @click="onMarkAllDoneClick"
-          />
-          <NextButton
-            faded
-            xs
-            slate
-            icon="i-lucide-settings"
+          >
+            {{ $t('NOTIFICATIONS_PAGE.MARK_ALL_DONE') }}
+          </woot-button>
+          <woot-button
+            color-scheme="secondary"
+            variant="smooth"
+            size="tiny"
+            icon="settings"
             @click="openAudioNotificationSettings"
           />
-          <NextButton
-            ghost
-            xs
-            slate
-            icon="i-lucide-x"
+          <woot-button
+            color-scheme="secondary"
+            variant="link"
+            size="tiny"
+            icon="dismiss"
             @click="closeNotificationPanel"
           />
         </div>
@@ -187,18 +185,25 @@ export default {
         class="flex items-center justify-between px-5 py-1"
       >
         <div class="flex">
-          <NextButton
-            ghost
-            slate
-            icon="i-lucide-chevrons-left"
-            :disabled="inFirstPage"
+          <woot-button
+            size="medium"
+            variant="clear"
+            color-scheme="secondary"
+            :is-disabled="inFirstPage"
             @click="onClickFirstPage"
-          />
-          <NextButton
-            ghost
-            slate
-            icon="i-lucide-chevron-left"
-            class="ltr:-ml-3 rtl:-mr-3"
+          >
+            <fluent-icon icon="chevron-left" size="16" />
+            <fluent-icon
+              icon="chevron-left"
+              size="16"
+              class="rtl:-mr-3 ltr:-ml-3"
+            />
+          </woot-button>
+          <woot-button
+            color-scheme="secondary"
+            variant="clear"
+            size="medium"
+            icon="chevron-left"
             :disabled="inFirstPage"
             @click="onClickPreviousPage"
           />
@@ -207,21 +212,28 @@ export default {
           {{ currentPage }} - {{ lastPage }}
         </span>
         <div class="flex">
-          <NextButton
-            ghost
-            slate
-            icon="i-lucide-chevron-right"
-            class="ltr:-mr-3 rtl:-ml-3"
+          <woot-button
+            color-scheme="secondary"
+            variant="clear"
+            size="medium"
+            icon="chevron-right"
             :disabled="inLastPage"
             @click="onClickNextPage"
           />
-          <NextButton
-            ghost
-            slate
-            icon="i-lucide-chevrons-right"
+          <woot-button
+            size="medium"
+            variant="clear"
+            color-scheme="secondary"
             :disabled="inLastPage"
             @click="onClickLastPage"
-          />
+          >
+            <fluent-icon icon="chevron-right" size="16" />
+            <fluent-icon
+              icon="chevron-right"
+              size="16"
+              class="rtl:-mr-3 ltr:-ml-3"
+            />
+          </woot-button>
         </div>
       </div>
       <div v-else />

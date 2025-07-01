@@ -117,7 +117,7 @@ export default {
     :loading-message="$t('SLA.LOADING')"
   >
     <template #header>
-      <SLAHeader :show-actions="records.length > 0" @add="openAddPopup" />
+      <SLAHeader :show-actions="records.length > 0" @click="openAddPopup" />
     </template>
     <template #loading>
       <SLAListItemLoading v-for="ii in 2" :key="ii" class="mb-3" />
@@ -127,11 +127,11 @@ export default {
         v-if="isBehindAPaywall"
         :is-super-admin="isSuperAdmin"
         :is-on-chatwoot-cloud="isOnChatwootCloud"
-        @upgrade="onClickCTA"
+        @click="onClickCTA"
       />
       <SLAEmptyState
         v-else-if="!records.length"
-        @primary-action="openAddPopup"
+        @primaryAction="openAddPopup"
       />
       <div v-else class="flex flex-col w-full h-full gap-3">
         <SLAListItem
@@ -144,16 +144,16 @@ export default {
           :resolution-time="displayTime(sla.resolution_time_threshold)"
           :has-business-hours="sla.only_during_business_hours"
           :is-loading="loading[sla.id]"
-          @delete="openDeletePopup(sla)"
+          @click="openDeletePopup(sla)"
         />
       </div>
 
-      <woot-modal v-model:show="showAddPopup" :on-close="hideAddPopup">
+      <woot-modal :show.sync="showAddPopup" :on-close="hideAddPopup">
         <AddSLA @close="hideAddPopup" />
       </woot-modal>
 
       <woot-delete-modal
-        v-model:show="showDeleteConfirmationPopup"
+        :show.sync="showDeleteConfirmationPopup"
         :on-close="closeDeletePopup"
         :on-confirm="confirmDeletion"
         :title="$t('SLA.DELETE.CONFIRM.TITLE')"

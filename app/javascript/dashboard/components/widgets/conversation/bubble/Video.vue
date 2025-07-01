@@ -6,7 +6,6 @@ export default {
       required: true,
     },
   },
-  emits: ['error'],
   data() {
     return {
       show: false,
@@ -31,7 +30,7 @@ export default {
 <template>
   <div class="video message-text__wrap">
     <video ref="videoElement" :src="url" muted playsInline @click="onClick" />
-    <woot-modal v-model:show="show" :on-close="onClose">
+    <woot-modal :show.sync="show" :on-close="onClose">
       <video
         :src="url"
         controls

@@ -1,11 +1,9 @@
 <script>
 import { useAlert } from 'dashboard/composables';
 import { CONTACTS_EVENTS } from '../../../helper/AnalyticsHelper/events';
-import { useTrack } from 'dashboard/composables';
-
 export default {
   props: {
-    show: {
+    showDeletePopup: {
       type: Boolean,
       default: false,
     },
@@ -26,16 +24,8 @@ export default {
       default: () => {},
     },
   },
-  emits: ['close', 'update:show'],
+
   computed: {
-    localShow: {
-      get() {
-        return this.show;
-      },
-      set(value) {
-        this.$emit('update:show', value);
-      },
-    },
     activeCustomViews() {
       if (this.activeFilterType === 0) {
         return 'conversation';
@@ -76,7 +66,7 @@ export default {
             ? this.$t('FILTER.CUSTOM_VIEWS.DELETE.API_FOLDERS.SUCCESS_MESSAGE')
             : this.$t('FILTER.CUSTOM_VIEWS.DELETE.API_SEGMENTS.SUCCESS_MESSAGE')
         );
-        useTrack(CONTACTS_EVENTS.DELETE_FILTER, {
+        this.$track(CONTACTS_EVENTS.DELETE_FILTER, {
           type: this.filterType === 0 ? 'folder' : 'segment',
         });
       } catch (error) {
@@ -97,11 +87,12 @@ export default {
 };
 </script>
 
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div>
     <woot-delete-modal
-      v-if="localShow"
-      v-model:show="localShow"
+      v-if="showDeletePopup"
+      :show.sync="showDeletePopup"
       :on-close="closeDeletePopup"
       :on-confirm="deleteSavedCustomViews"
       :title="$t('FILTER.CUSTOM_VIEWS.DELETE.MODAL.CONFIRM.TITLE')"

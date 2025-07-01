@@ -6,12 +6,7 @@ import { useAlert } from 'dashboard/composables';
 import { convertToAttributeSlug } from 'dashboard/helper/commons.js';
 import { ATTRIBUTE_MODELS, ATTRIBUTE_TYPES } from './constants';
 
-import NextButton from 'dashboard/components-next/button/Button.vue';
-
 export default {
-  components: {
-    NextButton,
-  },
   props: {
     onClose: {
       type: Function,
@@ -163,7 +158,7 @@ export default {
 </script>
 
 <template>
-  <woot-modal v-model:show="show" :on-close="onClose">
+  <woot-modal :show.sync="show" :on-close="onClose">
     <div class="flex flex-col h-auto overflow-auto">
       <woot-modal-header :header-title="$t('ATTRIBUTES_MGMT.ADD.TITLE')" />
 
@@ -191,7 +186,7 @@ export default {
                 : ''
             "
             :placeholder="$t('ATTRIBUTES_MGMT.ADD.FORM.NAME.PLACEHOLDER')"
-            @update:model-value="onDisplayNameChange"
+            @input="onDisplayNameChange"
             @blur="v$.displayName.$touch"
           />
           <woot-input
@@ -275,18 +270,13 @@ export default {
             :placeholder="$t('ATTRIBUTES_MGMT.ADD.FORM.REGEX_CUE.PLACEHOLDER')"
           />
           <div class="flex flex-row justify-end w-full gap-2 px-0 py-2">
-            <NextButton
-              faded
-              slate
-              type="reset"
-              :label="$t('ATTRIBUTES_MGMT.ADD.CANCEL_BUTTON_TEXT')"
-              @click.prevent="onClose"
-            />
-            <NextButton
-              type="submit"
-              :label="$t('ATTRIBUTES_MGMT.ADD.SUBMIT')"
+            <woot-submit-button
               :disabled="isButtonDisabled"
+              :button-text="$t('ATTRIBUTES_MGMT.ADD.SUBMIT')"
             />
+            <button class="button clear" @click.prevent="onClose">
+              {{ $t('ATTRIBUTES_MGMT.ADD.CANCEL_BUTTON_TEXT') }}
+            </button>
           </div>
         </div>
       </form>

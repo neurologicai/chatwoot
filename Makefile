@@ -1,12 +1,12 @@
 # Variables
-APP_NAME := chatwoot
+APP_NAME := 🅷🆄🅱
 RAILS_ENV ?= development
 
 # Targets
 setup:
 	gem install bundler
 	bundle install
-	pnpm install
+	yarn install
 
 db_create:
 	RAILS_ENV=$(RAILS_ENV) bundle exec rails db:create
@@ -30,7 +30,7 @@ server:
 	RAILS_ENV=$(RAILS_ENV) bundle exec rails server -b 0.0.0.0 -p 3000
 
 burn:
-	bundle && pnpm install
+	bundle && yarn
 
 run:
 	@if [ -f ./.overmind.sock ]; then \

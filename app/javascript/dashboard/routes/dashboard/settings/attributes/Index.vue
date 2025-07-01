@@ -4,8 +4,7 @@ import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
 import AddAttribute from './AddAttribute.vue';
 import CustomAttribute from './CustomAttribute.vue';
 import SettingsLayout from '../SettingsLayout.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'dashboard/composables/useI18n';
 import { useStoreGetters, useStore } from 'dashboard/composables/store';
 
 const { t } = useI18n();
@@ -69,11 +68,13 @@ const onClickTabChange = index => {
         feature-name="custom_attributes"
       >
         <template #actions>
-          <Button
-            icon="i-lucide-circle-plus"
-            :label="$t('ATTRIBUTES_MGMT.HEADER_BTN_TXT')"
+          <woot-button
+            class="button nice rounded-md"
+            icon="add-circle"
             @click="openAddPopup"
-          />
+          >
+            {{ $t('ATTRIBUTES_MGMT.HEADER_BTN_TXT') }}
+          </woot-button>
         </template>
       </BaseSettingsHeader>
     </template>
@@ -84,9 +85,8 @@ const onClickTabChange = index => {
         @change="onClickTabChange"
       >
         <woot-tabs-item
-          v-for="(tab, index) in tabs"
+          v-for="tab in tabs"
           :key="tab.key"
-          :index="index"
           :name="tab.name"
           :show-badge="false"
         />
@@ -98,11 +98,15 @@ const onClickTabChange = index => {
         :attribute-model="attributeModel"
       />
     </template>
-    <AddAttribute
+    <woot-modal
       v-if="showAddPopup"
-      v-model:show="showAddPopup"
+      :show.sync="showAddPopup"
       :on-close="hideAddPopup"
-      :selected-attribute-model-tab="selectedTabIndex"
-    />
+    >
+      <AddAttribute
+        :on-close="hideAddPopup"
+        :selected-attribute-model-tab="selectedTabIndex"
+      />
+    </woot-modal>
   </SettingsLayout>
 </template>

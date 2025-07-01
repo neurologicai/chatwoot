@@ -9,8 +9,8 @@ import {
   findNodeToInsertImage,
   setURLWithQueryAndSize,
 } from '../editorHelper';
-import { EditorState } from '@chatwoot/prosemirror-schema';
-import { EditorView } from '@chatwoot/prosemirror-schema';
+import { EditorState } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 
 // Define a basic ProseMirror schema

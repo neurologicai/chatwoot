@@ -6,7 +6,6 @@ import { IFrameHelper, RNHelper } from 'widget/helpers/utils';
 import configMixin from './mixins/configMixin';
 import availabilityMixin from 'widget/mixins/availability';
 import { getLocale } from './helpers/urlParamsHelper';
-import { getLanguageDirection } from 'dashboard/components/widgets/conversation/advancedFilterItems/languages';
 import { isEmptyObject } from 'widget/helpers/utils';
 import Spinner from 'shared/components/Spinner.vue';
 import routerMixin from './mixins/routerMixin';
@@ -19,7 +18,7 @@ import {
   ON_CAMPAIGN_MESSAGE_CLICK,
   ON_UNREAD_MESSAGE_CLICK,
 } from './constants/widgetBusEvents';
-import { useDarkMode } from 'widget/composables/useDarkMode';
+import darkModeMixin from 'widget/mixins/darkModeMixin';
 import { SDK_SET_BUBBLE_VISIBILITY } from '../shared/constants/sharedFrameEvents';
 import { emitter } from 'shared/helpers/mitt';
 
@@ -28,11 +27,7 @@ export default {
   components: {
     Spinner,
   },
-  mixins: [availabilityMixin, configMixin, routerMixin],
-  setup() {
-    const { prefersDarkMode } = useDarkMode();
-    return { prefersDarkMode };
-  },
+  mixins: [availabilityMixin, configMixin, routerMixin, darkModeMixin],
   data() {
     return {
       isMobile: false,
@@ -58,21 +53,10 @@ export default {
     isRNWebView() {
       return RNHelper.isRNWebView();
     },
-    isRTL() {
-      return this.$root.$i18n.locale
-        ? getLanguageDirection(this.$root.$i18n.locale)
-        : false;
-    },
   },
   watch: {
     activeCampaign() {
       this.setCampaignView();
-    },
-    isRTL: {
-      immediate: true,
-      handler(value) {
-        document.documentElement.dir = value ? 'rtl' : 'ltr';
-      },
     },
   },
   mounted() {
@@ -347,7 +331,7 @@ export default {
 <template>
   <div
     v-if="!conversationSize && isFetchingList"
-    class="flex items-center justify-center flex-1 h-full bg-n-background"
+    class="flex items-center justify-center flex-1 h-full bg-black-25"
     :class="{ dark: prefersDarkMode }"
   >
     <Spinner size="" />
@@ -368,5 +352,5 @@ export default {
 </template>
 
 <style lang="scss">
-@import 'widget/assets/scss/woot.scss';
+@import '~widget/assets/scss/woot.scss';
 </style>

@@ -1,11 +1,10 @@
-<script setup>
-import { useRouter } from 'vue-router';
-import Button from 'dashboard/components-next/button/Button.vue';
-
-const router = useRouter();
-
-const openProfileSettings = () => {
-  return router.push({ name: 'profile_settings_index' });
+<script>
+export default {
+  methods: {
+    openProfileSettings() {
+      return this.$router.push({ name: 'profile_settings_index' });
+    },
+  },
 };
 </script>
 
@@ -15,12 +14,13 @@ const openProfileSettings = () => {
   >
     <p class="w-fit !m-0">
       {{ $t('CONVERSATION.FOOTER.MESSAGE_SIGNATURE_NOT_CONFIGURED') }}
-
-      <Button
-        link
-        :label="$t('CONVERSATION.FOOTER.CLICK_HERE')"
+      <woot-button
+        color-scheme="primary"
+        variant="link"
         @click="openProfileSettings"
-      />
+      >
+        {{ $t('CONVERSATION.FOOTER.CLICK_HERE') }}
+      </woot-button>
     </p>
   </div>
 </template>

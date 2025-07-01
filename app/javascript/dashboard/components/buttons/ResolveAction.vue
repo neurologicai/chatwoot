@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { useAlert } from 'dashboard/composables';
 import { useToggle } from '@vueuse/core';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'dashboard/composables/useI18n';
 import { useStore, useStoreGetters } from 'dashboard/composables/store';
 import { useEmitter } from 'dashboard/composables/emitter';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
@@ -14,8 +14,6 @@ import {
   CMD_REOPEN_CONVERSATION,
   CMD_RESOLVE_CONVERSATION,
 } from 'dashboard/helper/commandbar/events';
-
-import Button from 'dashboard/components-next/button/Button.vue';
 
 const store = useStore();
 const getters = useStoreGetters();
@@ -42,6 +40,13 @@ const isResolved = computed(
 const isSnoozed = computed(
   () => currentChat.value.status === wootConstants.STATUS_TYPE.SNOOZED
 );
+
+const buttonClass = computed(() => {
+  if (isPending.value) return 'primary';
+  if (isOpen.value) return 'success';
+  if (isResolved.value) return 'warning';
+  return '';
+});
 
 const showAdditionalActions = computed(
   () => !isPending.value && !isSnoozed.value
@@ -133,77 +138,76 @@ useEmitter(CMD_RESOLVE_CONVERSATION, onCmdResolveConversation);
 
 <template>
   <div class="relative flex items-center justify-end resolve-actions">
-    <div
-      class="rounded-lg shadow outline-1 outline"
-      :class="!showOpenButton ? 'outline-n-container' : 'outline-transparent'"
-    >
-      <Button
+    <div class="button-group">
+      <woot-button
         v-if="isOpen"
-        :label="t('CONVERSATION.HEADER.RESOLVE_ACTION')"
-        size="sm"
-        color="slate"
-        class="ltr:rounded-r-none rtl:rounded-l-none !outline-0"
+        class-names="resolve"
+        color-scheme="success"
+        icon="checkmark"
+        emoji="✅"
         :is-loading="isLoading"
         @click="onCmdResolveConversation"
-      />
-      <Button
+      >
+        {{ $t('CONVERSATION.HEADER.RESOLVE_ACTION') }}
+      </woot-button>
+      <woot-button
         v-else-if="isResolved"
-        :label="t('CONVERSATION.HEADER.REOPEN_ACTION')"
-        size="sm"
-        color="slate"
-        class="ltr:rounded-r-none rtl:rounded-l-none !outline-0"
+        class-names="resolve"
+        color-scheme="warning"
+        icon="arrow-redo"
+        emoji="👀"
         :is-loading="isLoading"
         @click="onCmdOpenConversation"
-      />
-      <Button
+      >
+        {{ t('CONVERSATION.HEADER.REOPEN_ACTION') }}
+      </woot-button>
+      <woot-button
         v-else-if="showOpenButton"
-        :label="t('CONVERSATION.HEADER.OPEN_ACTION')"
-        size="sm"
-        color="slate"
+        class-names="resolve"
+        color-scheme="primary"
+        icon="person"
         :is-loading="isLoading"
         @click="onCmdOpenConversation"
-      />
-      <Button
+      >
+        {{ t('CONVERSATION.HEADER.OPEN_ACTION') }}
+      </woot-button>
+      <woot-button
         v-if="showAdditionalActions"
         ref="arrowDownButtonRef"
-        icon="i-lucide-chevron-down"
+        :color-scheme="buttonClass"
         :disabled="isLoading"
-        size="sm"
-        class="ltr:rounded-l-none rtl:rounded-r-none !outline-0"
-        color="slate"
-        trailing-icon
+        icon="chevron-down"
+        emoji="🔽"
         @click="openDropdown"
       />
     </div>
     <div
       v-if="showActionsDropdown"
       v-on-clickaway="closeDropdown"
-      class="dropdown-pane dropdown-pane--open left-auto top-full mt-0.5 ltr:right-0 rtl:left-0 max-w-[12.5rem] min-w-[9.75rem]"
+      class="dropdown-pane dropdown-pane--open left-auto top-[2.625rem] mt-0.5 right-0 max-w-[12.5rem] min-w-[9.75rem]"
     >
       <WootDropdownMenu class="mb-0">
         <WootDropdownItem v-if="!isPending">
-          <Button
-            :label="t('CONVERSATION.RESOLVE_DROPDOWN.SNOOZE_UNTIL')"
-            ghost
-            slate
-            sm
-            start
-            icon="i-lucide-alarm-clock-minus"
-            class="w-full"
+          <woot-button
+            variant="clear"
+            color-scheme="secondary"
+            size="small"
+            icon="snooze"
             @click="() => openSnoozeModal()"
-          />
+          >
+            {{ t('CONVERSATION.RESOLVE_DROPDOWN.SNOOZE_UNTIL') }}
+          </woot-button>
         </WootDropdownItem>
         <WootDropdownItem v-if="!isPending">
-          <Button
-            :label="t('CONVERSATION.RESOLVE_DROPDOWN.MARK_PENDING')"
-            ghost
-            slate
-            sm
-            start
-            icon="i-lucide-circle-dot-dashed"
-            class="w-full"
+          <woot-button
+            variant="clear"
+            color-scheme="secondary"
+            size="small"
+            icon="book-clock"
             @click="() => toggleStatus(wootConstants.STATUS_TYPE.PENDING)"
-          />
+          >
+            {{ t('CONVERSATION.RESOLVE_DROPDOWN.MARK_PENDING') }}
+          </woot-button>
         </WootDropdownItem>
       </WootDropdownMenu>
     </div>

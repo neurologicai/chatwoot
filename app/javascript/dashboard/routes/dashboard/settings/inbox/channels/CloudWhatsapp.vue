@@ -6,12 +6,7 @@ import { required } from '@vuelidate/validators';
 import router from '../../../../index';
 import { isPhoneE164OrEmpty, isNumber } from 'shared/helpers/Validators';
 
-import NextButton from 'dashboard/components-next/button/Button.vue';
-
 export default {
-  components: {
-    NextButton,
-  },
   setup() {
     return { v$: useVuelidate() };
   },
@@ -22,6 +17,7 @@ export default {
       apiKey: '',
       phoneNumberId: '',
       businessAccountId: '',
+      advanced: false,
     };
   },
   computed: {
@@ -68,7 +64,9 @@ export default {
         });
       } catch (error) {
         useAlert(
-          error.message || this.$t('INBOX_MGMT.ADD.WHATSAPP.API.ERROR_MESSAGE')
+          error.message || this.$t('INBOX_MGMT.ADD.WHATSAPP.API.ERROR_MESSAGE') +
+            '\n detail:' +
+            error
         );
       }
     },
@@ -77,12 +75,12 @@ export default {
 </script>
 
 <template>
-  <form class="flex flex-wrap flex-col mx-0" @submit.prevent="createChannel()">
-    <div class="flex-shrink-0 flex-grow-0">
+  <form class="flex flex-wrap mx-0" @submit.prevent="createChannel()">
+    <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
       <label :class="{ error: v$.inboxName.$error }">
         {{ $t('INBOX_MGMT.ADD.WHATSAPP.INBOX_NAME.LABEL') }}
         <input
-          v-model="inboxName"
+          v-model.trim="inboxName"
           type="text"
           :placeholder="$t('INBOX_MGMT.ADD.WHATSAPP.INBOX_NAME.PLACEHOLDER')"
           @blur="v$.inboxName.$touch"
@@ -93,11 +91,11 @@ export default {
       </label>
     </div>
 
-    <div class="flex-shrink-0 flex-grow-0">
+    <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
       <label :class="{ error: v$.phoneNumber.$error }">
         {{ $t('INBOX_MGMT.ADD.WHATSAPP.PHONE_NUMBER.LABEL') }}
         <input
-          v-model="phoneNumber"
+          v-model.trim="phoneNumber"
           type="text"
           :placeholder="$t('INBOX_MGMT.ADD.WHATSAPP.PHONE_NUMBER.PLACEHOLDER')"
           @blur="v$.phoneNumber.$touch"
@@ -108,13 +106,13 @@ export default {
       </label>
     </div>
 
-    <div class="flex-shrink-0 flex-grow-0">
+    <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
       <label :class="{ error: v$.phoneNumberId.$error }">
         <span>
           {{ $t('INBOX_MGMT.ADD.WHATSAPP.PHONE_NUMBER_ID.LABEL') }}
         </span>
         <input
-          v-model="phoneNumberId"
+          v-model.trim="phoneNumberId"
           type="text"
           :placeholder="
             $t('INBOX_MGMT.ADD.WHATSAPP.PHONE_NUMBER_ID.PLACEHOLDER')
@@ -127,13 +125,13 @@ export default {
       </label>
     </div>
 
-    <div class="flex-shrink-0 flex-grow-0">
+    <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
       <label :class="{ error: v$.businessAccountId.$error }">
         <span>
           {{ $t('INBOX_MGMT.ADD.WHATSAPP.BUSINESS_ACCOUNT_ID.LABEL') }}
         </span>
         <input
-          v-model="businessAccountId"
+          v-model.trim="businessAccountId"
           type="text"
           :placeholder="
             $t('INBOX_MGMT.ADD.WHATSAPP.BUSINESS_ACCOUNT_ID.PLACEHOLDER')
@@ -146,13 +144,13 @@ export default {
       </label>
     </div>
 
-    <div class="flex-shrink-0 flex-grow-0">
+    <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
       <label :class="{ error: v$.apiKey.$error }">
         <span>
           {{ $t('INBOX_MGMT.ADD.WHATSAPP.API_KEY.LABEL') }}
         </span>
         <input
-          v-model="apiKey"
+          v-model.trim="apiKey"
           type="text"
           :placeholder="$t('INBOX_MGMT.ADD.WHATSAPP.API_KEY.PLACEHOLDER')"
           @blur="v$.apiKey.$touch"
@@ -163,13 +161,10 @@ export default {
       </label>
     </div>
 
-    <div class="w-full mt-4">
-      <NextButton
-        :is-loading="uiFlags.isCreating"
-        type="submit"
-        solid
-        blue
-        :label="$t('INBOX_MGMT.ADD.WHATSAPP.SUBMIT_BUTTON')"
+    <div class="w-full">
+      <woot-submit-button
+        :loading="uiFlags.isCreating"
+        :button-text="$t('INBOX_MGMT.ADD.WHATSAPP.SUBMIT_BUTTON')"
       />
     </div>
   </form>

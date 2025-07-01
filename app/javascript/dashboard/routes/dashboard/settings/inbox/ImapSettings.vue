@@ -4,12 +4,10 @@ import { useAlert } from 'dashboard/composables';
 import SettingsSection from 'dashboard/components/SettingsSection.vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 export default {
   components: {
     SettingsSection,
-    NextButton,
   },
   props: {
     inbox: {
@@ -114,7 +112,7 @@ export default {
         <p>{{ $t('INBOX_MGMT.IMAP.TOGGLE_HELP') }}</p>
         <div v-if="isIMAPEnabled" class="mb-6">
           <woot-input
-            v-model="address"
+            v-model.trim="address"
             :class="{ error: v$.address.$error }"
             class="max-w-[75%] w-full"
             :label="$t('INBOX_MGMT.IMAP.ADDRESS.LABEL')"
@@ -157,10 +155,9 @@ export default {
             {{ $t('INBOX_MGMT.IMAP.ENABLE_SSL') }}
           </label>
         </div>
-        <NextButton
-          type="submit"
-          :label="$t('INBOX_MGMT.IMAP.UPDATE')"
-          :is-loading="uiFlags.isUpdatingIMAP"
+        <woot-submit-button
+          :button-text="$t('INBOX_MGMT.IMAP.UPDATE')"
+          :loading="uiFlags.isUpdatingIMAP"
           :disabled="(v$.$invalid && isIMAPEnabled) || uiFlags.isUpdatingIMAP"
         />
       </form>

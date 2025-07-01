@@ -6,6 +6,7 @@ import ChatOptions from 'shared/components/ChatOptions.vue';
 import ChatArticle from './template/Article.vue';
 import EmailInput from './template/EmailInput.vue';
 import CustomerSatisfaction from 'shared/components/CustomerSatisfaction.vue';
+import darkModeMixin from 'widget/mixins/darkModeMixin.js';
 import IntegrationCard from './template/IntegrationCard.vue';
 
 export default {
@@ -19,6 +20,7 @@ export default {
     CustomerSatisfaction,
     IntegrationCard,
   },
+  mixins: [darkModeMixin],
   props: {
     message: { type: String, default: null },
     contentType: { type: String, default: null },
@@ -95,11 +97,12 @@ export default {
       v-if="
         !isCards && !isOptions && !isForm && !isArticle && !isCards && !isCSAT
       "
-      class="chat-bubble agent bg-n-background dark:bg-n-solid-3 text-n-slate-12"
+      class="chat-bubble agent"
+      :class="$dm('bg-white', 'dark:bg-slate-700 has-dark-mode')"
     >
       <div
         v-dompurify-html="formatMessage(message, false)"
-        class="message-content text-n-slate-12"
+        class="message-content text-slate-900 dark:text-slate-50"
       />
       <EmailInput
         v-if="isTemplateEmail"
@@ -118,7 +121,7 @@ export default {
         :title="message"
         :options="messageContentAttributes.items"
         :hide-fields="!!messageContentAttributes.submitted_values"
-        @option-select="onOptionSelect"
+        @click="onOptionSelect"
       />
     </div>
     <ChatForm
@@ -144,8 +147,6 @@ export default {
     <CustomerSatisfaction
       v-if="isCSAT"
       :message-content-attributes="messageContentAttributes.submitted_values"
-      :display-type="messageContentAttributes.display_type"
-      :message="message"
       :message-id="messageId"
     />
   </div>

@@ -77,6 +77,9 @@ export default {
     isSent() {
       return MESSAGE_STATUS.SENT === this.messageStatus;
     },
+    isProgress() {
+      return MESSAGE_STATUS.PROGRESS === this.messageStatus;
+    },
     readableTime() {
       return messageTimestamp(this.createdAt, 'LLL d, h:mm a');
     },
@@ -106,6 +109,9 @@ export default {
         return true;
       }
       return false;
+    },
+    showProgressIndicator() {
+      return this.isProgress;
     },
     showSentIndicator() {
       if (!this.showStatusIndicators) {
@@ -195,6 +201,13 @@ export default {
         size="14"
       />
     </span>
+    <span v-else-if="showProgressIndicator" class="read-indicator-wrap">
+      <fluent-icon 
+        icon="clock" 
+        class="action--icon read-tick" 
+        size="14" 
+      />
+    </span>
     <span v-if="showReadIndicator" class="read-indicator-wrap">
       <fluent-icon
         v-tooltip.top-start="$t('CHAT_LIST.MESSAGE_READ')"
@@ -267,7 +280,7 @@ export default {
       }
 
       &.read-indicator {
-        @apply text-green-200 dark:text-green-200;
+        @apply text-green-700 dark:text-green-700;
       }
     }
 

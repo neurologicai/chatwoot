@@ -1,10 +1,5 @@
 <script>
-import NextButton from 'dashboard/components-next/button/Button.vue';
-
 export default {
-  components: {
-    NextButton,
-  },
   props: {
     totalLength: {
       type: Number,
@@ -15,7 +10,6 @@ export default {
       default: 0,
     },
   },
-  emits: ['prev', 'next'],
   computed: {
     isUpDisabled() {
       return this.currentIndex === 1;
@@ -42,34 +36,34 @@ export default {
 <template>
   <div class="flex gap-2 items-center">
     <div class="flex gap-1 items-center">
-      <NextButton
-        icon="i-lucide-chevron-up"
-        xs
-        slate
-        faded
+      <woot-button
+        size="tiny"
+        variant="hollow"
+        color-scheme="secondary"
+        icon="chevron-up"
         :disabled="isUpDisabled"
         @click="handleUpClick"
       />
-      <NextButton
-        icon="i-lucide-chevron-down"
-        xs
-        slate
-        faded
+      <woot-button
+        size="tiny"
+        variant="hollow"
+        color-scheme="secondary"
+        icon="chevron-down"
         :disabled="isDownDisabled"
         @click="handleDownClick"
       />
     </div>
     <div class="flex items-center gap-1 whitespace-nowrap">
-      <span class="text-sm font-medium text-n-slate-12 tabular-nums">
+      <span class="text-sm font-medium text-gray-600 tabular-nums">
         {{ totalLength <= 1 ? '1' : currentIndex }}
       </span>
       <span
         v-if="totalLength > 1"
-        class="text-sm text-n-slate-9 relative -top-px"
+        class="text-sm text-slate-400 relative -top-px"
       >
         /
       </span>
-      <span v-if="totalLength > 1" class="text-sm text-n-slate-9 tabular-nums">
+      <span v-if="totalLength > 1" class="text-sm text-slate-400 tabular-nums">
         {{ totalLength }}
       </span>
     </div>

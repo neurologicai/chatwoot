@@ -6,10 +6,9 @@ import fromUnixTime from 'date-fns/fromUnixTime';
 import format from 'date-fns/format';
 import { formatTime } from '@chatwoot/utils';
 import ChartStats from './components/ChartElements/ChartStats.vue';
-import BarChart from 'shared/components/charts/BarChart.vue';
 
 export default {
-  components: { ChartStats, BarChart },
+  components: { ChartStats },
   props: {
     groupBy: {
       type: Object,
@@ -18,10 +17,6 @@ export default {
     accountSummaryKey: {
       type: String,
       default: 'getAccountSummary',
-    },
-    summaryFetchingKey: {
-      type: String,
-      default: 'getAccountSummaryFetchingStatus',
     },
     reportKeys: {
       type: Object,
@@ -95,14 +90,14 @@ export default {
           case 'bar':
             return {
               ...dataset,
-              yAxisID: 'y',
+              yAxisID: 'y-left',
               label: metric.NAME,
               data: data.map(element => element.value),
             };
           case 'line':
             return {
               ...dataset,
-              yAxisID: 'y',
+              yAxisID: 'y-right',
               label: this.metrics[0].NAME,
               data: data.map(element => element.count),
             };
@@ -116,28 +111,22 @@ export default {
       };
     },
     getChartOptions(metric) {
-      const options = {
-        scales: METRIC_CHART[metric.KEY].scales,
-      };
-
-      // Only add tooltip configuration for time-based metrics
+      let tooltips = {};
       if (this.isAverageMetricType(metric.KEY)) {
-        options.plugins = {
-          tooltip: {
-            callbacks: {
-              label: ({ raw, dataIndex }) => {
-                return this.$t(metric.TOOLTIP_TEXT, {
-                  metricValue: formatTime(raw || 0),
-                  conversationCount:
-                    this.accountReport.data[metric.KEY][dataIndex]?.count || 0,
-                });
-              },
-            },
+        tooltips.callbacks = {
+          label: tooltipItem => {
+            return this.$t(metric.TOOLTIP_TEXT, {
+              metricValue: formatTime(tooltipItem.yLabel),
+              conversationCount:
+                this.accountReport.data[metric.KEY][tooltipItem.index].count,
+            });
           },
         };
       }
-
-      return options;
+      return {
+        scales: METRIC_CHART[metric.KEY].scales,
+        tooltips: tooltips,
+      };
     },
   },
 };
@@ -145,18 +134,14 @@ export default {
 
 <template>
   <div
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 px-6 py-5 shadow outline-1 outline outline-n-container rounded-xl bg-n-solid-2"
+    class="grid grid-cols-1 p-2 bg-white border rounded-md md:grid-cols-2 lg:grid-cols-3 dark:bg-slate-800 border-slate-100 dark:border-slate-700"
   >
     <div
       v-for="metric in metrics"
       :key="metric.KEY"
       class="p-4 mb-3 rounded-md"
     >
-      <ChartStats
-        :metric="metric"
-        :account-summary-key="accountSummaryKey"
-        :summary-fetching-key="summaryFetchingKey"
-      />
+      <ChartStats :metric="metric" :account-summary-key="accountSummaryKey" />
       <div class="mt-4 h-72">
         <woot-loading-state
           v-if="accountReport.isFetching[metric.KEY]"
@@ -164,10 +149,11 @@ export default {
           :message="$t('REPORT.LOADING_CHART')"
         />
         <div v-else class="flex items-center justify-center h-72">
-          <BarChart
+          <woot-bar
             v-if="accountReport.data[metric.KEY].length"
             :collection="getCollection(metric)"
             :chart-options="getChartOptions(metric)"
+            class="w-full h-72"
           />
           <span v-else class="text-sm text-slate-600">
             {{ $t('REPORT.NO_ENOUGH_DATA') }}

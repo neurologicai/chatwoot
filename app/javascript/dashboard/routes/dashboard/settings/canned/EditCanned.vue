@@ -4,12 +4,12 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 import { useAlert } from 'dashboard/composables';
 import WootMessageEditor from 'dashboard/components/widgets/WootWriter/Editor.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
+import WootSubmitButton from '../../../../components/buttons/FormSubmitButton.vue';
 import Modal from '../../../../components/Modal.vue';
 
 export default {
   components: {
-    NextButton,
+    WootSubmitButton,
     Modal,
     WootMessageEditor,
   },
@@ -89,7 +89,7 @@ export default {
 </script>
 
 <template>
-  <Modal v-model:show="show" :on-close="onClose">
+  <Modal :show.sync="show" :on-close="onClose">
     <div class="flex flex-col h-auto overflow-auto">
       <woot-modal-header :header-title="pageTitle" />
       <form class="flex flex-col w-full" @submit.prevent="editCannedResponse()">
@@ -97,7 +97,7 @@ export default {
           <label :class="{ error: v$.shortCode.$error }">
             {{ $t('CANNED_MGMT.EDIT.FORM.SHORT_CODE.LABEL') }}
             <input
-              v-model="shortCode"
+              v-model.trim="shortCode"
               type="text"
               :placeholder="$t('CANNED_MGMT.EDIT.FORM.SHORT_CODE.PLACEHOLDER')"
               @input="v$.shortCode.$touch"
@@ -122,23 +122,18 @@ export default {
           </div>
         </div>
         <div class="flex flex-row justify-end w-full gap-2 px-0 py-2">
-          <NextButton
-            faded
-            slate
-            type="reset"
-            :label="$t('CANNED_MGMT.EDIT.CANCEL_BUTTON_TEXT')"
-            @click.prevent="onClose"
-          />
-          <NextButton
-            type="submit"
-            :label="$t('CANNED_MGMT.EDIT.FORM.SUBMIT')"
+          <WootSubmitButton
             :disabled="
               v$.content.$invalid ||
               v$.shortCode.$invalid ||
               editCanned.showLoading
             "
-            :is-loading="editCanned.showLoading"
+            :button-text="$t('CANNED_MGMT.EDIT.FORM.SUBMIT')"
+            :loading="editCanned.showLoading"
           />
+          <button class="button clear" @click.prevent="onClose">
+            {{ $t('CANNED_MGMT.EDIT.CANCEL_BUTTON_TEXT') }}
+          </button>
         </div>
       </form>
     </div>

@@ -1,17 +1,15 @@
 import fromUnixTime from 'date-fns/fromUnixTime';
 import differenceInDays from 'date-fns/differenceInDays';
 import Cookies from 'js-cookie';
-import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
-import { SESSION_STORAGE_KEYS } from 'dashboard/constants/sessionStorage';
-import { LocalStorage } from 'shared/helpers/localStorage';
-import SessionStorage from 'shared/helpers/sessionStorage';
-import { emitter } from 'shared/helpers/mitt';
 import {
   ANALYTICS_IDENTITY,
   ANALYTICS_RESET,
   CHATWOOT_RESET,
   CHATWOOT_SET_USER,
-} from '../../constants/appEvents';
+} from '../../helper/scriptHelpers';
+import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
+import { LocalStorage } from 'shared/helpers/localStorage';
+import { emitter } from 'shared/helpers/mitt';
 
 Cookies.defaults = { sameSite: 'Lax' };
 
@@ -46,10 +44,6 @@ export const clearLocalStorageOnLogout = () => {
   LocalStorage.remove(LOCAL_STORAGE_KEYS.DRAFT_MESSAGES);
 };
 
-export const clearSessionStorageOnLogout = () => {
-  SessionStorage.remove(SESSION_STORAGE_KEYS.IMPERSONATION_USER);
-};
-
 export const deleteIndexedDBOnLogout = async () => {
   let dbs = [];
   try {
@@ -81,7 +75,6 @@ export const clearCookiesOnLogout = () => {
   emitter.emit(ANALYTICS_RESET);
   clearBrowserSessionCookies();
   clearLocalStorageOnLogout();
-  clearSessionStorageOnLogout();
   const globalConfig = window.globalConfig || {};
   const logoutRedirectLink = globalConfig.LOGOUT_REDIRECT_LINK || '/';
   window.location = logoutRedirectLink;

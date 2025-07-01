@@ -8,7 +8,6 @@ export default {
       default: null,
     },
   },
-  emits: ['selectRating'],
   data() {
     return {
       ratings: CSAT_RATINGS,

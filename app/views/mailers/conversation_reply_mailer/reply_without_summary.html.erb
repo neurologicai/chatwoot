@@ -1,12 +1,11 @@
 <% @messages.each do |message| %>
-  <p style="font-family: Roboto,"Helvetica Neue",Tahoma,Arial,sans-serif; text-align: start; unicode-bidi: plaintext;">
+  <p style="font-family: Roboto,'Helvetica Neue',Tahoma,Arial,sans-serif; text-align: start; unicode-bidi: plaintext;">
     <% if message.content %>
       <%= ChatwootMarkdownRenderer.new(message.content).render_message %>
     <% end %>
-    <% if message.attachments.present? %>
-      <p>Attachments:</p>
+    <% if message.attachments %>
       <% message.attachments.each do |attachment| %>
-        <p><a href="<%= attachment.file_url %>" target="_blank"><%= attachment.file.filename.to_s %></a></p>
+        anexo [<a href="<%= attachment.file_url %>" _target="blank">clique aqui para ver</a>]
       <% end %>
     <% end %>
   </p>

@@ -117,11 +117,3 @@ export const timeStampAppendedURL = dataUrl => {
 
   return url.toString();
 };
-
-export const getHostNameFromURL = url => {
-  try {
-    return new URL(url).hostname;
-  } catch (error) {
-    return null;
-  }
-};

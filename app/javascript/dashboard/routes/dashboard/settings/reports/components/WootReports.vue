@@ -1,35 +1,23 @@
 <script>
-import V4Button from 'dashboard/components-next/button/Button.vue';
-import { useAlert, useTrack } from 'dashboard/composables';
+import { useAlert } from 'dashboard/composables';
 import ReportFilters from './ReportFilters.vue';
 import ReportContainer from '../ReportContainer.vue';
 import { GROUP_BY_FILTER } from '../constants';
 import { generateFileName } from '../../../../../helper/downloadHelper';
 import { REPORTS_EVENTS } from '../../../../../helper/AnalyticsHelper/events';
-import ReportHeader from './ReportHeader.vue';
 
-const GROUP_BY_OPTIONS = {
-  DAY: [{ id: 1, groupByKey: 'REPORT.GROUPING_OPTIONS.DAY' }],
-  WEEK: [
-    { id: 1, groupByKey: 'REPORT.GROUPING_OPTIONS.DAY' },
-    { id: 2, groupByKey: 'REPORT.GROUPING_OPTIONS.WEEK' },
-  ],
-  MONTH: [
-    { id: 1, groupByKey: 'REPORT.GROUPING_OPTIONS.DAY' },
-    { id: 2, groupByKey: 'REPORT.GROUPING_OPTIONS.WEEK' },
-    { id: 3, groupByKey: 'REPORT.GROUPING_OPTIONS.MONTH' },
-  ],
-  YEAR: [
-    { id: 2, groupByKey: 'REPORT.GROUPING_OPTIONS.WEEK' },
-    { id: 3, groupByKey: 'REPORT.GROUPING_OPTIONS.MONTH' },
-    { id: 4, groupByKey: 'REPORT.GROUPING_OPTIONS.YEAR' },
-  ],
+const REPORTS_KEYS = {
+  CONVERSATIONS: 'conversations_count',
+  INCOMING_MESSAGES: 'incoming_messages_count',
+  OUTGOING_MESSAGES: 'outgoing_messages_count',
+  FIRST_RESPONSE_TIME: 'avg_first_response_time',
+  RESOLUTION_TIME: 'avg_resolution_time',
+  RESOLUTION_COUNT: 'resolutions_count',
+  REPLY_TIME: 'reply_time',
 };
 
 export default {
   components: {
-    ReportHeader,
-    V4Button,
     ReportFilters,
     ReportContainer,
   },
@@ -50,26 +38,14 @@ export default {
       type: String,
       default: 'Download Reports',
     },
-    reportTitle: {
-      type: String,
-      default: 'Download Reports',
-    },
-    hasBackButton: {
-      type: Boolean,
-      default: false,
-    },
-    selectedItem: {
-      type: Object,
-      default: null,
-    },
   },
   data() {
     return {
       from: 0,
       to: 0,
-      selectedFilter: this.selectedItem,
+      selectedFilter: null,
       groupBy: GROUP_BY_FILTER[1],
-      groupByfilterItemsList: GROUP_BY_OPTIONS.DAY.map(this.translateOptions),
+      groupByfilterItemsList: this.$t('REPORT.GROUP_BY_DAY_OPTIONS'),
       selectedGroupByFilter: null,
       businessHours: false,
     };
@@ -77,22 +53,6 @@ export default {
   computed: {
     filterItemsList() {
       return this.$store.getters[this.getterKey] || [];
-    },
-    isAgentType() {
-      return this.type === 'agent';
-    },
-    reportKeys() {
-      return {
-        CONVERSATIONS: 'conversations_count',
-        ...(!this.isAgentType && {
-          INCOMING_MESSAGES: 'incoming_messages_count',
-        }),
-        OUTGOING_MESSAGES: 'outgoing_messages_count',
-        FIRST_RESPONSE_TIME: 'avg_first_response_time',
-        RESOLUTION_TIME: 'avg_resolution_time',
-        RESOLUTION_COUNT: 'resolutions_count',
-        REPLY_TIME: 'reply_time',
-      };
     },
   },
   mounted() {
@@ -114,11 +74,19 @@ export default {
       }
     },
     fetchChartData() {
-      Object.keys(this.reportKeys).forEach(async key => {
+      [
+        'CONVERSATIONS',
+        'INCOMING_MESSAGES',
+        'OUTGOING_MESSAGES',
+        'FIRST_RESPONSE_TIME',
+        'RESOLUTION_TIME',
+        'RESOLUTION_COUNT',
+        'REPLY_TIME',
+      ].forEach(async key => {
         try {
           const { from, to, groupBy, businessHours } = this;
           this.$store.dispatch('fetchAccountReport', {
-            metric: this.reportKeys[key],
+            metric: REPORTS_KEYS[key],
             from,
             to,
             type: this.type,
@@ -148,7 +116,7 @@ export default {
     onDateRangeChange({ from, to, groupBy }) {
       // do not track filter change on inital load
       if (this.from !== 0 && this.to !== 0) {
-        useTrack(REPORTS_EVENTS.FILTER_REPORT, {
+        this.$track(REPORTS_EVENTS.FILTER_REPORT, {
           filterType: 'date',
           reportType: this.type,
         });
@@ -178,7 +146,7 @@ export default {
       this.groupBy = GROUP_BY_FILTER[payload.id];
       this.fetchAllData();
 
-      useTrack(REPORTS_EVENTS.FILTER_REPORT, {
+      this.$track(REPORTS_EVENTS.FILTER_REPORT, {
         filterType: 'groupBy',
         filterValue: this.groupBy?.period,
         reportType: this.type,
@@ -187,23 +155,20 @@ export default {
     fetchFilterItems(groupBy) {
       switch (groupBy) {
         case GROUP_BY_FILTER[2].period:
-          return GROUP_BY_OPTIONS.WEEK.map(this.translateOptions);
+          return this.$t('REPORT.GROUP_BY_WEEK_OPTIONS');
         case GROUP_BY_FILTER[3].period:
-          return GROUP_BY_OPTIONS.MONTH.map(this.translateOptions);
+          return this.$t('REPORT.GROUP_BY_MONTH_OPTIONS');
         case GROUP_BY_FILTER[4].period:
-          return GROUP_BY_OPTIONS.YEAR.map(this.translateOptions);
+          return this.$t('REPORT.GROUP_BY_YEAR_OPTIONS');
         default:
-          return GROUP_BY_OPTIONS.DAY.map(this.translateOptions);
+          return this.$t('REPORT.GROUP_BY_DAY_OPTIONS');
       }
-    },
-    translateOptions(opts) {
-      return { id: opts.id, groupBy: this.$t(opts.groupByKey) };
     },
     onBusinessHoursToggle(value) {
       this.businessHours = value;
       this.fetchAllData();
 
-      useTrack(REPORTS_EVENTS.FILTER_REPORT, {
+      this.$track(REPORTS_EVENTS.FILTER_REPORT, {
         filterType: 'businessHours',
         filterValue: value,
         reportType: this.type,
@@ -214,29 +179,26 @@ export default {
 </script>
 
 <template>
-  <ReportHeader :header-title="reportTitle" :has-back-button="hasBackButton">
-    <V4Button
-      :label="downloadButtonLabel"
-      icon="i-ph-download-simple"
-      size="sm"
+  <div class="flex-1 p-4 overflow-auto">
+    <woot-button
+      color-scheme="success"
+      class-names="button--fixed-top"
+      icon="arrow-download"
       @click="downloadReports"
+    >
+      {{ downloadButtonLabel }}
+    </woot-button>
+    <ReportFilters
+      v-if="filterItemsList"
+      :type="type"
+      :filter-items-list="filterItemsList"
+      :group-by-filter-items-list="groupByfilterItemsList"
+      :selected-group-by-filter="selectedGroupByFilter"
+      @dateRangeChange="onDateRangeChange"
+      @filterChange="onFilterChange"
+      @groupByFilterChange="onGroupByFilterChange"
+      @businessHoursToggle="onBusinessHoursToggle"
     />
-  </ReportHeader>
-  <ReportFilters
-    v-if="filterItemsList"
-    :type="type"
-    :filter-items-list="filterItemsList"
-    :group-by-filter-items-list="groupByfilterItemsList"
-    :selected-group-by-filter="selectedGroupByFilter"
-    :current-filter="selectedFilter"
-    @date-range-change="onDateRangeChange"
-    @filter-change="onFilterChange"
-    @group-by-filter-change="onGroupByFilterChange"
-    @business-hours-toggle="onBusinessHoursToggle"
-  />
-  <ReportContainer
-    v-if="filterItemsList.length"
-    :group-by="groupBy"
-    :report-keys="reportKeys"
-  />
+    <ReportContainer v-if="filterItemsList.length" :group-by="groupBy" />
+  </div>
 </template>

@@ -1,11 +1,8 @@
 <script>
 import { mapGetters } from 'vuex';
 import { useAlert } from 'dashboard/composables';
-import { emitter } from 'shared/helpers/mitt';
 import EmailTranscriptModal from './EmailTranscriptModal.vue';
 import ResolveAction from '../../buttons/ResolveAction.vue';
-import ButtonV4 from 'dashboard/components-next/button/Button.vue';
-
 import {
   CMD_MUTE_CONVERSATION,
   CMD_SEND_TRANSCRIPT,
@@ -16,7 +13,6 @@ export default {
   components: {
     EmailTranscriptModal,
     ResolveAction,
-    ButtonV4,
   },
   data() {
     return {
@@ -27,14 +23,14 @@ export default {
     ...mapGetters({ currentChat: 'getSelectedChat' }),
   },
   mounted() {
-    emitter.on(CMD_MUTE_CONVERSATION, this.mute);
-    emitter.on(CMD_UNMUTE_CONVERSATION, this.unmute);
-    emitter.on(CMD_SEND_TRANSCRIPT, this.toggleEmailActionsModal);
+    this.$emitter.on(CMD_MUTE_CONVERSATION, this.mute);
+    this.$emitter.on(CMD_UNMUTE_CONVERSATION, this.unmute);
+    this.$emitter.on(CMD_SEND_TRANSCRIPT, this.toggleEmailActionsModal);
   },
-  unmounted() {
-    emitter.off(CMD_MUTE_CONVERSATION, this.mute);
-    emitter.off(CMD_UNMUTE_CONVERSATION, this.unmute);
-    emitter.off(CMD_SEND_TRANSCRIPT, this.toggleEmailActionsModal);
+  destroyed() {
+    this.$emitter.off(CMD_MUTE_CONVERSATION, this.mute);
+    this.$emitter.off(CMD_UNMUTE_CONVERSATION, this.unmute);
+    this.$emitter.off(CMD_SEND_TRANSCRIPT, this.toggleEmailActionsModal);
   },
   methods: {
     mute() {
@@ -54,30 +50,27 @@ export default {
 
 <template>
   <div class="relative flex items-center gap-2 actions--container">
-    <ButtonV4
+    <woot-button
       v-if="!currentChat.muted"
       v-tooltip="$t('CONTACT_PANEL.MUTE_CONTACT')"
-      size="sm"
-      variant="ghost"
-      color="slate"
-      icon="i-lucide-volume-off"
+      variant="clear"
+      color-scheme="secondary"
+      icon="speaker-mute"
       @click="mute"
     />
-    <ButtonV4
+    <woot-button
       v-else
       v-tooltip.left="$t('CONTACT_PANEL.UNMUTE_CONTACT')"
-      size="sm"
-      variant="ghost"
-      color="slate"
-      icon="i-lucide-volume-1"
+      variant="clear"
+      color-scheme="secondary"
+      icon="speaker-1"
       @click="unmute"
     />
-    <ButtonV4
+    <woot-button
       v-tooltip="$t('CONTACT_PANEL.SEND_TRANSCRIPT')"
-      size="sm"
-      variant="ghost"
-      color="slate"
-      icon="i-lucide-share"
+      variant="clear"
+      color-scheme="secondary"
+      icon="share"
       @click="toggleEmailActionsModal"
     />
     <ResolveAction

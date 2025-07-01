@@ -1,14 +1,17 @@
 <script setup>
-import { computed, inject, defineModel } from 'vue';
+import { computed, inject } from 'vue';
 import { useMacros } from 'dashboard/composables/useMacros';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'dashboard/composables/useI18n';
 import ActionInput from 'dashboard/components/widgets/AutomationActionInput.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 const props = defineProps({
   singleNode: {
     type: Boolean,
     default: false,
+  },
+  value: {
+    type: Object,
+    default: () => ({}),
   },
   errorKey: {
     type: String,
@@ -20,15 +23,17 @@ const props = defineProps({
   },
 });
 
-defineEmits(['resetAction', 'deleteNode']);
+const emit = defineEmits(['input', 'resetAction', 'deleteNode']);
 
 const { t } = useI18n();
+
 const macroActionTypes = inject('macroActionTypes');
+
 const { getMacroDropdownValues } = useMacros();
 
-const actionData = defineModel({
-  type: Object,
-  required: true,
+const actionData = computed({
+  get: () => props.value,
+  set: value => emit('input', value),
 });
 
 const errorMessage = computed(() => {
@@ -42,33 +47,33 @@ const showActionInput = computed(() => {
     actionData.value.action_name === 'send_message'
   )
     return false;
-  const type = macroActionTypes.value.find(
+  const type = macroActionTypes.find(
     action => action.key === actionData.value.action_name
   ).inputType;
   return !!type;
 });
 
 const dropdownValues = () => {
-  return getMacroDropdownValues(actionData.value.action_name);
+  return getMacroDropdownValues(props.value.action_name);
 };
 </script>
 
 <template>
-  <div class="relative flex items-start w-full min-w-0 basis-full">
-    <NextButton
+  <div class="relative flex items-center w-full min-w-0 basis-full">
+    <woot-button
       v-if="!singleNode"
-      ghost
-      sm
-      slate
-      icon="i-lucide-menu"
-      class="absolute cursor-move -left-10 mr-2 macros__node-drag-handle"
+      size="small"
+      variant="clear"
+      color-scheme="secondary"
+      icon="navigation"
+      class="absolute cursor-move -left-8 macros__node-drag-handle"
     />
     <div
-      class="flex-grow p-2 mr-2 rounded-md shadow-sm outline outline-1 outline-n-weak"
+      class="flex-grow p-2 mr-2 rounded-md shadow-sm"
       :class="
         errorKey
-          ? 'animate-shake bg-n-ruby-8/20 outline-n-ruby-5 dark:outline-n-ruby-5'
-          : 'bg-n-background dark:bg-n-solid-1'
+          ? 'bg-red-50 animate-shake dark:bg-red-800'
+          : 'bg-white dark:bg-slate-700'
       "
     >
       <ActionInput
@@ -80,17 +85,16 @@ const dropdownValues = () => {
         is-macro
         :error-message="errorMessage"
         :initial-file-name="fileName"
-        @reset-action="$emit('resetAction')"
+        @resetAction="$emit('resetAction')"
       />
     </div>
-    <NextButton
+    <woot-button
       v-if="!singleNode"
       v-tooltip="$t('MACROS.EDITOR.DELETE_BTN_TOOLTIP')"
-      icon="i-lucide-trash-2"
-      sm
-      faded
-      ruby
-      class="flex-shrink-0"
+      icon="delete"
+      size="small"
+      variant="smooth"
+      color-scheme="alert"
       @click="$emit('deleteNode')"
     />
   </div>

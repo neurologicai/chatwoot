@@ -16,7 +16,8 @@ RSpec.describe WebhookJob do
   end
 
   it 'executes perform with default webhook type' do
-    expect(Webhooks::Trigger).to receive(:execute).with(url, payload, webhook_type)
+    expect(Webhooks::Trigger).to receive(:execute)
+      .with(url, payload, webhook_type, :post, { accept: :json, content_type: :json })
     perform_enqueued_jobs { job }
   end
 

@@ -1,4 +1,15 @@
-import { INBOX_TYPES } from 'dashboard/helper/inbox';
+export const INBOX_TYPES = {
+  WEB: 'Channel::WebWidget',
+  FB: 'Channel::FacebookPage',
+  TWITTER: 'Channel::TwitterProfile',
+  TWILIO: 'Channel::TwilioSms',
+  WHATSAPP: 'Channel::Whatsapp',
+  API: 'Channel::Api',
+  EMAIL: 'Channel::Email',
+  TELEGRAM: 'Channel::Telegram',
+  LINE: 'Channel::Line',
+  SMS: 'Channel::Sms',
+};
 
 export const INBOX_FEATURES = {
   REPLY_TO: 'replyTo',
@@ -80,6 +91,12 @@ export default {
         this.whatsAppAPIProvider === 'whatsapp_cloud'
       );
     },
+    isAUnoapiChannel() {
+      return (
+        this.channelType === INBOX_TYPES.WHATSAPP &&
+        this.whatsAppAPIProvider === 'unoapi'
+      );
+    },
     is360DialogWhatsAppChannel() {
       return (
         this.channelType === INBOX_TYPES.WHATSAPP &&
@@ -120,9 +137,6 @@ export default {
         this.channelType === INBOX_TYPES.WHATSAPP ||
         this.isATwilioWhatsAppChannel
       );
-    },
-    isAnInstagramChannel() {
-      return this.channelType === INBOX_TYPES.INSTAGRAM;
     },
   },
   methods: {

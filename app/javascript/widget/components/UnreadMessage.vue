@@ -7,12 +7,11 @@ import {
   ON_CAMPAIGN_MESSAGE_CLICK,
   ON_UNREAD_MESSAGE_CLICK,
 } from '../constants/widgetBusEvents';
-import { emitter } from 'shared/helpers/mitt';
-
+import darkModeMixin from 'widget/mixins/darkModeMixin';
 export default {
   name: 'UnreadMessage',
   components: { Thumbnail },
-  mixins: [configMixin],
+  mixins: [configMixin, darkModeMixin],
   props: {
     message: {
       type: String,
@@ -32,13 +31,9 @@ export default {
     },
   },
   setup() {
-    const { formatMessage, getPlainText, truncateMessage, highlightContent } =
-      useMessageFormatter();
+    const { formatMessage } = useMessageFormatter();
     return {
       formatMessage,
-      getPlainText,
-      truncateMessage,
-      highlightContent,
     };
   },
   computed: {
@@ -49,9 +44,10 @@ export default {
     },
     avatarUrl() {
       // eslint-disable-next-line
+      const BotImage = require('dashboard/assets/images/chatwoot_bot.png');
       const displayImage = this.useInboxAvatarForBot
         ? this.inboxAvatarUrl
-        : '/assets/images/chatwoot_bot.png';
+        : BotImage;
       if (this.isSenderExist(this.sender)) {
         const { avatar_url: avatarUrl } = this.sender;
         return avatarUrl;
@@ -82,9 +78,9 @@ export default {
     },
     onClickMessage() {
       if (this.campaignId) {
-        emitter.emit(ON_CAMPAIGN_MESSAGE_CLICK, this.campaignId);
+        this.$emitter.emit(ON_CAMPAIGN_MESSAGE_CLICK, this.campaignId);
       } else {
-        emitter.emit(ON_UNREAD_MESSAGE_CLICK);
+        this.$emitter.emit(ON_UNREAD_MESSAGE_CLICK);
       }
     },
   },
@@ -93,7 +89,11 @@ export default {
 
 <template>
   <div class="chat-bubble-wrap">
-    <button class="chat-bubble agent bg-white" @click="onClickMessage">
+    <button
+      class="chat-bubble agent"
+      :class="$dm('bg-white', 'dark:bg-slate-50')"
+      @click="onClickMessage"
+    >
       <div v-if="showSender" class="row--agent-block">
         <Thumbnail
           :src="avatarUrl"
@@ -113,19 +113,26 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+@import '~widget/assets/scss/variables.scss';
 .chat-bubble {
-  @apply max-w-[85%] cursor-pointer p-4;
+  max-width: 85%;
+  padding: $space-normal;
+  cursor: pointer;
 }
 
 .row--agent-block {
-  @apply items-center flex text-left pb-2 text-xs;
-
+  align-items: center;
+  display: flex;
+  text-align: left;
+  padding-bottom: $space-small;
+  font-size: $font-size-small;
   .agent--name {
-    @apply font-medium ml-1;
+    font-weight: $font-weight-medium;
+    margin-left: $space-smaller;
   }
-
   .company--name {
-    @apply text-n-slate-11 dark:text-n-slate-10 ml-1;
+    color: $color-light-gray;
+    margin-left: $space-smaller;
   }
 }
 </style>

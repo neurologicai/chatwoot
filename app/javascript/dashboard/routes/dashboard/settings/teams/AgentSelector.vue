@@ -1,10 +1,8 @@
 <script>
-import NextButton from 'dashboard/components-next/button/Button.vue';
 import Thumbnail from 'dashboard/components/widgets/Thumbnail.vue';
 
 export default {
   components: {
-    NextButton,
     Thumbnail,
   },
   props: {
@@ -138,11 +136,10 @@ export default {
           })
         }}
       </p>
-      <NextButton
-        type="submit"
-        :label="submitButtonText"
+      <woot-submit-button
+        :button-text="submitButtonText"
+        :loading="isWorking"
         :disabled="disableSubmitButton"
-        :is-loading="isWorking"
       />
     </div>
   </div>

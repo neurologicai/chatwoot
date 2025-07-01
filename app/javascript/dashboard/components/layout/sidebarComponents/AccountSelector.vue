@@ -7,7 +7,7 @@ export default {
       default: true,
     },
   },
-  emits: ['closeAccountModal', 'showCreateAccountModal'],
+
   computed: {
     ...mapGetters({
       accountId: 'getCurrentAccountId',
@@ -52,13 +52,9 @@ export default {
                 {{ account.name }}
               </div>
               <div
-                class="text-xs font-medium lowercase text-slate-500 dark:text-slate-500 hover:underline-offset-4"
+                class="text-xs font-medium text-slate-500 dark:text-slate-500 hover:underline-offset-4"
               >
-                {{
-                  account.custom_role_id
-                    ? account.custom_role.name
-                    : account.role
-                }}
+                {{ account.role }}
               </div>
             </label>
           </span>

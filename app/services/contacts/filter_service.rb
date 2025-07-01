@@ -9,7 +9,6 @@ class Contacts::FilterService < FilterService
   end
 
   def perform
-    validate_query_operator
     @contacts = query_builder(@filters['contacts'])
 
     {

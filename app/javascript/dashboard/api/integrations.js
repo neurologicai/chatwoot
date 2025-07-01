@@ -33,10 +33,16 @@ class IntegrationsAPI extends ApiClient {
     return axios.delete(`${this.baseUrl()}/integrations/hooks/${hookId}`);
   }
 
-  connectShopify({ shopDomain }) {
-    return axios.post(`${this.baseUrl()}/integrations/shopify/auth`, {
-      shop_domain: shopDomain,
-    });
+  fetchCaptainURL() {
+    return axios.get(`${this.baseUrl()}/integrations/captain/sso_url`);
+  }
+
+  getTypebotSettings() {
+    return axios.get(`${this.baseUrl()}/integrations/typebot/settings`);
+  }
+
+  saveTypebotSettings(settings) {
+    return axios.post(`${this.baseUrl()}/integrations/typebot/settings`, { settings });
   }
 }
 

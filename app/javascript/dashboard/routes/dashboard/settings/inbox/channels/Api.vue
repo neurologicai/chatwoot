@@ -5,7 +5,6 @@ import { useAlert } from 'dashboard/composables';
 import { required } from '@vuelidate/validators';
 import router from '../../../../index';
 import PageHeader from '../../SettingsSubPageHeader.vue';
-import NextButton from 'dashboard/components-next/button/Button.vue';
 
 const shouldBeWebhookUrl = (value = '') =>
   value ? value.startsWith('http') : true;
@@ -13,7 +12,6 @@ const shouldBeWebhookUrl = (value = '') =>
 export default {
   components: {
     PageHeader,
-    NextButton,
   },
   setup() {
     return { v$: useVuelidate() };
@@ -66,21 +64,18 @@ export default {
 
 <template>
   <div
-    class="border border-n-weak bg-n-solid-1 rounded-t-lg border-b-0 h-full w-full p-6 col-span-6 overflow-auto"
+    class="border border-slate-25 dark:border-slate-800/60 bg-white dark:bg-slate-900 h-full p-6 w-full max-w-full md:w-3/4 md:max-w-[75%] flex-shrink-0 flex-grow-0"
   >
     <PageHeader
       :header-title="$t('INBOX_MGMT.ADD.API_CHANNEL.TITLE')"
       :header-content="$t('INBOX_MGMT.ADD.API_CHANNEL.DESC')"
     />
-    <form
-      class="flex flex-wrap flex-col mx-0"
-      @submit.prevent="createChannel()"
-    >
-      <div class="flex-shrink-0 flex-grow-0">
+    <form class="flex flex-wrap mx-0" @submit.prevent="createChannel()">
+      <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
         <label :class="{ error: v$.channelName.$error }">
           {{ $t('INBOX_MGMT.ADD.API_CHANNEL.CHANNEL_NAME.LABEL') }}
           <input
-            v-model="channelName"
+            v-model.trim="channelName"
             type="text"
             :placeholder="
               $t('INBOX_MGMT.ADD.API_CHANNEL.CHANNEL_NAME.PLACEHOLDER')
@@ -93,11 +88,11 @@ export default {
         </label>
       </div>
 
-      <div class="flex-shrink-0 flex-grow-0">
+      <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
         <label :class="{ error: v$.webhookUrl.$error }">
           {{ $t('INBOX_MGMT.ADD.API_CHANNEL.WEBHOOK_URL.LABEL') }}
           <input
-            v-model="webhookUrl"
+            v-model.trim="webhookUrl"
             type="text"
             :placeholder="
               $t('INBOX_MGMT.ADD.API_CHANNEL.WEBHOOK_URL.PLACEHOLDER')
@@ -110,13 +105,10 @@ export default {
         </p>
       </div>
 
-      <div class="w-full mt-4">
-        <NextButton
-          :is-loading="uiFlags.isCreating"
-          type="submit"
-          solid
-          blue
-          :label="$t('INBOX_MGMT.ADD.API_CHANNEL.SUBMIT_BUTTON')"
+      <div class="w-full">
+        <woot-submit-button
+          :loading="uiFlags.isCreating"
+          :button-text="$t('INBOX_MGMT.ADD.API_CHANNEL.SUBMIT_BUTTON')"
         />
       </div>
     </form>

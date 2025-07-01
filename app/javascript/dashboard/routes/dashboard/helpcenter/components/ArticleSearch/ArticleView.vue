@@ -1,37 +1,41 @@
-<script setup>
+<script>
 import IframeLoader from 'shared/components/IframeLoader.vue';
-import Button from 'dashboard/components-next/button/Button.vue';
 
-defineProps({
-  url: {
-    type: String,
-    default: '',
+export default {
+  name: 'ArticleView',
+  components: {
+    IframeLoader,
   },
-});
-
-const emit = defineEmits(['back', 'insert']);
-
-const onBack = e => {
-  e.stopPropagation();
-  emit('back');
-};
-
-const onInsert = e => {
-  e.stopPropagation();
-  emit('insert');
+  props: {
+    url: {
+      type: String,
+      default: '',
+    },
+  },
+  methods: {
+    onBack(e) {
+      e.stopPropagation();
+      this.$emit('back');
+    },
+    onInsert(e) {
+      e.stopPropagation();
+      this.$emit('insert');
+    },
+  },
 };
 </script>
 
 <template>
   <div class="h-full w-full flex flex-col flex-1 overflow-hidden">
     <div class="py-1">
-      <Button
-        link
-        xs
-        :label="$t('HELP_CENTER.ARTICLE_SEARCH.BACK_RESULTS')"
-        icon="i-lucide-chevron-left"
+      <woot-button
+        variant="link"
+        size="small"
+        icon="chevron-left"
         @click="onBack"
-      />
+      >
+        {{ $t('HELP_CENTER.ARTICLE_SEARCH.BACK_RESULTS') }}
+      </woot-button>
     </div>
     <div class="-ml-4 h-full overflow-y-auto">
       <div class="w-full h-full min-h-0">
@@ -40,22 +44,24 @@ const onInsert = e => {
     </div>
 
     <div class="flex justify-end gap-2 py-2">
-      <Button
-        faded
-        slate
-        sm
-        type="reset"
-        icon="i-lucide-chevron-left"
-        :label="$t('HELP_CENTER.ARTICLE_SEARCH.BACK')"
+      <woot-button
+        variant="hollow"
+        size="small"
+        is-expanded
+        color-scheme="secondary"
+        icon="chevron-left"
         @click="onBack"
-      />
-      <Button
-        sm
-        type="submit"
-        icon="i-lucide-arrow-down-to-dot"
-        :label="$t('HELP_CENTER.ARTICLE_SEARCH.INSERT_ARTICLE')"
+      >
+        {{ $t('HELP_CENTER.ARTICLE_SEARCH.BACK') }}
+      </woot-button>
+      <woot-button
+        size="small"
+        is-expanded
+        icon="arrow-download"
         @click="onInsert"
-      />
+      >
+        {{ $t('HELP_CENTER.ARTICLE_SEARCH.INSERT_ARTICLE') }}
+      </woot-button>
     </div>
   </div>
 </template>
