@@ -1,7 +1,7 @@
 {
-  "name": "🅷🆄🅱",
-  "description": "🅷🆄🅱 is a customer support tool for instant messaging channels",
-  "website": "https://www.🅷🆄🅱.com/",
+  "name": "Leadster",
+  "description": "Leadster is a customer support tool for instant messaging channels",
+  "website": "https://www.leadster.com.br/",
   "repository": "https://github.com/neurologicai/chatwoot/",
   "logo": "https://app.chatwoot.com/brand-assets/logo_thumbnail.svg",
   "keywords": [
@@ -26,11 +26,11 @@
       "value": "production"
     },
     "FRONTEND_URL": {
-      "description": "Public root URL of the 🅷🆄🅱 installation. This will be used in the emails.",
+      "description": "Public root URL of the Leadster installation. This will be used in the emails.",
       "value": "https://atendimento.leadster.com.br"
     },
     "INSTALLATION_ENV": {
-      "description": "Installation method used for 🅷🆄🅱.",
+      "description": "Installation method used for Leadster.",
       "value": "heroku"
     },
     "REDIS_OPENSSL_VERIFY_MODE":{

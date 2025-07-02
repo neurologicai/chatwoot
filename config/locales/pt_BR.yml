@@ -192,14 +192,14 @@ pt_BR:
       description: "Dashboard Apps permitem que você crie e incorpore aplicativos que exibem informações do usuário, pedidos ou histórico de pagamentos, proporcionando mais contexto para seus agentes de suporte ao cliente."
     dyte:
       name: "Dyte"
-      description: "Dyte é um produto que integra funcionalidades de áudio e vídeo em sua aplicação. Com esta integração, seus agentes podem iniciar chamadas de vídeo/voz com seus clientes diretamente no 🅷🆄🅱."
+      description: "Dyte é um produto que integra funcionalidades de áudio e vídeo em sua aplicação. Com esta integração, seus agentes podem iniciar chamadas de vídeo/voz com seus clientes diretamente no Leadster."
       meeting_name: "%{agent_name} começou a reunião"
     slack:
       name: "Slack"
-      description: "Integre o 🅷🆄🅱 com o Slack para manter sua equipe sincronizada. Esta integração permite que você receba notificações de novas conversas e responda a elas diretamente na interface do Slack."
+      description: "Integre o Leadster com o Slack para manter sua equipe sincronizada. Esta integração permite que você receba notificações de novas conversas e responda a elas diretamente na interface do Slack."
     webhooks:
       name: "Webhooks"
-      description: "Eventos de Webhook fornecem atualizações em tempo real sobre atividades na sua conta do 🅷🆄🅱. Você pode se inscrever para seus eventos preferidos, e o 🅷🆄🅱 enviará callbacks HTTP com as atualizações."
+      description: "Eventos de Webhook fornecem atualizações em tempo real sobre atividades na sua conta do Leadster. Você pode se inscrever para seus eventos preferidos, e o Leadster enviará callbacks HTTP com as atualizações."
     dialogflow:
       name: "Dialogflow"
       description: "Construa chatbots com o Dialogflow e os integre facilmente na sua caixa de entrada. Esses bots podem lidar com consultas iniciais antes de transferi-las para um agente de atendimento ao cliente."
@@ -217,7 +217,7 @@ pt_BR:
       description: "Captain é um assistente de IA nativo construído para o seu produto e treinado na base de conhecimento da sua empresa. Ele responde como um humano e resolve consultas dos clientes de forma eficaz. Configure-o facilmente em suas caixas de entrada."
     typebot:
       name: "Typebot"
-      description: "Typebot é um construtor de chatbot de código aberto. Ele permite que você crie chatbots avançados visualmente, incorpore-os ao 🅷🆄🅱 e colete resultados em tempo real."
+      description: "Typebot é um construtor de chatbot de código aberto. Ele permite que você crie chatbots avançados visualmente, incorpore-os ao Leadster e colete resultados em tempo real."
       settings:
         frontend_url: "URL do Frontend"
   public_portal:

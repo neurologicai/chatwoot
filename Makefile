@@ -1,5 +1,5 @@
 # Variables
-APP_NAME := 🅷🆄🅱
+APP_NAME := Leadster
 RAILS_ENV ?= development
 
 # Targets
